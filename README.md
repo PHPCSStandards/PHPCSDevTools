@@ -24,6 +24,7 @@ This is a set of tools to aid developers of sniffs for [PHP CodeSniffer](https:/
     + [Stand-alone Installation](#stand-alone-installation)
 * [Features](#features)
     + [Checking whether all sniffs in a PHPCS standard are feature complete](#checking-whether-all-sniffs-in-a-phpcs-standard-are-feature-complete)
+    + [Sniff Debugging](#sniff-debugging)
     + [PHPCSDev ruleset for sniff repos](#phpcsdev-ruleset-for-sniff-repos)
 * [Contributing](#contributing)
 * [License](#license)
@@ -110,6 +111,59 @@ directories   One or more specific directories to examine.
 -h, --help    Print this help.
 -V, --version Display the current version of this script.
 ```
+
+
+### Sniff Debugging
+
+Once this project is installed, you will see a new `Debug` ruleset in the list of installed standards when you run `phpcs -i`.
+
+For now, this standard only contains one sniff: `Debug.Debug.TokenList`.
+This sniff will display compact, but detailed information about the tokens found in a (test case) file.
+
+This sniff is compatible with PHPCS 3.0+.
+
+Typical usage:
+* Set up a test case file for a new sniff you intend to write.
+* Run PHPCS over the test case file using this standard to see a list of the tokens found in the file:
+```bash
+phpcs ./SniffNameUnitTest.inc --standard=Debug
+```
+* Or use it together with the new sniff you are developing:
+```bash
+phpcs ./SniffNameUnitTest.inc --standard=YourStandard,Debug --sniffs=YourStandard.Category.NewSniffName,Debug.Debug.TokenList
+```
+	
+The output will look something along the lines of:
+```
+0 :: L001 :: C1 :: T_OPEN_TAG :: (5) :: <?php
+
+1 :: L002 :: C1 :: T_WHITESPACE :: (0) ::
+
+2 :: L003 :: C1 :: T_COMMENT :: (32) :: // Boolean not operator: All OK.
+
+3 :: L004 :: C1 :: T_IF :: (2) :: if
+4 :: L004 :: C3 :: T_WHITESPACE :: (1) ::
+5 :: L004 :: C4 :: T_OPEN_PARENTHESIS :: (1) :: (
+6 :: L004 :: C5 :: T_WHITESPACE :: (1) ::
+7 :: L004 :: C6 :: T_CONSTANT_ENCAPSED_STRING :: (4) :: 'bb'
+8 :: L004 :: C10 :: T_WHITESPACE :: (1) ::
+9 :: L004 :: C11 :: T_IS_NOT_IDENTICAL :: (3) :: !==
+10 :: L004 :: C14 :: T_WHITESPACE :: (1) ::
+11 :: L004 :: C15 :: T_CONSTANT_ENCAPSED_STRING :: (4) :: 'bb'
+12 :: L004 :: C19 :: T_WHITESPACE :: (1) ::
+13 :: L004 :: C20 :: T_CLOSE_PARENTHESIS :: (1) :: )
+14 :: L004 :: C21 :: T_WHITESPACE :: (1) ::
+15 :: L004 :: C22 :: T_OPEN_CURLY_BRACKET :: (1) :: {
+16 :: L004 :: C23 :: T_WHITESPACE :: (0) ::
+
+17 :: L005 :: C1 :: T_WHITESPACE :: (1) :: \t
+18 :: L005 :: C2 :: T_IF :: (2) :: if
+19 :: L005 :: C4 :: T_WHITESPACE :: (1) ::
+20 :: L005 :: C5 :: T_OPEN_PARENTHESIS :: (1) :: (
+21 :: L005 :: C6 :: T_WHITESPACE :: (0) ::
+```
+
+PHPCS itself can also display similar information using the `-vv` or `-vvv` verbosity flags, however, when using those, you will receive a *lot* more information than just the token list and, while useful for debugging PHPCS itself, the additional information is mostly just noise when developing a sniff.
 
 
 ### PHPCSDev ruleset for sniff repos
