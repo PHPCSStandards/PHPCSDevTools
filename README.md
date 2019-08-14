@@ -92,6 +92,8 @@ The standard checks your code against the following:
 
 The ruleset can be used like any other ruleset and specific sniffs and settings can be added to or overruled from a custom project based ruleset.
 
+For an example project-based ruleset using the `PHCPSDev` standard, have a look at the [`phpcs.xml.dist` file](https://github.com/PHPCSStandards/PHPCSDevTools/blob/develop/phpcs.xml.dist) in this repo.
+
 
 Contributing
 -------

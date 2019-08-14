@@ -31,6 +31,9 @@ jobs:
           packages:
             - libxml2-utils
       script:
+        # Check the code style of the code base.
+        - composer check-cs
+
         # Validate the xml file.
         # @link http://xmlsoft.org/xmllint.html
         - xmllint --noout --schema ./vendor/squizlabs/php_codesniffer/phpcs.xsd ./PHPCSDev/ruleset.xml
@@ -46,6 +49,7 @@ before_install:
   - export XMLLINT_INDENT="    "
 
   # --prefer-dist will allow for optimal use of the travis caching ability.
+  # The Composer PHPCS plugin takes care of setting the installed_paths for PHPCS.
   - composer install --prefer-dist --no-suggest
 
 

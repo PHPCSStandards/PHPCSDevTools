@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Coding Standard for PHPCSDevTools" xsi:noNamespaceSchemaLocation="./vendor/squizlabs/php_codesniffer/phpcs.xsd">
+    <description>Check the code of the PHPCSDevTools standard itself.</description>
+
+    <!--
+    #############################################################################
+    COMMAND LINE ARGUMENTS
+    https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml
+    #############################################################################
+    -->
+
+    <file>.</file>
+
+    <!-- Exclude Composer vendor directory. -->
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+
+    <!-- Only check PHP files. -->
+    <arg name="extensions" value="php"/>
+
+    <!-- Show progress, show the error codes for each message (source). -->
+    <arg value="ps"/>
+
+    <!-- Strip the filepaths down to the relevant bit. -->
+    <arg name="basepath" value="./"/>
+
+    <!-- Check up to 8 files simultaneously. -->
+    <arg name="parallel" value="8"/>
+
+    <!--
+    #############################################################################
+    USE THE PHPCSDev RULESET
+    #############################################################################
+    -->
+
+    <rule ref="PHPCSDev"/>
+
+    <!-- Set minimum PHP version supported to PHP 5.4. -->
+    <config name="testVersion" value="5.4-"/>
+
+    <!-- Enforce short arrays. -->
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+
+</ruleset>
