@@ -13,12 +13,31 @@ cache:
 
 php:
   - 5.4
-  - 7.3
+  - 5.5
+  - 5.6
+  - 7.0
+  - 7.1
+  - 7.2
+
+env:
+  matrix:
+    # `master`
+    - PHPCS_VERSION="dev-master" LINT=1
+    # Lowest supported PHPCS version.
+    # In reality this is 3.0.2, but there is a bug in the unit test runner of that version.
+    - PHPCS_VERSION="3.0.2"
 
 # Define the stages used.
+# For non-PRs, only the sniff and quicktest stages are run.
+# For pull requests and merges, the full script is run (skipping quicktest).
+# Note: for pull requests, "develop" is the base branch name.
+# See: https://docs.travis-ci.com/user/conditions-v1
 stages:
   - name: sniff
+  - name: quicktest
+    if: type = push AND branch NOT IN (master, develop)
   - name: test
+    if: branch IN (master, develop)
 
 jobs:
   fast_finish: true
@@ -26,6 +45,7 @@ jobs:
     #### SNIFF STAGE ####
     - stage: sniff
       php: 7.3
+      env: PHPCS_VERSION="dev-master"
       addons:
         apt:
           packages:
@@ -44,11 +64,63 @@ jobs:
         - diff -B ./PHPCSDev/ruleset.xml <(xmllint --format "./PHPCSDev/ruleset.xml")
 
 
+    #### QUICK TEST STAGE ####
+    # This is a much quicker test which only runs the unit tests and linting against the low/high
+    # supported PHP/PHPCS combinations.
+    - stage: quicktest
+      php: 7.3
+      env: PHPCS_VERSION="dev-master" LINT=1
+    - php: 7.2
+      env: PHPCS_VERSION="3.0.2"
+
+    - php: 5.4
+      env: PHPCS_VERSION="dev-master" LINT=1
+    - php: 5.4
+      env: PHPCS_VERSION="3.0.2"
+
+    #### TEST STAGE ####
+    # Additional builds to prevent issues with PHPCS versions incompatible with certain PHP versions.
+    - stage: test
+      php: 7.3
+      env: PHPCS_VERSION="dev-master" LINT=1
+    # PHPCS is only compatible with PHP 7.3 as of version 3.3.1.
+    - php: 7.3
+      env: PHPCS_VERSION="3.3.1"
+    # PHPCS is only compatible with PHP 7.4 as of version 3.5.0.
+    - php: "7.4snapshot"
+      env: PHPCS_VERSION=dev-master"
+
+  allow_failures:
+    # Allow failures for unstable builds.
+    - php: "7.4snapshot"
+
+
 before_install:
   # Speed up build time by disabling Xdebug when its not needed.
   - phpenv config-rm xdebug.ini || echo 'No xdebug config.'
 
+  # On stable PHPCS versions, allow for PHP deprecation notices.
+  # Unit tests don't need to fail on those for stable releases where those issues won't get fixed anymore.
+  - |
+    if [[ "$TRAVIS_BUILD_STAGE_NAME" != "Sniff" && $PHPCS_BRANCH != "dev-master" ]]; then
+      echo 'error_reporting = E_ALL & ~E_DEPRECATED' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+    fi
+
   - export XMLLINT_INDENT="    "
+
+  # Set up test environment using Composer.
+  - composer require --no-update --no-scripts squizlabs/php_codesniffer:${PHPCS_VERSION}
+  - |
+    if [[ "$TRAVIS_BUILD_STAGE_NAME" == "Sniff" ]]; then
+      # The sniff stage doesn't run the unit tests, so no need for PHPUnit.
+      composer remove --dev phpunit/phpunit --no-update --no-scripts
+    elif [[ "$PHPCS_VERSION" < "3.1.0" ]]; then
+      # PHPCS < 3.1.0 is not compatible with PHPUnit 6.x.
+      composer require --dev phpunit/phpunit:"^4.0||^5.0" --no-update --no-scripts
+    elif [[ "$PHPCS_VERSION" < "3.2.3" ]]; then
+      # PHPCS < 3.2.3 is not compatible with PHPUnit 7.x.
+      composer require --dev phpunit/phpunit:"^4.0||^5.0||^6.0" --no-update --no-scripts
+    fi
 
   # --prefer-dist will allow for optimal use of the travis caching ability.
   # The Composer PHPCS plugin takes care of setting the installed_paths for PHPCS.
@@ -57,13 +129,16 @@ before_install:
 
 script:
   # Lint PHP files against parse errors.
-  - composer lint
+  - if [[ "$LINT" == "1" ]]; then composer lint; fi
 
   # Check that any sniffs available are feature complete.
   # This also acts as an integration test for the feature completeness script,
   # which is why it is run against various PHP versions and not in the "Sniff" stage.
-  - composer check-complete
+  - if [[ "$LINT" == "1" ]]; then composer check-complete; fi
 
-  # Validate the composer.json file on low/high PHP versions.
+  # Validate the composer.json file.
   # @link https://getcomposer.org/doc/03-cli.md#validate
-  - composer validate --no-check-all --strict
+  - if [[ "$LINT" == "1" ]]; then composer validate --no-check-all --strict; fi
+
+  # Run the unit tests.
+  - composer run-tests
