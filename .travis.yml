@@ -4,6 +4,7 @@ language: php
 
 ## Cache composer and apt downloads.
 cache:
+  apt: true
   directories:
     # Cache directory for older Composer versions.
     - $HOME/.composer/cache/files
@@ -14,13 +15,35 @@ php:
   - 5.4
   - 7.3
 
+# Define the stages used.
+stages:
+  - name: sniff
+  - name: test
+
 jobs:
   fast_finish: true
+  include:
+    #### SNIFF STAGE ####
+    - stage: sniff
+      php: 7.3
+      addons:
+        apt:
+          packages:
+            - libxml2-utils
+      script:
+        # Validate the xml file.
+        # @link http://xmlsoft.org/xmllint.html
+        - xmllint --noout --schema ./vendor/squizlabs/php_codesniffer/phpcs.xsd ./PHPCSDev/ruleset.xml
+
+        # Check the code-style consistency of the xml files.
+        - diff -B ./PHPCSDev/ruleset.xml <(xmllint --format "./PHPCSDev/ruleset.xml")
 
 
 before_install:
   # Speed up build time by disabling Xdebug when its not needed.
   - phpenv config-rm xdebug.ini || echo 'No xdebug config.'
+
+  - export XMLLINT_INDENT="    "
 
   # --prefer-dist will allow for optimal use of the travis caching ability.
   - composer install --prefer-dist --no-suggest
