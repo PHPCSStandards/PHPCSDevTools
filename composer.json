@@ -1,0 +1,37 @@
+{
+    "name" : "phpcsstandards/phpcsdevtools",
+    "description" : "Tools for PHP_CodeSniffer sniff developers.",
+    "type" : "phpcodesniffer-standard",
+    "keywords" : [ "phpcs", "devtools", "php_codesniffer" ],
+    "license" : "LGPL-3.0-or-later",
+    "authors" : [
+        {
+            "name" : "Juliette Reinders Folmer",
+            "role" : "lead",
+            "homepage" : "https://github.com/jrfnl"
+        },
+        {
+            "name" : "Contributors",
+            "homepage" : "https://github.com/PHPCSStandards/PHPCSDevTools/graphs/contributors"
+        }
+    ],
+    "support" : {
+        "issues" : "https://github.com/PHPCSStandards/PHPCSDevTools/issues",
+        "source" : "https://github.com/PHPCSStandards/PHPCSDevTools"
+    },
+    "require" : {
+        "php" : ">=5.4",
+        "squizlabs/php_codesniffer" : "^3.0.2",
+        "dealerdirect/phpcodesniffer-composer-installer" : "^0.5"
+    },
+    "require-dev" : {
+        "roave/security-advisories" : "dev-master",
+        "jakub-onderka/php-parallel-lint": "^1.0",
+        "jakub-onderka/php-console-highlighter": "^0.4"
+    },
+    "scripts" : {
+        "lint": [
+            "@php ./vendor/jakub-onderka/php-parallel-lint/parallel-lint . -e php --exclude vendor"
+        ]
+    }
+}
