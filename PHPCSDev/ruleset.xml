@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="PHPCSDev" namespace="PHPCSStandards\PHPCSDev" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd">
+
+    <description>A PSR-2 based standard for use by sniff developers to check the code style of external PHPCS standards</description>
+
+    <!--
+    ####################################################################
+    PHP: Check PHP cross version compatibility.
+    For optimal results, the custom project ruleset should set the testVersion
+    config variable.
+    For compatibility with the PHP version supported by PHP_CodeSniffer 3.0+,
+    this would typically be set like: <config name="testVersion" value="5.4-"/>.
+    ####################################################################
+    -->
+    <rule ref="PHPCompatibility">
+        <exclude name="PHPCompatibility.Constants.NewConstants.t_finallyFound"/>
+        <exclude name="PHPCompatibility.Constants.NewConstants.t_yieldFound"/>
+        <exclude name="PHPCompatibility.Constants.NewConstants.t_ellipsisFound"/>
+        <exclude name="PHPCompatibility.Constants.NewConstants.t_powFound"/>
+        <exclude name="PHPCompatibility.Constants.NewConstants.t_pow_equalFound"/>
+        <exclude name="PHPCompatibility.Constants.NewConstants.t_spaceshipFound"/>
+        <exclude name="PHPCompatibility.Constants.NewConstants.t_coalesceFound"/>
+        <exclude name="PHPCompatibility.Constants.NewConstants.t_coalesce_equalFound"/>
+        <exclude name="PHPCompatibility.Constants.NewConstants.t_yield_fromFound"/>
+    </rule>
+
+
+    <!--
+    ####################################################################
+    Code style: Check style for compliance with PSR2.
+    ####################################################################
+    -->
+    <rule ref="PSR2"/>
+
+
+    <!--
+    ####################################################################
+    Code style: Naming Conventions.
+    ####################################################################
+    -->
+
+    <!-- Check that variable names are in camelCase. -->
+    <rule ref="Squiz.NamingConventions.ValidVariableName">
+        <exclude name="Squiz.NamingConventions.ValidVariableName.PrivateNoUnderscore"/>
+    </rule>
+
+    <!-- Check that function and method names are in camelCase. -->
+    <rule ref="Generic.NamingConventions.CamelCapsFunctionName">
+        <properties>
+            <!-- Allow for two adjacent capital letters for acronyms. -->
+            <property name="strict" value="false"/>
+        </properties>
+    </rule>
+
+
+    <!--
+    ####################################################################
+    Code style: Various other additions.
+    ####################################################################
+    -->
+
+    <!-- PSR2 appears to ignore blank lines for superfluous whitespace and in several other places. Let's fix that. -->
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
+        <properties>
+            <property name="ignoreBlankLines" value="false"/>
+        </properties>
+    </rule>
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.StartFile">
+        <severity>5</severity>
+    </rule>
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EndFile">
+        <severity>5</severity>
+    </rule>
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EmptyLines">
+        <severity>5</severity>
+    </rule>
+
+    <!-- Ensure exactly one blank line before each property declaration. -->
+    <rule ref="Squiz.WhiteSpace.MemberVarSpacing"/>
+
+    <!-- Ensure exactly one blank line before each function declaration, two blank lines
+         before the first function and 0 after the last. -->
+    <rule ref="Squiz.WhiteSpace.FunctionSpacing">
+        <properties>
+            <property name="spacing" value="1"/>
+            <property name="spacingBeforeFirst" value="1"/>
+            <property name="spacingAfterLast" value="0"/>
+        </properties>
+    </rule>
+
+    <rule ref="Generic.PHP.LowerCaseType"/>
+    <rule ref="Generic.WhiteSpace.ArbitraryParenthesesSpacing"/>
+    <rule ref="PSR12.Classes.ClassInstantiation"/>
+    <rule ref="PSR12.Keywords.ShortFormTypeKeywords"/>
+    <rule ref="PSR12.Operators.OperatorSpacing"/>
+
+    <!-- Align the equal operator in assignment blocks. -->
+    <rule ref="Generic.Formatting.MultipleStatementAlignment">
+        <properties>
+            <property name="maxPadding" value="25"/>
+        </properties>
+    </rule>
+
+    <rule ref="PEAR.Files.IncludingFile"/>
+    <rule ref="PEAR.Files.IncludingFile.UseInclude">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PEAR.Files.IncludingFile.UseIncludeOnce">
+        <severity>0</severity>
+    </rule>
+
+
+    <!--
+    ####################################################################
+    Code style: Array declarations.
+    ####################################################################
+    -->
+
+    <!-- Use normalized array indentation. -->
+    <rule ref="Generic.Arrays.ArrayIndent"/>
+    <rule ref="Squiz.Arrays.ArrayDeclaration"/>
+
+    <!-- Ignoring the Squiz indentation rules as normalized arrays are preferred. -->
+    <rule ref="Squiz.Arrays.ArrayDeclaration.KeyNotAligned">
+        <severity>0</severity>
+    </rule>
+    <rule ref="Squiz.Arrays.ArrayDeclaration.ValueNotAligned">
+        <severity>0</severity>
+    </rule>
+    <rule ref="Squiz.Arrays.ArrayDeclaration.CloseBraceNotAligned">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Single and multi-line arrays are both allowed. -->
+    <rule ref="Squiz.Arrays.ArrayDeclaration.SingleLineNotAllowed">
+        <severity>0</severity>
+    </rule>
+    <rule ref="Squiz.Arrays.ArrayDeclaration.MultiLineNotAllowed">
+        <severity>0</severity>
+    </rule>
+
+
+    <!--
+    ####################################################################
+    Docs: Verify the documentation.
+    ####################################################################
+    -->
+
+    <rule ref="Generic.Commenting.DocComment">
+        <!-- Having a @see or @internal tag before the @param tags is fine. -->
+        <exclude name="Generic.Commenting.DocComment.ParamNotFirst"/>
+    </rule>
+
+    <rule ref="PEAR.Commenting">
+        <!-- Exclude PEAR specific tag requirements. -->
+        <exclude name="PEAR.Commenting.FileComment.MissingVersion"/>
+        <exclude name="PEAR.Commenting.FileComment.MissingAuthorTag"/>
+        <exclude name="PEAR.Commenting.FileComment.MissingCategoryTag"/>
+        <exclude name="PEAR.Commenting.FileComment.MissingLicenseTag"/>
+        <exclude name="PEAR.Commenting.FileComment.MissingLinkTag"/>
+        <exclude name="PEAR.Commenting.ClassComment.MissingAuthorTag"/>
+        <exclude name="PEAR.Commenting.ClassComment.MissingCategoryTag"/>
+        <exclude name="PEAR.Commenting.ClassComment.MissingLicenseTag"/>
+        <exclude name="PEAR.Commenting.ClassComment.MissingLinkTag"/>
+        <exclude name="PEAR.Commenting.ClassComment.MissingPackageTag"/>
+
+        <!-- Having a @see or @internal tag before the @category tag is fine. -->
+        <exclude name="PEAR.Commenting.ClassComment.CategoryTagOrder"/>
+    </rule>
+
+</ruleset>
