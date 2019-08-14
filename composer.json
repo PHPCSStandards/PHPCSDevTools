@@ -42,6 +42,9 @@
         ],
         "fix-cs": [
             "@php ./vendor/squizlabs/php_codesniffer/bin/phpcbf"
+        ],
+        "check-complete": [
+            "@php ./bin/phpcs-check-feature-completeness ./Debug"
         ]
     }
 }

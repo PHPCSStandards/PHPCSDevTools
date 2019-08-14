@@ -59,6 +59,11 @@ script:
   # Lint PHP files against parse errors.
   - composer lint
 
+  # Check that any sniffs available are feature complete.
+  # This also acts as an integration test for the feature completeness script,
+  # which is why it is run against various PHP versions and not in the "Sniff" stage.
+  - composer check-complete
+
   # Validate the composer.json file on low/high PHP versions.
   # @link https://getcomposer.org/doc/03-cli.md#validate
   - composer validate --no-check-all --strict
