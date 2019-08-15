@@ -23,6 +23,7 @@ This is a set of tools to aid developers of sniffs for [PHP CodeSniffer](https:/
     + [Composer Global Installation](#composer-global-installation)
     + [Stand-alone Installation](#stand-alone-installation)
 * [Features](#features)
+    + [Checking whether all sniffs in a PHPCS standard are feature complete](#checking-whether-all-sniffs-in-a-phpcs-standard-are-feature-complete)
     + [PHPCSDev ruleset for sniff repos](#phpcsdev-ruleset-for-sniff-repos)
 * [Contributing](#contributing)
 * [License](#license)
@@ -63,6 +64,52 @@ composer global require phpcsstandards/phpcsdevtools:^1.0
 
 Features
 ------------------------------
+
+### Checking whether all sniffs in a PHPCS standard are feature complete
+
+You can now easily check whether each and every sniff in your standard is accompanied by a documentation XML file (warning) as well as unit test files (error).
+
+To use the tool, run it from the root of the your standards repo like so:
+```bash
+# When installed as a project dependency:
+vendor/bin/phpcs-check-feature-completeness
+
+# When installed globally with Composer:
+phpcs-check-feature-completeness
+
+# When installed as a git clone or otherwise:
+php -f "path/to/PHPCSDevTools/bin/phpcs-check-feature-completeness"
+```
+
+If all is good, you will see a `All # sniffs are accompanied by unit tests and documentation.` message.
+
+If there are files missing, you will see errors/warnings for each missing file, like so:
+```
+WARNING: Documentation missing for path/to/project/StandardName/Sniffs/Category/SniffNameSniff.php.
+ERROR: Unit tests missing for path/to/project/StandardName/Sniffs/Category/SniffNameSniff.php.
+```
+
+For the fastest results, it is recommended to pass the name of the subdirectory where your standard is located to the script, like so:
+```bash
+phpcs-check-feature-completeness ./StandardName
+```
+
+#### Options
+```
+directories   One or more specific directories to examine.
+              Defaults to the directory from which the script is run.
+-q, --quiet   Turn off warnings for missing documentation.
+--exclude     Comma-delimited list of (relative) directories to exclude
+              from the scan.
+              Defaults to excluding the /vendor/ directory.
+--no-progress Disable progress in console output.
+--colors      Enable colors in console output.
+              (disables auto detection of color support)
+--no-colors   Disable colors in console output.
+-h, --help    Print this help.
+-V, --version Display the current version of this script.
+```
+
 
 ### PHPCSDev ruleset for sniff repos
 
