@@ -106,6 +106,7 @@ directories   One or more specific directories to examine.
 --colors      Enable colors in console output.
               (disables auto detection of color support)
 --no-colors   Disable colors in console output.
+-v            Verbose mode.
 -h, --help    Print this help.
 -V, --version Display the current version of this script.
 ```
