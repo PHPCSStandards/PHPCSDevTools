@@ -57,6 +57,13 @@ class CheckSniffCompleteness
     protected $showColored;
 
     /**
+     * Verbosity level.
+     *
+     * @var int
+     */
+    protected $verbose = 0;
+
+    /**
      * The target directories to examine.
      *
      * @var array
@@ -244,6 +251,10 @@ class CheckSniffCompleteness
             $this->showColored = $this->isColorSupported();
         }
 
+        if (isset($argsFlipped['-v'])) {
+            $this->verbose = 1;
+        }
+
         foreach ($args as $arg) {
             if (strpos($arg, '--exclude=') === 0) {
                 $exclude = substr($arg, 10);
@@ -284,9 +295,11 @@ class CheckSniffCompleteness
     {
         $this->showVersion();
 
-        echo 'Target dir(s):', PHP_EOL,
-            '- ' . implode(PHP_EOL . '- ', $this->targetDirs),
-            PHP_EOL, PHP_EOL;
+        if ($this->verbose > 0) {
+            echo 'Target dir(s):', PHP_EOL,
+                '- ' . implode(PHP_EOL . '- ', $this->targetDirs),
+                PHP_EOL, PHP_EOL;
+        }
 
         if ($this->isComplete() !== true) {
             exit(1);
@@ -321,7 +334,7 @@ class CheckSniffCompleteness
         $notices      = [];
         $warningCount = 0;
         $errorCount   = 0;
-        foreach ($this->allSniffs as $file) {
+        foreach ($this->allSniffs as $i => $file) {
             if ($this->quietMode === false) {
                 $docFile = str_replace(array_keys($this->sniffToDoc), $this->sniffToDoc, $file);
                 if (isset($this->allFiles[$docFile]) === false) {
@@ -353,6 +366,20 @@ class CheckSniffCompleteness
             // Show progress.
             if ($this->showProgress === true) {
                 echo '.';
+
+                $current = ($i + 1);
+                if (($current % 60) === 0 || $current === $sniffCount) {
+                    $padding = strlen($sniffCount);
+
+                    $filling = '';
+                    if ($current === $sniffCount) {
+                        $lines   = ceil($current / 60);
+                        $filling = str_repeat(' ', (($lines * 60) - $sniffCount));
+                    }
+
+                    echo $filling, ' ', str_pad($current, $padding, ' ', \STR_PAD_LEFT), ' / ', $sniffCount,
+                        ' (', str_pad(round(($current / $sniffCount) * 100), 3, ' ', \STR_PAD_LEFT), '%)', PHP_EOL;
+                }
             }
         }
 
@@ -428,7 +455,8 @@ class CheckSniffCompleteness
     {
         echo 'PHPCSDev Tools: Sniff feature completeness checker version ';
         include __DIR__ . '/../VERSION';
-        echo PHP_EOL, PHP_EOL;
+        echo PHP_EOL,
+            'by Juliette Reinders Folmer', PHP_EOL, PHP_EOL;
     }
 
     /**
@@ -442,11 +470,11 @@ class CheckSniffCompleteness
 
         echo 'Usage:', PHP_EOL,
             '    phpcs-check-feature-completeness', PHP_EOL,
-            '    phpcs-check-feature-completeness [-q] [--exclude=<dir>] [directory]', PHP_EOL;
+            '    phpcs-check-feature-completeness [-q] [--exclude=<dir>] [directories]', PHP_EOL;
 
         echo PHP_EOL,
             'Options:', PHP_EOL,
-            '    directory     A specific directory to examine.', PHP_EOL,
+            '    directories   One or more specific directories to examine.', PHP_EOL,
             '                  Defaults to the directory from which the script is run.', PHP_EOL,
             '    -q, --quiet   Turn off warnings for missing documentation.', PHP_EOL,
             '    --exclude     Comma-delimited list of (relative) directories to exclude', PHP_EOL,
@@ -456,6 +484,7 @@ class CheckSniffCompleteness
             '    --colors      Enable colors in console output.', PHP_EOL,
             '                  (disables auto detection of color support)', PHP_EOL,
             '    --no-colors   Disable colors in console output.', PHP_EOL,
+            '    -v            Verbose mode.', PHP_EOL,
             '    -h, --help    Print this help.', PHP_EOL,
             '    -V, --version Display the current version of this script.', PHP_EOL;
     }
