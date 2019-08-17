@@ -373,8 +373,10 @@ class CheckSniffCompleteness
 
                     $filling = '';
                     if ($current === $sniffCount) {
-                        $lines   = ceil($current / 60);
-                        $filling = str_repeat(' ', (($lines * 60) - $sniffCount));
+                        $lines = ceil($current / 60);
+                        if ($lines > 1) {
+                            $filling = str_repeat(' ', (($lines * 60) - $sniffCount));
+                        }
                     }
 
                     echo $filling, ' ', str_pad($current, $padding, ' ', \STR_PAD_LEFT), ' / ', $sniffCount,
