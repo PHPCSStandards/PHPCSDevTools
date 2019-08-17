@@ -27,6 +27,7 @@
     },
     "require-dev" : {
         "roave/security-advisories" : "dev-master",
+        "phpunit/phpunit" : "^4.5 || ^5.0 || ^6.0 || ^7.0",
         "jakub-onderka/php-parallel-lint": "^1.0",
         "jakub-onderka/php-console-highlighter": "^0.4"
     },
@@ -42,6 +43,12 @@
         ],
         "fix-cs": [
             "@php ./vendor/squizlabs/php_codesniffer/bin/phpcbf"
+        ],
+        "run-tests": [
+            "@php ./vendor/phpunit/phpunit/phpunit --filter PHPCSStandards ./vendor/squizlabs/php_codesniffer/tests/AllTests.php"
+        ],
+        "check-complete": [
+            "@php ./bin/phpcs-check-feature-completeness ./Debug"
         ]
     }
 }

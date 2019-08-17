@@ -1,0 +1,9 @@
+<documentation title="Token List">
+    <standard>
+    <![CDATA[
+    Lists how PHPCS tokenizes code.
+
+    This sniff will not throw any warnings or errors, but is solely intended as a tool for sniff developers.
+    ]]>
+    </standard>
+</documentation>
