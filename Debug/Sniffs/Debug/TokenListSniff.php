@@ -60,10 +60,23 @@ class TokenListSniff implements Sniff
     public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
+        $last   = ($phpcsFile->numTokens - 1);
+
+        $ptrPadding  = max(3, strlen($last));
+        $linePadding = strlen($tokens[$last]['line']);
 
         $oldIniValue = \ini_set('xdebug.overload_var_dump', 1);
 
         echo \PHP_EOL;
+        echo \str_pad('Ptr', $ptrPadding, ' ', \STR_PAD_BOTH),
+            ' :: ', \str_pad('Ln', ($linePadding + 1), ' ', \STR_PAD_BOTH),
+            ' :: ', \str_pad('Col', 4, ' ', \STR_PAD_BOTH),
+            ' :: ', 'Cond',
+            ' :: ', \str_pad('Token Type', 26), // Longest token type name is 26 chars.
+            ' :: [len]: Content', \PHP_EOL;
+
+        echo \str_repeat('-', ($ptrPadding + $linePadding + 35 + 16 + 18)), \PHP_EOL;
+
         foreach ($tokens as $ptr => $token) {
             if (isset($token['length']) === false) {
                 $token['length'] = strlen($token['content']);
@@ -82,8 +95,17 @@ class TokenListSniff implements Sniff
                 }
             }
 
-            echo $ptr, ' :: L', \str_pad($token['line'], 3, '0', \STR_PAD_LEFT), ' :: C', $token['column'],
-                ' :: ', $token['type'], ' :: (', $token['length'], ') :: ', $content, \PHP_EOL;
+            $conditionCount = 'F'; // False.
+            if (isset($token['conditions'])) {
+                $conditionCount = count($token['conditions']);
+            }
+
+            echo \str_pad($ptr, $ptrPadding, ' ', \STR_PAD_LEFT),
+                ' :: L', \str_pad($token['line'], $linePadding, '0', \STR_PAD_LEFT),
+                ' :: C', \str_pad($token['column'], 3, ' ', \STR_PAD_LEFT),
+                ' :: CC', \str_pad($conditionCount, 2, ' ', \STR_PAD_LEFT),
+                ' :: ', \str_pad($token['type'], 26), // Longest token type name is 26 chars.
+                ' :: [', $token['length'], ']: ', $content, \PHP_EOL;
         }
 
         // If necessary, reset the ini setting.
