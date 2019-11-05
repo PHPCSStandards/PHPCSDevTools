@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit test class for the TokenList sniff.
  *
- * @covers PHPCSStandards\Debug\Sniffs\Debug::TokenListSniff
+ * @covers PHPCSStandards\Debug\Sniffs\Debug\TokenListSniff
  *
  * @since 1.0.0
  */
@@ -33,7 +33,12 @@ class TokenListZUnitTest extends TestCase
 
         $this->assertNotEmpty($output);
 
-        $expected = '0 :: L001 :: C1 :: T_OPEN_TAG :: (5) :: <?php';
+        $expected  = 'Ptr :: Ln :: Col  :: Cond :: Token Type                 :: [len]: Content';
+        $expected .= PHP_EOL;
+        $expected .= '-------------------------------------------------------------------------';
+        $expected .= PHP_EOL;
+        $expected .= '  0 :: L1 :: C  1 :: CC 0 :: T_OPEN_TAG                 :: [5]: <?php';
+
         $this->assertSame($expected, $output);
     }
 }

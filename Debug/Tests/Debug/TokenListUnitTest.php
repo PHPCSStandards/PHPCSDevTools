@@ -15,7 +15,7 @@ use PHP_CodeSniffer\Tests\Standards\AbstractSniffUnitTest;
 /**
  * Unit test class for the TokenList sniff.
  *
- * @covers PHPCSStandards\Debug\Sniffs\Debug::TokenListSniff
+ * @covers PHPCSStandards\Debug\Sniffs\Debug\TokenListSniff
  *
  * @since 1.0.0
  */
