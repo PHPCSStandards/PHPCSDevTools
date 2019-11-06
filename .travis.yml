@@ -86,13 +86,17 @@ jobs:
     # PHPCS is only compatible with PHP 7.3 as of version 3.3.1.
     - php: 7.3
       env: PHPCS_VERSION="3.3.1"
+    - php: "7.4snapshot"
+      env: PHPCS_VERSION="dev-master"
     # PHPCS is only compatible with PHP 7.4 as of version 3.5.0.
     - php: "7.4snapshot"
-      env: PHPCS_VERSION=dev-master"
+      env: PHPCS_VERSION="3.5.0"
+    - php: "nightly"
+      env: PHPCS_VERSION="n/a" LINT=1
 
   allow_failures:
     # Allow failures for unstable builds.
-    - php: "7.4snapshot"
+    - php: "nightly"
 
 
 before_install:
@@ -102,16 +106,19 @@ before_install:
   # On stable PHPCS versions, allow for PHP deprecation notices.
   # Unit tests don't need to fail on those for stable releases where those issues won't get fixed anymore.
   - |
-    if [[ "$TRAVIS_BUILD_STAGE_NAME" != "Sniff" && $PHPCS_BRANCH != "dev-master" ]]; then
+    if [[ "$TRAVIS_BUILD_STAGE_NAME" != "Sniff" && "$PHPCS_VERSION" != "dev-master" && "$PHPCS_VERSION" != "n/a" ]]; then
       echo 'error_reporting = E_ALL & ~E_DEPRECATED' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
     fi
 
   - export XMLLINT_INDENT="    "
 
   # Set up test environment using Composer.
-  - composer require --no-update --no-scripts squizlabs/php_codesniffer:${PHPCS_VERSION}
   - |
-    if [[ "$TRAVIS_BUILD_STAGE_NAME" == "Sniff" ]]; then
+    if [[ $PHPCS_VERSION != "n/a" ]]; then
+      composer require --no-update --no-scripts squizlabs/php_codesniffer:${PHPCS_VERSION}
+    fi
+  - |
+    if [[ "$TRAVIS_BUILD_STAGE_NAME" == "Sniff" || $PHPCS_VERSION == "n/a" ]]; then
       # The sniff stage doesn't run the unit tests, so no need for PHPUnit.
       composer remove --dev phpunit/phpunit --no-update --no-scripts
     elif [[ "$PHPCS_VERSION" < "3.1.0" ]]; then
@@ -141,4 +148,4 @@ script:
   - if [[ "$LINT" == "1" ]]; then composer validate --no-check-all --strict; fi
 
   # Run the unit tests.
-  - composer run-tests
+  - if [[ $PHPCS_VERSION != "n/a" ]]; then composer run-tests; fi
