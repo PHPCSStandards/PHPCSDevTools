@@ -37,7 +37,7 @@ Installation
 
 Run the following from the root of your project:
 ```bash
-composer require phpcsstandards/phpcsdevtools:^1.0
+composer require --dev phpcsstandards/phpcsdevtools:^1.0
 ```
 
 ### Composer Global Installation
