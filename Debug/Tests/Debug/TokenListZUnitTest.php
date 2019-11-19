@@ -29,15 +29,14 @@ class TokenListZUnitTest extends TestCase
      */
     public function testOutput()
     {
-        $output = trim(TokenListUnitTest::$output);
+        $output = str_replace(["\r\n", "\r"], "\n", TokenListUnitTest::$output);
 
         $this->assertNotEmpty($output);
 
-        $expected  = 'Ptr :: Ln :: Col  :: Cond :: Token Type                 :: [len]: Content';
-        $expected .= PHP_EOL;
-        $expected .= '-------------------------------------------------------------------------';
-        $expected .= PHP_EOL;
-        $expected .= '  0 :: L1 :: C  1 :: CC 0 :: T_OPEN_TAG                 :: [5]: <?php';
+        $expected  = "\n";
+        $expected .= 'Ptr :: Ln :: Col  :: Cond :: Token Type                 :: [len]: Content' . "\n";
+        $expected .= '-------------------------------------------------------------------------' . "\n";
+        $expected .= '  0 :: L1 :: C  1 :: CC 0 :: T_OPEN_TAG                 :: [5]: <?php' . "\n\n";
 
         $this->assertSame($expected, $output);
     }
