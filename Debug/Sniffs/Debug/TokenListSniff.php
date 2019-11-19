@@ -65,8 +65,6 @@ class TokenListSniff implements Sniff
         $ptrPadding  = max(3, strlen($last));
         $linePadding = strlen($tokens[$last]['line']);
 
-        $oldIniValue = \ini_set('xdebug.overload_var_dump', 1);
-
         echo \PHP_EOL;
         echo \str_pad('Ptr', $ptrPadding, ' ', \STR_PAD_BOTH),
             ' :: ', \str_pad('Ln', ($linePadding + 1), ' ', \STR_PAD_BOTH),
@@ -106,11 +104,6 @@ class TokenListSniff implements Sniff
                 ' :: CC', \str_pad($conditionCount, 2, ' ', \STR_PAD_LEFT),
                 ' :: ', \str_pad($token['type'], 26), // Longest token type name is 26 chars.
                 ' :: [', $token['length'], ']: ', $content, \PHP_EOL;
-        }
-
-        // If necessary, reset the ini setting.
-        if ($oldIniValue !== false) {
-            \ini_set('xdebug.overload_var_dump', $oldIniValue);
         }
 
         // Only do this once per file.
