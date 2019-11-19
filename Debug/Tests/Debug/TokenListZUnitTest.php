@@ -37,6 +37,9 @@ class TokenListZUnitTest extends TestCase
         $expected .= 'Ptr :: Ln :: Col  :: Cond :: Token Type                 :: [len]: Content' . "\n";
         $expected .= '-------------------------------------------------------------------------' . "\n";
         $expected .= '  0 :: L1 :: C  1 :: CC 0 :: T_OPEN_TAG                 :: [5]: <?php' . "\n\n";
+        $expected .= '  1 :: L2 :: C  1 :: CC 0 :: T_WHITESPACE               :: [0]: ' . "\n\n";
+        $expected .= '  2 :: L3 :: C  1 :: CC 0 :: T_FUNCTION                 :: [8]: function' . "\n";
+        $expected .= '  3 :: L3 :: C  9 :: CC 0 :: T_WHITESPACE               :: [0]: ' . "\n\n";
 
         $this->assertSame($expected, $output);
     }

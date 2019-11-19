@@ -36,6 +36,23 @@ class TokenListSniff implements Sniff
     ];
 
     /**
+     * Default values for the token indexes accessed.
+     *
+     * This prevents issues with "undefined index" notices in case of rare tokenizer issues.
+     *
+     * @var array
+     */
+    private $tokenDefaults = [
+        'type'       => '?',
+        'code'       => '?',
+        'content'    => '',
+        'line'       => '?',
+        'column'     => '?',
+        'level'      => 0,
+        'conditions' => [],
+    ];
+
+    /**
      * Returns an array of tokens this test wants to listen for.
      *
      * @return array
@@ -76,27 +93,29 @@ class TokenListSniff implements Sniff
         echo \str_repeat('-', ($ptrPadding + $linePadding + 35 + 16 + 18)), \PHP_EOL;
 
         foreach ($tokens as $ptr => $token) {
+            $token  += $this->tokenDefaults;
+            $content = $token['content'];
+
             if (isset($token['length']) === false) {
-                $token['length'] = strlen($token['content']);
+                $token['length'] = 0;
+                if (isset($token['content'])) {
+                    $token['length'] = strlen($content);
+                }
             }
 
-            $content = $token['content'];
             if ($token['code'] === \T_WHITESPACE
                 || (defined('T_DOC_COMMENT_WHITESPACE')
                 && $token['code'] === \T_DOC_COMMENT_WHITESPACE)
             ) {
-                if (strpos($token['content'], "\t") !== false) {
-                    $content = str_replace("\t", '\t', $token['content']);
+                if (strpos($content, "\t") !== false) {
+                    $content = str_replace("\t", '\t', $content);
                 }
                 if (isset($token['orig_content'])) {
                     $content .= ' :: Orig: ' . str_replace("\t", '\t', $token['orig_content']);
                 }
             }
 
-            $conditionCount = 'F'; // False.
-            if (isset($token['conditions'])) {
-                $conditionCount = count($token['conditions']);
-            }
+            $conditionCount = count($token['conditions']);
 
             echo \str_pad($ptr, $ptrPadding, ' ', \STR_PAD_LEFT),
                 ' :: L', \str_pad($token['line'], $linePadding, '0', \STR_PAD_LEFT),
