@@ -86,10 +86,10 @@ jobs:
     # PHPCS is only compatible with PHP 7.3 as of version 3.3.1.
     - php: 7.3
       env: PHPCS_VERSION="3.3.1"
-    - php: "7.4snapshot"
+    - php: 7.4
       env: PHPCS_VERSION="dev-master"
     # PHPCS is only compatible with PHP 7.4 as of version 3.5.0.
-    - php: "7.4snapshot"
+    - php: 7.4
       env: PHPCS_VERSION="3.5.0"
     - php: "nightly"
       env: PHPCS_VERSION="n/a" LINT=1
