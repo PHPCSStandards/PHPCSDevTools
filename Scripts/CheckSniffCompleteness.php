@@ -8,7 +8,7 @@
  * @link      https://github.com/PHPCSStandards/PHPCSDevTools
  */
 
-namespace PHPCSStandards\Scripts;
+namespace PHPCSDevTools\Scripts;
 
 /**
  * Check that each sniff is feature complete, i.e. has unit tests and documentation.
