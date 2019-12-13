@@ -110,6 +110,9 @@
         <severity>0</severity>
     </rule>
 
+    <!-- Disallow Yoda conditions. -->
+    <rule ref="Generic.ControlStructures.DisallowYodaConditions"/>
+
 
     <!--
     ####################################################################
