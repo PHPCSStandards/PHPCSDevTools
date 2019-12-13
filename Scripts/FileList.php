@@ -8,7 +8,7 @@
  * @link      https://github.com/PHPCSStandards/PHPCSDevTools
  */
 
-namespace PHPCSStandards\Scripts;
+namespace PHPCSDevTools\Scripts;
 
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
