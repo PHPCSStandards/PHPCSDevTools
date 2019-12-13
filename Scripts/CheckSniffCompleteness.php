@@ -455,7 +455,7 @@ class CheckSniffCompleteness
      */
     protected function showVersion()
     {
-        echo 'PHPCSDev Tools: Sniff feature completeness checker version ';
+        echo 'PHPCSDevTools: Sniff feature completeness checker version ';
         include __DIR__ . '/../VERSION';
         echo PHP_EOL,
             'by Juliette Reinders Folmer', PHP_EOL, PHP_EOL;
