@@ -45,10 +45,10 @@
             "@php ./vendor/squizlabs/php_codesniffer/bin/phpcbf"
         ],
         "run-tests": [
-            "@php ./vendor/phpunit/phpunit/phpunit --filter PHPCSStandards ./vendor/squizlabs/php_codesniffer/tests/AllTests.php"
+            "@php ./vendor/phpunit/phpunit/phpunit --filter PHPCSDebug ./vendor/squizlabs/php_codesniffer/tests/AllTests.php"
         ],
         "check-complete": [
-            "@php ./bin/phpcs-check-feature-completeness ./Debug"
+            "@php ./bin/phpcs-check-feature-completeness ./PHPCSDebug"
         ]
     }
 }

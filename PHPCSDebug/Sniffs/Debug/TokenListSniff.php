@@ -8,7 +8,7 @@
  * @link      https://github.com/PHPCSStandards/PHPCSDevTools
  */
 
-namespace PHPCSStandards\Debug\Sniffs\Debug;
+namespace PHPCSDebug\Sniffs\Debug;
 
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
