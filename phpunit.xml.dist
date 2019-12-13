@@ -10,7 +10,7 @@
 
     <testsuites>
         <testsuite name="PHPCSDevTools">
-            <directory suffix="UnitTest.php">./Debug/Tests/</directory>
+            <directory suffix="UnitTest.php">./PHPCSDebug/Tests/</directory>
         </testsuite>
     </testsuites>
 

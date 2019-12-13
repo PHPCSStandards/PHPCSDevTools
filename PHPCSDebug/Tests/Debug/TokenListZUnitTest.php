@@ -8,14 +8,14 @@
  * @link      https://github.com/PHPCSStandards/PHPCSDevTools
  */
 
-namespace PHPCSStandards\Debug\Tests\Debug;
+namespace PHPCSDebug\Tests\Debug;
 
 use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test class for the TokenList sniff.
  *
- * @covers PHPCSStandards\Debug\Sniffs\Debug\TokenListSniff
+ * @covers PHPCSDebug\Sniffs\Debug\TokenListSniff
  *
  * @since 1.0.0
  */

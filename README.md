@@ -115,9 +115,9 @@ directories   One or more specific directories to examine.
 
 ### Sniff Debugging
 
-Once this project is installed, you will see a new `Debug` ruleset in the list of installed standards when you run `phpcs -i`.
+Once this project is installed, you will see a new `PHPCSDebug` ruleset in the list of installed standards when you run `phpcs -i`.
 
-For now, this standard only contains one sniff: `Debug.Debug.TokenList`.
+For now, this standard only contains one sniff: `PHPCSDebug.Debug.TokenList`.
 This sniff will display compact, but detailed information about the tokens found in a (test case) file.
 
 This sniff is compatible with PHPCS 3.0+.
@@ -126,11 +126,11 @@ Typical usage:
 * Set up a test case file for a new sniff you intend to write.
 * Run PHPCS over the test case file using this standard to see a list of the tokens found in the file:
 ```bash
-phpcs ./SniffNameUnitTest.inc --standard=Debug
+phpcs ./SniffNameUnitTest.inc --standard=PHPCSDebug
 ```
 * Or use it together with the new sniff you are developing:
 ```bash
-phpcs ./SniffNameUnitTest.inc --standard=YourStandard,Debug --sniffs=YourStandard.Category.NewSniffName,Debug.Debug.TokenList
+phpcs ./SniffNameUnitTest.inc --standard=YourStandard,PHPCSDebug --sniffs=YourStandard.Category.NewSniffName,PHPCSDebug.Debug.TokenList
 ```
 
 The output will look something along the lines of:

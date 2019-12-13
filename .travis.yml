@@ -56,11 +56,11 @@ jobs:
 
         # Validate the xml file.
         # @link http://xmlsoft.org/xmllint.html
-        - xmllint --noout --schema ./vendor/squizlabs/php_codesniffer/phpcs.xsd ./Debug/ruleset.xml
+        - xmllint --noout --schema ./vendor/squizlabs/php_codesniffer/phpcs.xsd ./PHPCSDebug/ruleset.xml
         - xmllint --noout --schema ./vendor/squizlabs/php_codesniffer/phpcs.xsd ./PHPCSDev/ruleset.xml
 
         # Check the code-style consistency of the xml files.
-        - diff -B ./Debug/ruleset.xml <(xmllint --format "./Debug/ruleset.xml")
+        - diff -B ./PHPCSDebug/ruleset.xml <(xmllint --format "./PHPCSDebug/ruleset.xml")
         - diff -B ./PHPCSDev/ruleset.xml <(xmllint --format "./PHPCSDev/ruleset.xml")
 
 
