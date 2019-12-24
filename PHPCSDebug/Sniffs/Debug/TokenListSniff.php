@@ -79,8 +79,8 @@ class TokenListSniff implements Sniff
         $tokens = $phpcsFile->getTokens();
         $last   = ($phpcsFile->numTokens - 1);
 
-        $ptrPadding  = max(3, strlen($last));
-        $linePadding = strlen($tokens[$last]['line']);
+        $ptrPadding  = \max(3, \strlen($last));
+        $linePadding = \strlen($tokens[$last]['line']);
 
         echo \PHP_EOL;
         echo \str_pad('Ptr', $ptrPadding, ' ', \STR_PAD_BOTH),
@@ -99,23 +99,23 @@ class TokenListSniff implements Sniff
             if (isset($token['length']) === false) {
                 $token['length'] = 0;
                 if (isset($token['content'])) {
-                    $token['length'] = strlen($content);
+                    $token['length'] = \strlen($content);
                 }
             }
 
             if ($token['code'] === \T_WHITESPACE
-                || (defined('T_DOC_COMMENT_WHITESPACE')
+                || (\defined('T_DOC_COMMENT_WHITESPACE')
                 && $token['code'] === \T_DOC_COMMENT_WHITESPACE)
             ) {
-                if (strpos($content, "\t") !== false) {
-                    $content = str_replace("\t", '\t', $content);
+                if (\strpos($content, "\t") !== false) {
+                    $content = \str_replace("\t", '\t', $content);
                 }
                 if (isset($token['orig_content'])) {
-                    $content .= ' :: Orig: ' . str_replace("\t", '\t', $token['orig_content']);
+                    $content .= ' :: Orig: ' . \str_replace("\t", '\t', $token['orig_content']);
                 }
             }
 
-            $conditionCount = count($token['conditions']);
+            $conditionCount = \count($token['conditions']);
 
             echo \str_pad($ptr, $ptrPadding, ' ', \STR_PAD_LEFT),
                 ' :: L', \str_pad($token['line'], $linePadding, '0', \STR_PAD_LEFT),

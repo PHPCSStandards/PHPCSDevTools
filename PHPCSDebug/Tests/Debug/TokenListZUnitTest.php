@@ -29,7 +29,7 @@ class TokenListZUnitTest extends TestCase
      */
     public function testOutput()
     {
-        $output = str_replace(["\r\n", "\r"], "\n", TokenListUnitTest::$output);
+        $output = \str_replace(["\r\n", "\r"], "\n", TokenListUnitTest::$output);
 
         $this->assertNotEmpty($output);
 
