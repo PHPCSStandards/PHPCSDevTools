@@ -38,7 +38,7 @@ class TokenListUnitTest extends AbstractSniffUnitTest
     {
         parent::setUp();
 
-        ob_start();
+        \ob_start();
     }
 
     /**
@@ -48,7 +48,7 @@ class TokenListUnitTest extends AbstractSniffUnitTest
      */
     protected function tearDown()
     {
-        self::$output = ob_get_flush();
+        self::$output = \ob_get_flush();
 
         parent::tearDown();
     }

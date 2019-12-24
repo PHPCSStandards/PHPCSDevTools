@@ -74,7 +74,7 @@ class FileList
         );
 
         if ($filter === '') {
-            $filter = sprintf(self::BASE_REGEX, preg_quote($this->rootPath . DIRECTORY_SEPARATOR, '`'));
+            $filter = \sprintf(self::BASE_REGEX, \preg_quote($this->rootPath . \DIRECTORY_SEPARATOR, '`'));
         }
 
         $this->fileIterator = new RegexIterator($flattened, $filter);
@@ -102,7 +102,7 @@ class FileList
         $fileList = [];
 
         foreach ($this->fileIterator as $file) {
-            $fileList[] = str_replace($this->rootPath, '', $file);
+            $fileList[] = \str_replace($this->rootPath, '', $file);
         }
 
         return $fileList;

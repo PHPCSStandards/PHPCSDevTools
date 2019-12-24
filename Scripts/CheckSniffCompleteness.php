@@ -156,25 +156,25 @@ class CheckSniffCompleteness
             $this->targetDirs[] = $this->projectRoot;
         } else {
             // Handle Windows vs Unix file paths.
-            $sep = DIRECTORY_SEPARATOR;
+            $sep = \DIRECTORY_SEPARATOR;
         }
 
         // Handle excluded dirs.
         $exclude = '(?!\.git/)';
         if (empty($this->excludedDirs) === false) {
-            $excludedDirs = array_map(
+            $excludedDirs = \array_map(
                 'preg_quote',
                 $this->excludedDirs,
-                array_fill(0, count($this->excludedDirs), '`')
+                \array_fill(0, \count($this->excludedDirs), '`')
             );
-            $exclude      = '(?!(\.git|' . implode('|', $excludedDirs) . ')/)';
+            $exclude      = '(?!(\.git|' . \implode('|', $excludedDirs) . ')/)';
         }
 
         // Prepare the regexes.
-        $quotedProjectRoot = preg_quote($this->projectRoot . $sep, '`');
-        $allFilesRegex     = str_replace('(?!\.git/)', $exclude, FileList::BASE_REGEX);
-        $allFilesRegex     = sprintf($allFilesRegex, $quotedProjectRoot);
-        $sniffsRegex       = sprintf(self::FILTER_REGEX, $quotedProjectRoot, $exclude);
+        $quotedProjectRoot = \preg_quote($this->projectRoot . $sep, '`');
+        $allFilesRegex     = \str_replace('(?!\.git/)', $exclude, FileList::BASE_REGEX);
+        $allFilesRegex     = \sprintf($allFilesRegex, $quotedProjectRoot);
+        $sniffsRegex       = \sprintf(self::FILTER_REGEX, $quotedProjectRoot, $exclude);
 
         // Get the file lists.
         $allFiles  = [];
@@ -187,12 +187,12 @@ class CheckSniffCompleteness
             $allSniffs[] = (new FileList($targetDir, $this->projectRoot, $sniffsRegex))->getList();
         }
 
-        $allFiles = call_user_func_array('array_merge', $allFiles);
-        sort($allFiles, SORT_NATURAL);
-        $this->allFiles = array_flip($allFiles);
+        $allFiles = \call_user_func_array('array_merge', $allFiles);
+        \sort($allFiles, \SORT_NATURAL);
+        $this->allFiles = \array_flip($allFiles);
 
-        $allSniffs = call_user_func_array('array_merge', $allSniffs);
-        sort($allSniffs, SORT_NATURAL);
+        $allSniffs = \call_user_func_array('array_merge', $allSniffs);
+        \sort($allSniffs, \SORT_NATURAL);
         $this->allSniffs = $allSniffs;
     }
 
@@ -206,9 +206,9 @@ class CheckSniffCompleteness
         $args = $_SERVER['argv'];
 
         // Remove the call to the script itself.
-        array_shift($args);
+        \array_shift($args);
 
-        $this->projectRoot = getcwd();
+        $this->projectRoot = \getcwd();
 
         if (empty($args)) {
             // No options set.
@@ -217,7 +217,7 @@ class CheckSniffCompleteness
             return;
         }
 
-        $argsFlipped = array_flip($args);
+        $argsFlipped = \array_flip($args);
 
         if (isset($argsFlipped['-h'])
             || isset($argsFlipped['--help'])
@@ -256,17 +256,17 @@ class CheckSniffCompleteness
         }
 
         foreach ($args as $arg) {
-            if (strpos($arg, '--exclude=') === 0) {
-                $exclude = substr($arg, 10);
+            if (\strpos($arg, '--exclude=') === 0) {
+                $exclude = \substr($arg, 10);
                 if ($exclude === '') {
                     $this->excludedDirs = [];
                     continue;
                 }
 
-                $exclude = explode(',', $exclude);
-                $exclude = array_map(
+                $exclude = \explode(',', $exclude);
+                $exclude = \array_map(
                     function ($subdir) {
-                        return trim($subdir, '/');
+                        return \trim($subdir, '/');
                     },
                     $exclude
                 );
@@ -277,7 +277,7 @@ class CheckSniffCompleteness
 
             if ($arg[0] !== '-') {
                 // The user must have set a path to search.
-                $realpath = realpath($arg);
+                $realpath = \realpath($arg);
 
                 if ($realpath !== false) {
                     $this->targetDirs[] = $realpath;
@@ -296,9 +296,9 @@ class CheckSniffCompleteness
         $this->showVersion();
 
         if ($this->verbose > 0) {
-            echo 'Target dir(s):', PHP_EOL,
-                '- ' . implode(PHP_EOL . '- ', $this->targetDirs),
-                PHP_EOL, PHP_EOL;
+            echo 'Target dir(s):', \PHP_EOL,
+                '- ' . \implode(\PHP_EOL . '- ', $this->targetDirs),
+                \PHP_EOL, \PHP_EOL;
         }
 
         if ($this->isComplete() !== true) {
@@ -315,9 +315,9 @@ class CheckSniffCompleteness
      */
     public function isComplete()
     {
-        $sniffCount = count($this->allSniffs);
+        $sniffCount = \count($this->allSniffs);
         if ($sniffCount === 0) {
-            echo 'No sniffs found.', PHP_EOL;
+            echo 'No sniffs found.', \PHP_EOL;
             return true;
         }
 
@@ -326,9 +326,9 @@ class CheckSniffCompleteness
         $testCaseError = 'ERROR: Unit test case file missing for %s.';
 
         if ($this->showColored === true) {
-            $docWarning    = str_replace('WARNING', "\033[33mWARNING\033[0m", $docWarning);
-            $testError     = str_replace('ERROR', "\033[31mERROR\033[0m", $testError);
-            $testCaseError = str_replace('ERROR', "\033[31mERROR\033[0m", $testError);
+            $docWarning    = \str_replace('WARNING', "\033[33mWARNING\033[0m", $docWarning);
+            $testError     = \str_replace('ERROR', "\033[31mERROR\033[0m", $testError);
+            $testCaseError = \str_replace('ERROR', "\033[31mERROR\033[0m", $testError);
         }
 
         $notices      = [];
@@ -336,21 +336,21 @@ class CheckSniffCompleteness
         $errorCount   = 0;
         foreach ($this->allSniffs as $i => $file) {
             if ($this->quietMode === false) {
-                $docFile = str_replace(array_keys($this->sniffToDoc), $this->sniffToDoc, $file);
+                $docFile = \str_replace(\array_keys($this->sniffToDoc), $this->sniffToDoc, $file);
                 if (isset($this->allFiles[$docFile]) === false) {
-                    $notices[] = sprintf($docWarning, $file);
+                    $notices[] = \sprintf($docWarning, $file);
                     ++$warningCount;
                 }
             }
 
-            $testFile = str_replace(array_keys($this->sniffToUnitTest), $this->sniffToUnitTest, $file);
+            $testFile = \str_replace(\array_keys($this->sniffToUnitTest), $this->sniffToUnitTest, $file);
             if (isset($this->allFiles[$testFile]) === false) {
-                $notices[] = sprintf($testError, $file);
+                $notices[] = \sprintf($testError, $file);
                 ++$errorCount;
             } else {
                 $fileFound = false;
                 foreach ($this->testCaseExtensions as $extension) {
-                    $testCaseFile = str_replace('.php', $extension, $testFile);
+                    $testCaseFile = \str_replace('.php', $extension, $testFile);
                     if (isset($this->allFiles[$testCaseFile]) === true) {
                         $fileFound = true;
                         break;
@@ -358,7 +358,7 @@ class CheckSniffCompleteness
                 }
 
                 if ($fileFound === false) {
-                    $notices[] = sprintf($testCaseError, $file);
+                    $notices[] = \sprintf($testCaseError, $file);
                     ++$errorCount;
                 }
             }
@@ -369,18 +369,18 @@ class CheckSniffCompleteness
 
                 $current = ($i + 1);
                 if (($current % 60) === 0 || $current === $sniffCount) {
-                    $padding = strlen($sniffCount);
+                    $padding = \strlen($sniffCount);
 
                     $filling = '';
                     if ($current === $sniffCount) {
-                        $lines = ceil($current / 60);
+                        $lines = \ceil($current / 60);
                         if ($lines > 1) {
-                            $filling = str_repeat(' ', (($lines * 60) - $sniffCount));
+                            $filling = \str_repeat(' ', (($lines * 60) - $sniffCount));
                         }
                     }
 
-                    echo $filling, ' ', str_pad($current, $padding, ' ', \STR_PAD_LEFT), ' / ', $sniffCount,
-                        ' (', str_pad(round(($current / $sniffCount) * 100), 3, ' ', \STR_PAD_LEFT), '%)', PHP_EOL;
+                    echo $filling, ' ', \str_pad($current, $padding, ' ', \STR_PAD_LEFT), ' / ', $sniffCount,
+                        ' (', \str_pad(\round(($current / $sniffCount) * 100), 3, ' ', \STR_PAD_LEFT), '%)', \PHP_EOL;
                 }
             }
         }
@@ -390,11 +390,11 @@ class CheckSniffCompleteness
          */
         if (empty($notices) === false) {
             // Show the errors and warnings.
-            echo PHP_EOL,
-                implode(PHP_EOL, $notices), PHP_EOL,
-                PHP_EOL,
-                '-----------------------------------------', PHP_EOL,
-                sprintf('Found %d errors and %d warnings', $errorCount, $warningCount), PHP_EOL;
+            echo \PHP_EOL,
+                \implode(\PHP_EOL, $notices), \PHP_EOL,
+                \PHP_EOL,
+                '-----------------------------------------', \PHP_EOL,
+                \sprintf('Found %d errors and %d warnings', $errorCount, $warningCount), \PHP_EOL;
 
             return false;
         } else {
@@ -413,7 +413,7 @@ class CheckSniffCompleteness
                 $feedback = "\033[32m" . $feedback . "\033[0m";
             }
 
-            echo PHP_EOL, PHP_EOL, $feedback, PHP_EOL;
+            echo \PHP_EOL, \PHP_EOL, $feedback, \PHP_EOL;
 
             return true;
         }
@@ -427,22 +427,22 @@ class CheckSniffCompleteness
     protected function isColorSupported()
     {
         // Windows.
-        if (DIRECTORY_SEPARATOR === '\\') {
-            if (getenv('ANSICON') !== false || getenv('ConEmuANSI') === 'ON') {
+        if (\DIRECTORY_SEPARATOR === '\\') {
+            if (\getenv('ANSICON') !== false || \getenv('ConEmuANSI') === 'ON') {
                 return true;
             }
 
-            if (function_exists('sapi_windows_vt100_support')) {
+            if (\function_exists('sapi_windows_vt100_support')) {
                 // phpcs:ignore PHPCompatibility.FunctionUse.NewFunctions.sapi_windows_vt100_supportFound
-                return @sapi_windows_vt100_support(STDOUT);
+                return @\sapi_windows_vt100_support(\STDOUT);
             }
 
             return false;
         }
 
         // Linux/MacOS.
-        if (function_exists('posix_isatty')) {
-            return @posix_isatty(STDOUT);
+        if (\function_exists('posix_isatty')) {
+            return @\posix_isatty(\STDOUT);
         }
 
         return false;
@@ -457,8 +457,8 @@ class CheckSniffCompleteness
     {
         echo 'PHPCSDevTools: Sniff feature completeness checker version ';
         include __DIR__ . '/../VERSION';
-        echo PHP_EOL,
-            'by Juliette Reinders Folmer', PHP_EOL, PHP_EOL;
+        echo \PHP_EOL,
+            'by Juliette Reinders Folmer', \PHP_EOL, \PHP_EOL;
     }
 
     /**
@@ -470,24 +470,24 @@ class CheckSniffCompleteness
     {
         $this->showVersion();
 
-        echo 'Usage:', PHP_EOL,
-            '    phpcs-check-feature-completeness', PHP_EOL,
-            '    phpcs-check-feature-completeness [-q] [--exclude=<dir>] [directories]', PHP_EOL;
+        echo 'Usage:', \PHP_EOL,
+            '    phpcs-check-feature-completeness', \PHP_EOL,
+            '    phpcs-check-feature-completeness [-q] [--exclude=<dir>] [directories]', \PHP_EOL;
 
-        echo PHP_EOL,
-            'Options:', PHP_EOL,
-            '    directories   One or more specific directories to examine.', PHP_EOL,
-            '                  Defaults to the directory from which the script is run.', PHP_EOL,
-            '    -q, --quiet   Turn off warnings for missing documentation.', PHP_EOL,
-            '    --exclude     Comma-delimited list of (relative) directories to exclude', PHP_EOL,
-            '                  from the scan.', PHP_EOL,
-            '                  Defaults to excluding the /vendor/ directory.', PHP_EOL,
-            '    --no-progress Disable progress in console output.', PHP_EOL,
-            '    --colors      Enable colors in console output.', PHP_EOL,
-            '                  (disables auto detection of color support)', PHP_EOL,
-            '    --no-colors   Disable colors in console output.', PHP_EOL,
-            '    -v            Verbose mode.', PHP_EOL,
-            '    -h, --help    Print this help.', PHP_EOL,
-            '    -V, --version Display the current version of this script.', PHP_EOL;
+        echo \PHP_EOL,
+            'Options:', \PHP_EOL,
+            '    directories   One or more specific directories to examine.', \PHP_EOL,
+            '                  Defaults to the directory from which the script is run.', \PHP_EOL,
+            '    -q, --quiet   Turn off warnings for missing documentation.', \PHP_EOL,
+            '    --exclude     Comma-delimited list of (relative) directories to exclude', \PHP_EOL,
+            '                  from the scan.', \PHP_EOL,
+            '                  Defaults to excluding the /vendor/ directory.', \PHP_EOL,
+            '    --no-progress Disable progress in console output.', \PHP_EOL,
+            '    --colors      Enable colors in console output.', \PHP_EOL,
+            '                  (disables auto detection of color support)', \PHP_EOL,
+            '    --no-colors   Disable colors in console output.', \PHP_EOL,
+            '    -v            Verbose mode.', \PHP_EOL,
+            '    -h, --help    Print this help.', \PHP_EOL,
+            '    -V, --version Display the current version of this script.', \PHP_EOL;
     }
 }
