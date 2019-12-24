@@ -117,6 +117,12 @@
     <!-- Disallow Yoda conditions. -->
     <rule ref="Generic.ControlStructures.DisallowYodaConditions"/>
 
+    <!-- Use self or static when referring to the class in use. -->
+    <rule ref="Squiz.Classes.SelfMemberReference"/>
+
+    <!-- Only one object structure per file. -->
+    <rule ref="Generic.Files.OneObjectStructurePerFile"/>
+
 
     <!--
     ####################################################################
@@ -178,5 +184,38 @@
         <!-- Using @since for class changelog demands multiple tags. -->
         <exclude name="PEAR.Commenting.ClassComment.DuplicateSinceTag"/>
     </rule>
+
+
+    <!--
+    ####################################################################
+    Code Analysis additions.
+    ####################################################################
+    -->
+
+    <!-- Efficiency: don't use function calls within the condition of a for loop. -->
+    <rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall"/>
+
+    <!-- Efficiency: don't use size functions within a loop. -->
+    <rule ref="Squiz.PHP.DisallowSizeFunctionsInLoops"/>
+
+    <!-- Efficiency: don't unnecessarily use double quotes. -->
+    <rule ref="Squiz.Strings.DoubleQuoteUsage.NotRequired"/>
+
+    <!-- Error prevention: warns when an inner loop uses the same incrementor as the outer loop. -->
+    <rule ref="Generic.CodeAnalysis.JumbledIncrementer"/>
+
+    <!-- Error prevention: don't assign from within a condition. -->
+    <rule ref="Generic.CodeAnalysis.AssignmentInCondition">
+        <exclude name="Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition"/>
+    </rule>
+
+    <!-- Clean up: remove redundant code. -->
+    <rule ref="Squiz.PHP.NonExecutableCode"/>
+
+    <!-- Clean up: no empty statements. -->
+    <rule ref="Generic.CodeAnalysis.EmptyPHPStatement"/>
+
+    <!-- Parse error prevention: guard against merge conflict artifacts. -->
+    <rule ref="Generic.VersionControl.GitMergeConflict"/>
 
 </ruleset>
