@@ -32,7 +32,14 @@
     #############################################################################
     -->
 
-    <rule ref="PHPCSDev"/>
+    <rule ref="PHPCSDev">
+        <!-- Allow for the file docblock on the line directly following the PHP open tag.
+             As the sniff in PHPCS does not use modular error codes (yet - see PR #2729),
+             the complete error code needs to be disabled, not just the bit involving
+             the file docblocks.
+        -->
+        <exclude name="PSR12.Files.FileHeader.SpacingAfterBlock"/>
+    </rule>
 
     <!-- Set minimum PHP version supported to PHP 5.4. -->
     <config name="testVersion" value="5.4-"/>

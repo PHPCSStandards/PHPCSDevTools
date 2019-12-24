@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="PHPCSDev" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd">
 
-    <description>A PSR-2 based standard for use by sniff developers to check the code style of external PHPCS standards</description>
+    <description>A PSR-12 based standard for use by sniff developers to check the code style of external PHPCS standards</description>
 
     <!--
     ####################################################################
@@ -28,10 +28,18 @@
 
     <!--
     ####################################################################
-    Code style: Check style for compliance with PSR2.
+    Code style: Check style for compliance with PSR12.
     ####################################################################
     -->
-    <rule ref="PSR2"/>
+    <rule ref="PSR12">
+        <!-- As PHP 5.4 is the minimum supported PHP version for PHP_CodeSniffer and
+             most external standards, adding constant visibility is not (yet) an option. -->
+        <exclude name="PSR12.Properties.ConstantVisibility"/>
+
+        <!-- Allow for the first condition of a multi-line control structure to be on the same line
+             as the control structure keyword. -->
+        <exclude name="PSR12.ControlStructures.ControlStructureSpacing.FirstExpressionLine"/>
+    </rule>
 
 
     <!--
@@ -60,7 +68,7 @@
     ####################################################################
     -->
 
-    <!-- PSR2 appears to ignore blank lines for superfluous whitespace and in several other places. Let's fix that. -->
+    <!-- PSR12 appears to ignore blank lines for superfluous whitespace and in several other places. Let's fix that. -->
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
         <properties>
             <property name="ignoreBlankLines" value="false"/>
@@ -89,11 +97,7 @@
         </properties>
     </rule>
 
-    <rule ref="Generic.PHP.LowerCaseType"/>
     <rule ref="Generic.WhiteSpace.ArbitraryParenthesesSpacing"/>
-    <rule ref="PSR12.Classes.ClassInstantiation"/>
-    <rule ref="PSR12.Keywords.ShortFormTypeKeywords"/>
-    <rule ref="PSR12.Operators.OperatorSpacing"/>
 
     <!-- Align the equal operator in assignment blocks. -->
     <rule ref="Generic.Formatting.MultipleStatementAlignment">

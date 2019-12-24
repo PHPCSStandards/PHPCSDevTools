@@ -185,7 +185,7 @@ Often, sniff repos will use the code style of the standard they are adding. Howe
 So for those repos which need a basic standard which will still keep their code-base consistent, this standard should be useful.
 
 The standard checks your code against the following:
-* Compliance with [PSR-2](https://www.php-fig.org/psr/psr-2/).
+* Compliance with [PSR-12](https://www.php-fig.org/psr/psr-12/), with a  few exceptions.
 * Use of camelCase variable and function names.
 * Use of normalized arrays.
 * All files, classes, functions and properties are documented with a docblock and contain the minimally needed information.
