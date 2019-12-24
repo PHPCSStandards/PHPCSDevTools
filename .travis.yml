@@ -20,12 +20,10 @@ php:
   - 7.2
 
 env:
-  matrix:
-    # `master`
-    - PHPCS_VERSION="dev-master" LINT=1
-    # Lowest supported PHPCS version.
-    # In reality this is 3.0.2, but there is a bug in the unit test runner of that version.
-    - PHPCS_VERSION="3.0.2"
+  # `master`
+  - PHPCS_VERSION="dev-master" LINT=1
+  # Lowest supported PHPCS version.
+  - PHPCS_VERSION="3.0.2"
 
 # Define the stages used.
 # For non-PRs, only the sniff and quicktest stages are run.
@@ -70,12 +68,15 @@ jobs:
     - stage: quicktest
       php: 7.3
       env: PHPCS_VERSION="dev-master" LINT=1
-    - php: 7.2
+    - stage: quicktest
+      php: 7.2
       env: PHPCS_VERSION="3.0.2"
 
-    - php: 5.4
+    - stage: quicktest
+      php: 5.4
       env: PHPCS_VERSION="dev-master" LINT=1
-    - php: 5.4
+    - stage: quicktest
+      php: 5.4
       env: PHPCS_VERSION="3.0.2"
 
     #### TEST STAGE ####
