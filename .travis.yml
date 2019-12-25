@@ -61,6 +61,9 @@ jobs:
         - diff -B ./PHPCSDebug/ruleset.xml <(xmllint --format "./PHPCSDebug/ruleset.xml")
         - diff -B ./PHPCSDev/ruleset.xml <(xmllint --format "./PHPCSDev/ruleset.xml")
 
+        # Validate the composer.json file.
+        # @link https://getcomposer.org/doc/03-cli.md#validate
+        - composer validate --no-check-all --strict
 
     #### QUICK TEST STAGE ####
     # This is a much quicker test which only runs the unit tests and linting against the low/high
@@ -143,10 +146,6 @@ script:
   # This also acts as an integration test for the feature completeness script,
   # which is why it is run against various PHP versions and not in the "Sniff" stage.
   - if [[ "$LINT" == "1" ]]; then composer check-complete; fi
-
-  # Validate the composer.json file.
-  # @link https://getcomposer.org/doc/03-cli.md#validate
-  - if [[ "$LINT" == "1" ]]; then composer validate --no-check-all --strict; fi
 
   # Run the unit tests.
   - if [[ $PHPCS_VERSION != "n/a" ]]; then composer run-tests; fi
