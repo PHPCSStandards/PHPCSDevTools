@@ -3,6 +3,7 @@
     "description" : "Tools for PHP_CodeSniffer sniff developers.",
     "type" : "phpcodesniffer-standard",
     "keywords" : [ "phpcs", "devtools", "debug", "php_codesniffer", "phpcodesniffer-standard" ],
+    "homepage": "https://phpcsstandards.github.io/PHPCSDevTools/",
     "license" : "LGPL-3.0-or-later",
     "authors" : [
         {
