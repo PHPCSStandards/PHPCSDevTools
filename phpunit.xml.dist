@@ -13,12 +13,4 @@
             <directory suffix="UnitTest.php">./PHPCSDebug/Tests/</directory>
         </testsuite>
     </testsuites>
-
-    <php>
-        <!-- This line prevents issues with PHPCS trying to load sniff files for
-             standards which we aren't testing.
-             Ref: https://github.com/squizlabs/PHP_CodeSniffer/pull/1146 -->
-        <env name="PHPCS_IGNORE_TESTS" value="PHPCompatibility"/>
-    </php>
 </phpunit>
-
