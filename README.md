@@ -25,7 +25,6 @@ This is a set of tools to aid developers of sniffs for [PHP CodeSniffer](https:/
 * [Features](#features)
     + [Checking whether all sniffs in a PHPCS standard are feature complete](#checking-whether-all-sniffs-in-a-phpcs-standard-are-feature-complete)
     + [Sniff Debugging](#sniff-debugging)
-    + [PHPCSDev ruleset for sniff repos](#phpcsdev-ruleset-for-sniff-repos)
 * [Contributing](#contributing)
 * [License](#license)
 
@@ -166,37 +165,6 @@ Ptr :: Ln :: Col  :: Cond :: Token Type                 :: [len]: Content
 ```
 
 PHPCS itself can also display similar information using the `-vv` or `-vvv` verbosity flags, however, when using those, you will receive a *lot* more information than just the token list and, while useful for debugging PHPCS itself, the additional information is mostly just noise when developing a sniff.
-
-
-### PHPCSDev ruleset for sniff repos
-
-Once this project is installed, you will see a new `PHPCSDev` ruleset in the list of installed standards when you run `phpcs -i`.
-
-**Important: This ruleset currently requires PHP_CodeSniffer >= `3.5.0+`.**
-
-> As sniffs developers will mostly work with the latest version of PHP_CodeSniffer, this shouldn't cause any problems.
->
-> Similarly, the CS check in automated CI runs should normally be run on a high PHPCS version for the best results.
-
-The `PHPCSDev` standard can be used by sniff developers to check the code style of their sniff repo code.
-
-Often, sniff repos will use the code style of the standard they are adding. However, not all sniff repos are actually about code style.
-
-So for those repos which need a basic standard which will still keep their code-base consistent, this standard should be useful.
-
-The standard checks your code against the following:
-* Compliance with [PSR-12](https://www.php-fig.org/psr/psr-12/), with a  few exceptions.
-* Use of camelCase variable and function names.
-* Use of normalized arrays.
-* All files, classes, functions and properties are documented with a docblock and contain the minimally needed information.
-* A small number of arbitrary additional code style checks.
-* PHP cross-version compatibility, while allowing for the tokens back-filled by PHPCS itself.
-    Note: for optimal results, the project custom ruleset should set the `testVersion` config variable.
-    This is not done by default as config variables are currently [difficult](https://github.com/squizlabs/PHP_CodeSniffer/issues/2197) [to overrule](https://github.com/squizlabs/PHP_CodeSniffer/issues/1821).
-
-The ruleset can be used like any other ruleset and specific sniffs and settings can be added to or overruled from a custom project based ruleset.
-
-For an example project-based ruleset using the `PHCPSDev` standard, have a look at the [`phpcs.xml.dist` file](https://github.com/PHPCSStandards/PHPCSDevTools/blob/develop/phpcs.xml.dist) in this repo.
 
 
 Contributing
