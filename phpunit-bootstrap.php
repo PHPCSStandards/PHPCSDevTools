@@ -41,6 +41,8 @@ if ($phpcsDir === false && \is_dir($composerPHPCSPath)) {
 if ($phpcsDir !== false && \is_dir($phpcsDir)) {
     if (\file_exists($phpcsDir . $ds . 'tests' . $ds . 'bootstrap.php')) {
         require_once $phpcsDir . $ds . 'tests' . $ds . 'bootstrap.php'; // PHPUnit 6.x+ support as of PHPCS 3.1.0.
+    } elseif (\file_exists($phpcsDir . $ds . 'autoload.php')) {
+        require_once $phpcsDir . $ds . 'autoload.php'; // PHPCS < 3.1.0.
     }
 } else {
     echo 'Uh oh... can\'t find PHPCS.
@@ -53,5 +55,29 @@ pointing to the PHPCS directory.
     die(1);
 }
 
+/*
+ * Set the PHPCS_IGNORE_TEST environment variable to ignore tests from other standards.
+ * Ref: https://github.com/squizlabs/PHP_CodeSniffer/pull/1146
+ */
+$phpcsDevtoolsStandards = [
+    'PHPCSDebug' => true,
+];
+
+$allStandards   = PHP_CodeSniffer\Util\Standards::getInstalledStandards();
+$allStandards[] = 'Generic';
+
+$standardsToIgnore = [];
+foreach ($allStandards as $standard) {
+    if (isset($phpcsDevtoolsStandards[$standard]) === true) {
+        continue;
+    }
+
+    $standardsToIgnore[] = $standard;
+}
+
+$standardsToIgnoreString = \implode(',', $standardsToIgnore);
+\putenv("PHPCS_IGNORE_TESTS={$standardsToIgnoreString}");
+
 // Clean up.
 unset($ds, $phpcsDir, $composerPHPCSPath);
+unset($ds, $phpcsDir, $composerPHPCSPath, $allStandards, $standardsToIgnore, $standard, $standardsToIgnoreString);
