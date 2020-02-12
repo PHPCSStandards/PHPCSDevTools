@@ -55,11 +55,9 @@ jobs:
         # Validate the xml file.
         # @link http://xmlsoft.org/xmllint.html
         - xmllint --noout --schema ./vendor/squizlabs/php_codesniffer/phpcs.xsd ./PHPCSDebug/ruleset.xml
-        - xmllint --noout --schema ./vendor/squizlabs/php_codesniffer/phpcs.xsd ./PHPCSDev/ruleset.xml
 
         # Check the code-style consistency of the xml files.
         - diff -B ./PHPCSDebug/ruleset.xml <(xmllint --format "./PHPCSDebug/ruleset.xml")
-        - diff -B ./PHPCSDev/ruleset.xml <(xmllint --format "./PHPCSDev/ruleset.xml")
 
         # Validate the composer.json file.
         # @link https://getcomposer.org/doc/03-cli.md#validate
@@ -117,6 +115,11 @@ before_install:
   - export XMLLINT_INDENT="    "
 
   # Set up test environment using Composer.
+  - |
+    if [[ "$TRAVIS_BUILD_STAGE_NAME" != "Sniff" ]]; then
+      # Remove the PHPCSDevCS dependency as it has different PHPCS requirements and would block installs.
+      composer remove --dev phpcsstandards/phpcsdevcs --no-update --no-scripts
+    fi
   - |
     if [[ $PHPCS_VERSION != "n/a" ]]; then
       composer require --no-update --no-scripts squizlabs/php_codesniffer:${PHPCS_VERSION}
