@@ -108,7 +108,7 @@ before_install:
   # On stable PHPCS versions, allow for PHP deprecation notices.
   # Unit tests don't need to fail on those for stable releases where those issues won't get fixed anymore.
   - |
-    if [[ "$TRAVIS_BUILD_STAGE_NAME" != "Sniff" && "$PHPCS_VERSION" != "dev-master" && "$PHPCS_VERSION" != "n/a" ]]; then
+    if [[ "${TRAVIS_BUILD_STAGE_NAME^}" != "Sniff" && "$PHPCS_VERSION" != "dev-master" && "$PHPCS_VERSION" != "n/a" ]]; then
       echo 'error_reporting = E_ALL & ~E_DEPRECATED' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
     fi
 
@@ -116,7 +116,7 @@ before_install:
 
   # Set up test environment using Composer.
   - |
-    if [[ "$TRAVIS_BUILD_STAGE_NAME" != "Sniff" ]]; then
+    if [[ "${TRAVIS_BUILD_STAGE_NAME^}" != "Sniff" ]]; then
       # Remove the PHPCSDevCS dependency as it has different PHPCS requirements and would block installs.
       composer remove --dev phpcsstandards/phpcsdevcs --no-update --no-scripts
     fi
@@ -125,7 +125,7 @@ before_install:
       composer require --no-update --no-scripts squizlabs/php_codesniffer:${PHPCS_VERSION}
     fi
   - |
-    if [[ "$TRAVIS_BUILD_STAGE_NAME" == "Sniff" || $PHPCS_VERSION == "n/a" ]]; then
+    if [[ "${TRAVIS_BUILD_STAGE_NAME^}" == "Sniff" || $PHPCS_VERSION == "n/a" ]]; then
       # The sniff stage doesn't run the unit tests, so no need for PHPUnit.
       composer remove --dev phpunit/phpunit --no-update --no-scripts
     elif [[ "$PHPCS_VERSION" < "3.1.0" ]]; then
