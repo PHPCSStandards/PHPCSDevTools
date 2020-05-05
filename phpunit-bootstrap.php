@@ -79,5 +79,4 @@ $standardsToIgnoreString = \implode(',', $standardsToIgnore);
 \putenv("PHPCS_IGNORE_TESTS={$standardsToIgnoreString}");
 
 // Clean up.
-unset($ds, $phpcsDir, $composerPHPCSPath);
 unset($ds, $phpcsDir, $composerPHPCSPath, $allStandards, $standardsToIgnore, $standard, $standardsToIgnoreString);
