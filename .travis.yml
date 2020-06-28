@@ -11,6 +11,7 @@ cache:
     # Cache directory for more recent Composer versions.
     - $HOME/.cache/composer/files
 
+# Note: PHP 7.3, 7.4 and nightly are added via "jobs".
 php:
   - 5.4
   - 5.5
@@ -42,7 +43,7 @@ jobs:
   include:
     #### SNIFF STAGE ####
     - stage: sniff
-      php: 7.3
+      php: 7.4
       env: PHPCS_VERSION="dev-master"
       addons:
         apt:
@@ -67,7 +68,7 @@ jobs:
     # This is a much quicker test which only runs the unit tests and linting against the low/high
     # supported PHP/PHPCS combinations.
     - stage: quicktest
-      php: 7.3
+      php: 7.4
       env: PHPCS_VERSION="dev-master" LINT=1
     - stage: quicktest
       php: 7.2
@@ -93,12 +94,18 @@ jobs:
     # PHPCS is only compatible with PHP 7.4 as of version 3.5.0.
     - php: 7.4
       env: PHPCS_VERSION="3.5.0"
+
+    # Builds against unstable versions which are allowed to fail for now.
+    - stage: test
+      php: 7.4
+      env: PHPCS_VERSION="4.0.x-dev"
     - php: "nightly"
-      env: PHPCS_VERSION="n/a" LINT=1
+      env: PHPCS_VERSION="dev-master" LINT=1
 
   allow_failures:
     # Allow failures for unstable builds.
     - php: "nightly"
+    - env: PHPCS_VERSION="4.0.x-dev"
 
 
 before_install:
@@ -108,7 +115,7 @@ before_install:
   # On stable PHPCS versions, allow for PHP deprecation notices.
   # Unit tests don't need to fail on those for stable releases where those issues won't get fixed anymore.
   - |
-    if [[ "${TRAVIS_BUILD_STAGE_NAME^}" != "Sniff" && "$PHPCS_VERSION" != "dev-master" && "$PHPCS_VERSION" != "n/a" ]]; then
+    if [[ "${TRAVIS_BUILD_STAGE_NAME^}" != "Sniff" && "$PHPCS_VERSION" != "dev-master" && "$PHPCS_VERSION" != "4.0.x-dev" ]]; then
       echo 'error_reporting = E_ALL & ~E_DEPRECATED' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
     fi
 
@@ -125,7 +132,7 @@ before_install:
       composer require --no-update --no-scripts squizlabs/php_codesniffer:${PHPCS_VERSION}
     fi
   - |
-    if [[ "${TRAVIS_BUILD_STAGE_NAME^}" == "Sniff" || $PHPCS_VERSION == "n/a" ]]; then
+    if [[ "${TRAVIS_BUILD_STAGE_NAME^}" == "Sniff" ]]; then
       # The sniff stage doesn't run the unit tests, so no need for PHPUnit.
       composer remove --dev phpunit/phpunit --no-update --no-scripts
     elif [[ "$PHPCS_VERSION" < "3.1.0" ]]; then
@@ -138,7 +145,16 @@ before_install:
 
   # --prefer-dist will allow for optimal use of the travis caching ability.
   # The Composer PHPCS plugin takes care of setting the installed_paths for PHPCS.
-  - composer install --prefer-dist --no-suggest
+  - |
+    if [[ $TRAVIS_PHP_VERSION == "nightly" ]]; then
+      # Not all dependencies allow for installing on nightly yet, so ignore platform requirements.
+      composer install --prefer-dist --no-suggest --ignore-platform-reqs
+    elif [[ "$PHPCS_VERSION" == "4.0.x-dev" ]]; then
+      # PHPCS 4.x does not ship by default with the base test case, so source is needed.
+      composer install --prefer-source --no-suggest
+    else
+      composer install --prefer-dist --no-suggest
+    fi
 
 
 script:
