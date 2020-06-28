@@ -2,7 +2,7 @@ PHPCSDevTools for developers of PHP_CodeSniffer sniffs
 =====================================================
 
 [![Latest Stable Version](https://poser.pugx.org/phpcsstandards/phpcsdevtools/v/stable)](https://packagist.org/packages/phpcsstandards/phpcsdevtools)
-[![Travis Build Status](https://travis-ci.com/PHPCSStandards/PHPCSDevTools.svg?branch=master)](https://travis-ci.com/PHPCSStandards/PHPCSDevTools/branches)
+[![Travis Build Status](https://travis-ci.com/PHPCSStandards/PHPCSDevTools.svg?branch=stable)](https://travis-ci.com/PHPCSStandards/PHPCSDevTools/branches)
 [![Release Date of the Latest Version](https://img.shields.io/github/release-date/PHPCSStandards/PHPCSDevTools.svg?maxAge=1800)](https://github.com/PHPCSStandards/PHPCSDevTools/releases)
 :construction:
 [![Latest Unstable Version](https://img.shields.io/badge/unstable-dev--develop-e68718.svg?maxAge=2419200)](https://packagist.org/packages/phpcsstandards/phpcsdevtools#dev-develop)
@@ -12,7 +12,7 @@ PHPCSDevTools for developers of PHP_CodeSniffer sniffs
 [![Minimum PHP Version](https://img.shields.io/packagist/php-v/phpcsstandards/phpcsdevtools.svg?maxAge=3600)](https://packagist.org/packages/phpcsstandards/phpcsdevtools)
 [![Tested on PHP 5.4 to nightly](https://img.shields.io/badge/tested%20on-PHP%205.4%20|%205.5%20|%205.6%20|%207.0%20|%207.1%20|%207.2%20|%207.3%20|%207.4%20|%20nightly-brightgreen.svg?maxAge=2419200)](https://travis-ci.com/PHPCSStandards/PHPCSDevTools)
 
-[![License: LGPLv3](https://poser.pugx.org/phpcsstandards/phpcsdevtools/license)](https://github.com/PHPCSStandards/PHPCSDevTools/blob/master/LICENSE)
+[![License: LGPLv3](https://poser.pugx.org/phpcsstandards/phpcsdevtools/license)](https://github.com/PHPCSStandards/PHPCSDevTools/blob/stable/LICENSE)
 ![Awesome](https://img.shields.io/badge/awesome%3F-yes!-brightgreen.svg)
 
 
@@ -43,7 +43,7 @@ composer require --dev phpcsstandards/phpcsdevtools:^1.0
 
 If you work on several different sniff repos, you may want to install this toolset globally:
 ```bash
-composer global require phpcsstandards/phpcsdevtools:^1.0
+composer global require --dev phpcsstandards/phpcsdevtools:^1.0
 ```
 
 Composer will automatically install dependencies and register the PHPCSDebug standard with PHP_CodeSniffer using the [DealerDirect Composer PHPCS plugin](https://github.com/Dealerdirect/phpcodesniffer-composer-installer/).
@@ -59,7 +59,7 @@ Composer will automatically install dependencies and register the PHPCSDebug sta
    ```bash
    phpcs --config-set installed_paths /path/to/PHPCSDevTools
    ```
-   **Warning**: :warning: The `installed_paths` command overwrites any previously set `installed_paths`. If you have previously set `installed_paths` for other external standards, run `phpcs --config-show` first and then run the `installed_paths` command with all the paths you need separated by comma's, i.e.:
+   :warning: **Warning**: The `installed_paths` command overwrites any previously set `installed_paths`. If you have previously set `installed_paths` for other external standards, run `phpcs --config-show` first and then run the `installed_paths` command with all the paths you need separated by comma's, i.e.:
    ```bash
    phpcs --config-set installed_paths /path/1,/path/2,/path/3
    ```
@@ -70,9 +70,9 @@ Features
 
 ### Checking whether all sniffs in a PHPCS standard are feature complete
 
-You can now easily check whether each and every sniff in your standard is accompanied by a documentation XML file (warning) as well as unit test files (error).
+You can now check whether each and every sniff in your standard is accompanied by a documentation XML file (warning) as well as unit test files (error).
 
-To use the tool, run it from the root of the your standards repo like so:
+To use the tool, run it from the root of your standards repo like so:
 ```bash
 # When installed as a project dependency:
 vendor/bin/phpcs-check-feature-completeness
@@ -122,7 +122,7 @@ Once this project is installed, you will see a new `PHPCSDebug` ruleset in the l
 For now, this standard only contains one sniff: `PHPCSDebug.Debug.TokenList`.
 This sniff will display compact, but detailed information about the tokens found in a (test case) file.
 
-This sniff is compatible with PHPCS 3.0+.
+This sniff is compatible with PHPCS 3.0.2+.
 
 Typical usage:
 * Set up a test case file for a new sniff you intend to write.
@@ -172,7 +172,7 @@ PHPCS itself can also display similar information using the `-vv` or `-vvv` verb
 
 Contributing
 -------
-Contributions to this project are welcome. Just clone the repo, branch off from `develop`, make your changes, commit them and send in a pull request.
+Contributions to this project are welcome. Clone this repository, branch off from `develop`, make your changes, commit them and send in a pull request.
 
 If unsure whether the changes you are proposing would be welcome, open an issue first to discuss your proposal.
 
