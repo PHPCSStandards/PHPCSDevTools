@@ -2,7 +2,7 @@ PHPCSDevTools for developers of PHP_CodeSniffer sniffs
 =====================================================
 
 [![Latest Stable Version](https://poser.pugx.org/phpcsstandards/phpcsdevtools/v/stable)](https://packagist.org/packages/phpcsstandards/phpcsdevtools)
-[![Travis Build Status](https://travis-ci.com/PHPCSStandards/PHPCSDevTools.svg?branch=master)](https://travis-ci.com/PHPCSStandards/PHPCSDevTools/branches)
+[![Travis Build Status](https://travis-ci.com/PHPCSStandards/PHPCSDevTools.svg?branch=stable)](https://travis-ci.com/PHPCSStandards/PHPCSDevTools/branches)
 [![Release Date of the Latest Version](https://img.shields.io/github/release-date/PHPCSStandards/PHPCSDevTools.svg?maxAge=1800)](https://github.com/PHPCSStandards/PHPCSDevTools/releases)
 :construction:
 [![Latest Unstable Version](https://img.shields.io/badge/unstable-dev--develop-e68718.svg?maxAge=2419200)](https://packagist.org/packages/phpcsstandards/phpcsdevtools#dev-develop)
@@ -12,7 +12,7 @@ PHPCSDevTools for developers of PHP_CodeSniffer sniffs
 [![Minimum PHP Version](https://img.shields.io/packagist/php-v/phpcsstandards/phpcsdevtools.svg?maxAge=3600)](https://packagist.org/packages/phpcsstandards/phpcsdevtools)
 [![Tested on PHP 5.4 to nightly](https://img.shields.io/badge/tested%20on-PHP%205.4%20|%205.5%20|%205.6%20|%207.0%20|%207.1%20|%207.2%20|%207.3%20|%207.4%20|%20nightly-brightgreen.svg?maxAge=2419200)](https://travis-ci.com/PHPCSStandards/PHPCSDevTools)
 
-[![License: LGPLv3](https://poser.pugx.org/phpcsstandards/phpcsdevtools/license)](https://github.com/PHPCSStandards/PHPCSDevTools/blob/master/LICENSE)
+[![License: LGPLv3](https://poser.pugx.org/phpcsstandards/phpcsdevtools/license)](https://github.com/PHPCSStandards/PHPCSDevTools/blob/stable/LICENSE)
 ![Awesome](https://img.shields.io/badge/awesome%3F-yes!-brightgreen.svg)
 
 

@@ -21,7 +21,7 @@ php:
   - 7.2
 
 env:
-  # `master`
+  # PHPCS `master`
   - PHPCS_VERSION="dev-master" LINT=1
   # Lowest supported PHPCS version.
   - PHPCS_VERSION="3.0.2"
@@ -34,9 +34,9 @@ env:
 stages:
   - name: sniff
   - name: quicktest
-    if: type = push AND branch NOT IN (master, develop)
+    if: type = push AND branch NOT IN (stable, develop)
   - name: test
-    if: branch IN (master, develop)
+    if: branch IN (stable, develop)
 
 jobs:
   fast_finish: true
