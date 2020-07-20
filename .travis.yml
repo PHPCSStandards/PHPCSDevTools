@@ -1,5 +1,4 @@
-dist: trusty
-
+os: linux
 language: php
 
 ## Cache composer and apt downloads.
@@ -11,10 +10,8 @@ cache:
     # Cache directory for more recent Composer versions.
     - $HOME/.cache/composer/files
 
-# Note: PHP 7.3, 7.4 and nightly are added via "jobs".
+# Note: PHP 5.4, 5.5, 7.3, 7.4 and nightly are added via "jobs".
 php:
-  - 5.4
-  - 5.5
   - 5.6
   - 7.0
   - 7.1
@@ -70,15 +67,14 @@ jobs:
     - stage: quicktest
       php: 7.4
       env: PHPCS_VERSION="dev-master" LINT=1
-    - stage: quicktest
-      php: 7.2
+    - php: 7.2
       env: PHPCS_VERSION="3.1.0"
 
-    - stage: quicktest
-      php: 5.4
+    - php: 5.4
+      dist: trusty
       env: PHPCS_VERSION="dev-master" LINT=1
-    - stage: quicktest
-      php: 5.4
+    - php: 5.4
+      dist: trusty
       env: PHPCS_VERSION="3.1.0"
 
     #### TEST STAGE ####
@@ -95,9 +91,22 @@ jobs:
     - php: 7.4
       env: PHPCS_VERSION="3.5.0"
 
+    # PHP 5.4/5.5 need trusty.
+    - php: 5.5
+      dist: trusty
+      env: PHPCS_VERSION="dev-master" LINT=1
+    - php: 5.5
+      dist: trusty
+      env: PHPCS_VERSION="3.1.0"
+    - php: 5.4
+      dist: trusty
+      env: PHPCS_VERSION="dev-master" LINT=1
+    - php: 5.4
+      dist: trusty
+      env: PHPCS_VERSION="3.1.0"
+
     # Builds against unstable versions which are allowed to fail for now.
-    - stage: test
-      php: 7.4
+    - php: 7.4
       env: PHPCS_VERSION="4.0.x-dev"
     - php: "nightly"
       env: PHPCS_VERSION="dev-master" LINT=1
