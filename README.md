@@ -122,7 +122,7 @@ Once this project is installed, you will see a new `PHPCSDebug` ruleset in the l
 For now, this standard only contains one sniff: `PHPCSDebug.Debug.TokenList`.
 This sniff will display compact, but detailed information about the tokens found in a (test case) file.
 
-This sniff is compatible with PHPCS 3.0.2+.
+This sniff is compatible with PHPCS 3.1.0+.
 
 Typical usage:
 * Set up a test case file for a new sniff you intend to write.

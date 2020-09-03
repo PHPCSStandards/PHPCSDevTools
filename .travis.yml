@@ -24,7 +24,7 @@ env:
   # PHPCS `master`
   - PHPCS_VERSION="dev-master" LINT=1
   # Lowest supported PHPCS version.
-  - PHPCS_VERSION="3.0.2"
+  - PHPCS_VERSION="3.1.0"
 
 # Define the stages used.
 # For non-PRs, only the sniff and quicktest stages are run.
@@ -72,14 +72,14 @@ jobs:
       env: PHPCS_VERSION="dev-master" LINT=1
     - stage: quicktest
       php: 7.2
-      env: PHPCS_VERSION="3.0.2"
+      env: PHPCS_VERSION="3.1.0"
 
     - stage: quicktest
       php: 5.4
       env: PHPCS_VERSION="dev-master" LINT=1
     - stage: quicktest
       php: 5.4
-      env: PHPCS_VERSION="3.0.2"
+      env: PHPCS_VERSION="3.1.0"
 
     #### TEST STAGE ####
     # Additional builds to prevent issues with PHPCS versions incompatible with certain PHP versions.
@@ -135,12 +135,6 @@ before_install:
     if [[ "${TRAVIS_BUILD_STAGE_NAME^}" == "Sniff" ]]; then
       # The sniff stage doesn't run the unit tests, so no need for PHPUnit.
       composer remove --dev phpunit/phpunit --no-update --no-scripts
-    elif [[ "$PHPCS_VERSION" < "3.1.0" ]]; then
-      # PHPCS < 3.1.0 is not compatible with PHPUnit 6.x.
-      composer require --dev phpunit/phpunit:"^4.0||^5.0" --no-update --no-scripts
-    elif [[ "$PHPCS_VERSION" < "3.2.3" ]]; then
-      # PHPCS < 3.2.3 is not compatible with PHPUnit 7.x.
-      composer require --dev phpunit/phpunit:"^4.0||^5.0||^6.0" --no-update --no-scripts
     fi
 
   # --prefer-dist will allow for optimal use of the travis caching ability.
@@ -149,9 +143,6 @@ before_install:
     if [[ $TRAVIS_PHP_VERSION == "nightly" ]]; then
       # Not all dependencies allow for installing on nightly yet, so ignore platform requirements.
       composer install --prefer-dist --no-suggest --ignore-platform-reqs
-    elif [[ "$PHPCS_VERSION" == "4.0.x-dev" ]]; then
-      # PHPCS 4.x does not ship by default with the base test case, so source is needed.
-      composer install --prefer-source --no-suggest
     else
       composer install --prefer-dist --no-suggest
     fi

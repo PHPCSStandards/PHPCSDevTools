@@ -17,33 +17,51 @@ if (\defined('PHP_CODESNIFFER_IN_TESTS') === false) {
     \define('PHP_CODESNIFFER_IN_TESTS', true);
 }
 
+if (\defined('PHP_CODESNIFFER_CBF') === false) {
+    \define('PHP_CODESNIFFER_CBF', false);
+}
+
+if (\defined('PHP_CODESNIFFER_VERBOSITY') === false) {
+    \define('PHP_CODESNIFFER_VERBOSITY', 0);
+}
+
 $ds = \DIRECTORY_SEPARATOR;
 
 /*
  * Load the necessary PHPCS files.
  */
 // Get the PHPCS dir from an environment variable.
-$phpcsDir          = \getenv('PHPCS_DIR');
-$composerPHPCSPath = __DIR__ . $ds . 'vendor' . $ds . 'squizlabs' . $ds . 'php_codesniffer';
+$phpcsDir = \getenv('PHPCS_DIR');
 
-if ($phpcsDir === false && \is_dir($composerPHPCSPath)) {
-    // PHPCS installed via Composer.
-    $phpcsDir = $composerPHPCSPath;
-} elseif ($phpcsDir !== false) {
-    /*
-     * PHPCS in a custom directory.
-     * For this to work, the `PHPCS_DIR` needs to be set in a custom `phpunit.xml` file.
-     */
+// Get the PHPCSUtils dir from an environment variable.
+$phpcsUtilsDir = \getenv('PHPCSUTILS_DIR');
+
+// This may be a Composer install.
+if (\is_dir(__DIR__ . $ds . 'vendor')) {
+    $vendorDir = __DIR__ . $ds . 'vendor';
+    if ($phpcsDir === false && \is_dir($vendorDir . $ds . 'squizlabs' . $ds . 'php_codesniffer')) {
+        $phpcsDir = $vendorDir . $ds . 'squizlabs' . $ds . 'php_codesniffer';
+    }
+    if ($phpcsUtilsDir === false && \is_dir($vendorDir . $ds . 'phpcsstandards' . $ds . 'phpcsutils')) {
+        $phpcsUtilsDir = $vendorDir . $ds . 'phpcsstandards' . $ds . 'phpcsutils';
+    }
+}
+
+if ($phpcsDir !== false) {
     $phpcsDir = \realpath($phpcsDir);
 }
 
-// Try and load the PHPCS bootstrap which loads the autoloader and PHPUnit aliases.
-if ($phpcsDir !== false && \is_dir($phpcsDir)) {
-    if (\file_exists($phpcsDir . $ds . 'tests' . $ds . 'bootstrap.php')) {
-        require_once $phpcsDir . $ds . 'tests' . $ds . 'bootstrap.php'; // PHPUnit 6.x+ support as of PHPCS 3.1.0.
-    } elseif (\file_exists($phpcsDir . $ds . 'autoload.php')) {
-        require_once $phpcsDir . $ds . 'autoload.php'; // PHPCS < 3.1.0.
-    }
+if ($phpcsUtilsDir !== false) {
+    $phpcsUtilsDir = \realpath($phpcsUtilsDir);
+}
+
+// Try and load the PHPCS autoloader.
+if ($phpcsDir !== false && \file_exists($phpcsDir . $ds . 'autoload.php')) {
+    // PHPCS 3.x.
+    require_once $phpcsDir . $ds . 'autoload.php';
+
+    // Pre-load the token back-fills to prevent undefined constant notices.
+    require_once $phpcsDir . '/src/Util/Tokens.php';
 } else {
     echo 'Uh oh... can\'t find PHPCS.
 
@@ -55,28 +73,19 @@ pointing to the PHPCS directory.
     die(1);
 }
 
-/*
- * Set the PHPCS_IGNORE_TEST environment variable to ignore tests from other standards.
- * Ref: https://github.com/squizlabs/PHP_CodeSniffer/pull/1146
- */
-$phpcsDevtoolsStandards = [
-    'PHPCSDebug' => true,
-];
+// Try and load the PHPCSUtils autoloader.
+if ($phpcsUtilsDir !== false && \file_exists($phpcsUtilsDir . $ds . 'phpcsutils-autoload.php')) {
+    require_once $phpcsUtilsDir . $ds . 'phpcsutils-autoload.php';
+} else {
+    echo 'Uh oh... can\'t find PHPCSUtils.
 
-$allStandards   = PHP_CodeSniffer\Util\Standards::getInstalledStandards();
-$allStandards[] = 'Generic';
+If you use Composer, please run `composer install`.
+Otherwise, make sure you set a `PHPCSUTILS_DIR` environment variable in your phpunit.xml file
+pointing to the PHPCSUtils directory.
+';
 
-$standardsToIgnore = [];
-foreach ($allStandards as $standard) {
-    if (isset($phpcsDevtoolsStandards[$standard]) === true) {
-        continue;
-    }
-
-    $standardsToIgnore[] = $standard;
+    die(1);
 }
 
-$standardsToIgnoreString = \implode(',', $standardsToIgnore);
-\putenv("PHPCS_IGNORE_TESTS={$standardsToIgnoreString}");
-
 // Clean up.
-unset($ds, $phpcsDir, $composerPHPCSPath, $allStandards, $standardsToIgnore, $standard, $standardsToIgnoreString);
+unset($ds, $phpcsDir, $phpcsUtilsDir, $vendorDir);
