@@ -134,16 +134,16 @@ before_install:
   - |
     if [[ "${TRAVIS_BUILD_STAGE_NAME^}" != "Sniff" ]]; then
       # Remove the PHPCSDevCS dependency as it has different PHPCS requirements and would block installs.
-      composer remove --dev phpcsstandards/phpcsdevcs --no-update --no-scripts
+      travis_retry composer remove --dev phpcsstandards/phpcsdevcs --no-update --no-scripts
     fi
   - |
     if [[ $PHPCS_VERSION != "n/a" ]]; then
-      composer require --no-update --no-scripts squizlabs/php_codesniffer:${PHPCS_VERSION}
+      travis_retry composer require --no-update --no-scripts squizlabs/php_codesniffer:${PHPCS_VERSION}
     fi
   - |
     if [[ "${TRAVIS_BUILD_STAGE_NAME^}" == "Sniff" ]]; then
       # The sniff stage doesn't run the unit tests, so no need for PHPUnit.
-      composer remove --dev phpunit/phpunit --no-update --no-scripts
+      travis_retry composer remove --dev phpunit/phpunit --no-update --no-scripts
     fi
 
   # --prefer-dist will allow for optimal use of the travis caching ability.
@@ -151,9 +151,9 @@ before_install:
   - |
     if [[ $TRAVIS_PHP_VERSION == "nightly" ]]; then
       # Not all dependencies allow for installing on nightly yet, so ignore platform requirements.
-      composer install --prefer-dist --no-suggest --ignore-platform-reqs
+      travis_retry composer install --prefer-dist --no-suggest --ignore-platform-reqs
     else
-      composer install --prefer-dist --no-suggest
+      travis_retry composer install --prefer-dist --no-suggest
     fi
 
 
