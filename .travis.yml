@@ -41,11 +41,21 @@ jobs:
     #### SNIFF STAGE ####
     - stage: sniff
       php: 7.4
-      env: PHPCS_VERSION="dev-master"
       addons:
         apt:
           packages:
             - libxml2-utils
+
+      before_install:
+        - phpenv config-rm xdebug.ini || echo 'No xdebug config.'
+        - export XMLLINT_INDENT="    "
+        # Set up CS check.
+        # - Using PHPCS `master` as an early detection system for bugs upstream.
+        # - The sniff stage doesn't run the unit tests, so no need for PHPUnit.
+        - travis_retry composer remove --dev phpunit/phpunit --no-update --no-scripts
+        - travis_retry composer require --no-update squizlabs/php_codesniffer:"dev-master"
+        - travis_retry composer install --no-interaction
+
       script:
         # Check the code style of the code base.
         - composer check-cs
@@ -124,24 +134,14 @@ before_install:
   # On stable PHPCS versions, allow for PHP deprecation notices.
   # Unit tests don't need to fail on those for stable releases where those issues won't get fixed anymore.
   - |
-    if [[ "${TRAVIS_BUILD_STAGE_NAME^}" != "Sniff" && "$PHPCS_VERSION" != "dev-master" && "$PHPCS_VERSION" != "4.0.x-dev" ]]; then
+    if [[ "$PHPCS_VERSION" != "dev-master" && "$PHPCS_VERSION" != "4.0.x-dev" ]]; then
       echo 'error_reporting = E_ALL & ~E_DEPRECATED' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
     fi
 
-  - export XMLLINT_INDENT="    "
-
   # Set up test environment using Composer.
-  - |
-    if [[ "${TRAVIS_BUILD_STAGE_NAME^}" != "Sniff" ]]; then
-      # Remove the PHPCSDevCS dependency as it has different PHPCS requirements and would block installs.
-      travis_retry composer remove --dev phpcsstandards/phpcsdevcs --no-update --no-scripts
-    fi
   - travis_retry composer require --no-update --no-scripts squizlabs/php_codesniffer:${PHPCS_VERSION}
-  - |
-    if [[ "${TRAVIS_BUILD_STAGE_NAME^}" == "Sniff" ]]; then
-      # The sniff stage doesn't run the unit tests, so no need for PHPUnit.
-      travis_retry composer remove --dev phpunit/phpunit --no-update --no-scripts
-    fi
+  # Remove the PHPCSDevCS dependency as it has different PHPCS requirements and would block installs.
+  - travis_retry composer remove --dev phpcsstandards/phpcsdevcs --no-update --no-scripts
 
   # --prefer-dist will allow for optimal use of the travis caching ability.
   # The Composer PHPCS plugin takes care of setting the installed_paths for PHPCS.
