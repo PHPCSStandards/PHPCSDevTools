@@ -136,10 +136,7 @@ before_install:
       # Remove the PHPCSDevCS dependency as it has different PHPCS requirements and would block installs.
       travis_retry composer remove --dev phpcsstandards/phpcsdevcs --no-update --no-scripts
     fi
-  - |
-    if [[ $PHPCS_VERSION != "n/a" ]]; then
-      travis_retry composer require --no-update --no-scripts squizlabs/php_codesniffer:${PHPCS_VERSION}
-    fi
+  - travis_retry composer require --no-update --no-scripts squizlabs/php_codesniffer:${PHPCS_VERSION}
   - |
     if [[ "${TRAVIS_BUILD_STAGE_NAME^}" == "Sniff" ]]; then
       # The sniff stage doesn't run the unit tests, so no need for PHPUnit.
@@ -167,4 +164,4 @@ script:
   - if [[ "$LINT" == "1" ]]; then composer check-complete; fi
 
   # Run the unit tests.
-  - if [[ $PHPCS_VERSION != "n/a" ]]; then composer run-tests; fi
+  - composer run-tests
