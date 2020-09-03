@@ -1,5 +1,4 @@
-dist: trusty
-
+os: linux
 language: php
 
 ## Cache composer and apt downloads.
@@ -11,10 +10,8 @@ cache:
     # Cache directory for more recent Composer versions.
     - $HOME/.cache/composer/files
 
-# Note: PHP 7.3, 7.4 and nightly are added via "jobs".
+# Note: PHP 5.4, 5.5, 7.3, 7.4 and nightly are added via "jobs".
 php:
-  - 5.4
-  - 5.5
   - 5.6
   - 7.0
   - 7.1
@@ -44,11 +41,21 @@ jobs:
     #### SNIFF STAGE ####
     - stage: sniff
       php: 7.4
-      env: PHPCS_VERSION="dev-master"
       addons:
         apt:
           packages:
             - libxml2-utils
+
+      before_install:
+        - phpenv config-rm xdebug.ini || echo 'No xdebug config.'
+        - export XMLLINT_INDENT="    "
+        # Set up CS check.
+        # - Using PHPCS `master` as an early detection system for bugs upstream.
+        # - The sniff stage doesn't run the unit tests, so no need for PHPUnit.
+        - travis_retry composer remove --dev phpunit/phpunit --no-update --no-scripts
+        - travis_retry composer require --no-update squizlabs/php_codesniffer:"dev-master"
+        - travis_retry composer install --no-interaction
+
       script:
         # Check the code style of the code base.
         - composer check-cs
@@ -70,15 +77,14 @@ jobs:
     - stage: quicktest
       php: 7.4
       env: PHPCS_VERSION="dev-master" LINT=1
-    - stage: quicktest
-      php: 7.2
+    - php: 7.2
       env: PHPCS_VERSION="3.1.0"
 
-    - stage: quicktest
-      php: 5.4
+    - php: 5.4
+      dist: trusty
       env: PHPCS_VERSION="dev-master" LINT=1
-    - stage: quicktest
-      php: 5.4
+    - php: 5.4
+      dist: trusty
       env: PHPCS_VERSION="3.1.0"
 
     #### TEST STAGE ####
@@ -95,9 +101,22 @@ jobs:
     - php: 7.4
       env: PHPCS_VERSION="3.5.0"
 
+    # PHP 5.4/5.5 need trusty.
+    - php: 5.5
+      dist: trusty
+      env: PHPCS_VERSION="dev-master" LINT=1
+    - php: 5.5
+      dist: trusty
+      env: PHPCS_VERSION="3.1.0"
+    - php: 5.4
+      dist: trusty
+      env: PHPCS_VERSION="dev-master" LINT=1
+    - php: 5.4
+      dist: trusty
+      env: PHPCS_VERSION="3.1.0"
+
     # Builds against unstable versions which are allowed to fail for now.
-    - stage: test
-      php: 7.4
+    - php: 7.4
       env: PHPCS_VERSION="4.0.x-dev"
     - php: "nightly"
       env: PHPCS_VERSION="dev-master" LINT=1
@@ -115,36 +134,23 @@ before_install:
   # On stable PHPCS versions, allow for PHP deprecation notices.
   # Unit tests don't need to fail on those for stable releases where those issues won't get fixed anymore.
   - |
-    if [[ "${TRAVIS_BUILD_STAGE_NAME^}" != "Sniff" && "$PHPCS_VERSION" != "dev-master" && "$PHPCS_VERSION" != "4.0.x-dev" ]]; then
+    if [[ "$PHPCS_VERSION" != "dev-master" && "$PHPCS_VERSION" != "4.0.x-dev" ]]; then
       echo 'error_reporting = E_ALL & ~E_DEPRECATED' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
     fi
 
-  - export XMLLINT_INDENT="    "
-
   # Set up test environment using Composer.
-  - |
-    if [[ "${TRAVIS_BUILD_STAGE_NAME^}" != "Sniff" ]]; then
-      # Remove the PHPCSDevCS dependency as it has different PHPCS requirements and would block installs.
-      composer remove --dev phpcsstandards/phpcsdevcs --no-update --no-scripts
-    fi
-  - |
-    if [[ $PHPCS_VERSION != "n/a" ]]; then
-      composer require --no-update --no-scripts squizlabs/php_codesniffer:${PHPCS_VERSION}
-    fi
-  - |
-    if [[ "${TRAVIS_BUILD_STAGE_NAME^}" == "Sniff" ]]; then
-      # The sniff stage doesn't run the unit tests, so no need for PHPUnit.
-      composer remove --dev phpunit/phpunit --no-update --no-scripts
-    fi
+  - travis_retry composer require --no-update --no-scripts squizlabs/php_codesniffer:${PHPCS_VERSION}
+  # Remove the PHPCSDevCS dependency as it has different PHPCS requirements and would block installs.
+  - travis_retry composer remove --dev phpcsstandards/phpcsdevcs --no-update --no-scripts
 
   # --prefer-dist will allow for optimal use of the travis caching ability.
   # The Composer PHPCS plugin takes care of setting the installed_paths for PHPCS.
   - |
     if [[ $TRAVIS_PHP_VERSION == "nightly" ]]; then
       # Not all dependencies allow for installing on nightly yet, so ignore platform requirements.
-      composer install --prefer-dist --no-suggest --ignore-platform-reqs
+      travis_retry composer install --prefer-dist --no-suggest --ignore-platform-reqs
     else
-      composer install --prefer-dist --no-suggest
+      travis_retry composer install --prefer-dist --no-suggest
     fi
 
 
@@ -158,4 +164,4 @@ script:
   - if [[ "$LINT" == "1" ]]; then composer check-complete; fi
 
   # Run the unit tests.
-  - if [[ $PHPCS_VERSION != "n/a" ]]; then composer run-tests; fi
+  - composer run-tests
