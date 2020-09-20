@@ -81,14 +81,15 @@ class TokenListSniff implements Sniff
 
         $ptrPadding  = \max(3, \strlen($last));
         $linePadding = \strlen($tokens[$last]['line']);
+        $sep         = ' | ';
 
         echo \PHP_EOL;
         echo \str_pad('Ptr', $ptrPadding, ' ', \STR_PAD_BOTH),
-            ' :: ', \str_pad('Ln', ($linePadding + 1), ' ', \STR_PAD_BOTH),
-            ' :: ', \str_pad('Col', 4, ' ', \STR_PAD_BOTH),
-            ' :: ', 'Cond',
-            ' :: ', \str_pad('Token Type', 26), // Longest token type name is 26 chars.
-            ' :: [len]: Content', \PHP_EOL;
+            $sep, \str_pad('Ln', ($linePadding + 1), ' ', \STR_PAD_BOTH),
+            $sep, \str_pad('Col', 4, ' ', \STR_PAD_BOTH),
+            $sep, 'Cond',
+            $sep, \str_pad('Token Type', 26), // Longest token type name is 26 chars.
+            $sep, '[len]: Content', \PHP_EOL;
 
         echo \str_repeat('-', ($ptrPadding + $linePadding + 35 + 16 + 18)), \PHP_EOL;
 
@@ -111,18 +112,18 @@ class TokenListSniff implements Sniff
                     $content = \str_replace("\t", '\t', $content);
                 }
                 if (isset($token['orig_content'])) {
-                    $content .= ' :: Orig: ' . \str_replace("\t", '\t', $token['orig_content']);
+                    $content .= $sep . 'Orig: ' . \str_replace("\t", '\t', $token['orig_content']);
                 }
             }
 
             $conditionCount = \count($token['conditions']);
 
             echo \str_pad($ptr, $ptrPadding, ' ', \STR_PAD_LEFT),
-                ' :: L', \str_pad($token['line'], $linePadding, '0', \STR_PAD_LEFT),
-                ' :: C', \str_pad($token['column'], 3, ' ', \STR_PAD_LEFT),
-                ' :: CC', \str_pad($conditionCount, 2, ' ', \STR_PAD_LEFT),
-                ' :: ', \str_pad($token['type'], 26), // Longest token type name is 26 chars.
-                ' :: [', $token['length'], ']: ', $content, \PHP_EOL;
+                $sep, 'L', \str_pad($token['line'], $linePadding, '0', \STR_PAD_LEFT),
+                $sep, 'C', \str_pad($token['column'], 3, ' ', \STR_PAD_LEFT),
+                $sep, 'CC', \str_pad($conditionCount, 2, ' ', \STR_PAD_LEFT),
+                $sep, \str_pad($token['type'], 26), // Longest token type name is 26 chars.
+                $sep, '[', $token['length'], ']: ', $content, \PHP_EOL;
         }
 
         // Only do this once per file.
