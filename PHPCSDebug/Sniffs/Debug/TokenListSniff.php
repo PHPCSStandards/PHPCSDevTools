@@ -86,7 +86,7 @@ class TokenListSniff implements Sniff
         echo \PHP_EOL;
         echo \str_pad('Ptr', $ptrPadding, ' ', \STR_PAD_BOTH),
             $sep, \str_pad('Ln', ($linePadding + 1), ' ', \STR_PAD_BOTH),
-            $sep, \str_pad('Col', 4, ' ', \STR_PAD_BOTH),
+            $sep, 'Col ',
             $sep, 'Cond',
             $sep, \str_pad('Token Type', 26), // Longest token type name is 26 chars.
             $sep, '[len]: Content', \PHP_EOL;
@@ -116,12 +116,10 @@ class TokenListSniff implements Sniff
                 }
             }
 
-            $conditionCount = \count($token['conditions']);
-
             echo \str_pad($ptr, $ptrPadding, ' ', \STR_PAD_LEFT),
                 $sep, 'L', \str_pad($token['line'], $linePadding, '0', \STR_PAD_LEFT),
                 $sep, 'C', \str_pad($token['column'], 3, ' ', \STR_PAD_LEFT),
-                $sep, 'CC', \str_pad($conditionCount, 2, ' ', \STR_PAD_LEFT),
+                $sep, 'CC', \str_pad($token['level'], 2, ' ', \STR_PAD_LEFT),
                 $sep, \str_pad($token['type'], 26), // Longest token type name is 26 chars.
                 $sep, '[', $token['length'], ']: ', $content, \PHP_EOL;
         }
