@@ -258,7 +258,7 @@ class CheckSniffCompleteness
         foreach ($args as $arg) {
             if (\strpos($arg, '--exclude=') === 0) {
                 $exclude = \substr($arg, 10);
-                if ($exclude === '') {
+                if (empty($exclude)) {
                     $this->excludedDirs = [];
                     continue;
                 }
