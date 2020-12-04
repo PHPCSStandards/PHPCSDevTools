@@ -100,6 +100,11 @@ jobs:
     # PHPCS is only compatible with PHP 7.4 as of version 3.5.0.
     - php: 7.4
       env: PHPCS_VERSION="3.5.0"
+    - php: 8.0
+      env: PHPCS_VERSION="dev-master" LINT=1
+    # PHPCS is only compatible with PHP 8.0 as of version 3.5.7.
+    - php: 8.0
+      env: PHPCS_VERSION="3.5.7"
 
     # PHP 5.4/5.5 need trusty.
     - php: 5.5
@@ -146,8 +151,8 @@ before_install:
   # --prefer-dist will allow for optimal use of the travis caching ability.
   # The Composer PHPCS plugin takes care of setting the installed_paths for PHPCS.
   - |
-    if [[ $TRAVIS_PHP_VERSION == "nightly" ]]; then
-      # Not all dependencies allow for installing on nightly yet, so ignore platform requirements.
+    if [[ $TRAVIS_PHP_VERSION == "nightly" || $TRAVIS_PHP_VERSION == "8.0" ]]; then
+      # Not all dependencies allow for installing on PHP 8.0+, so ignore platform requirements.
       travis_retry composer install --prefer-dist --no-suggest --ignore-platform-reqs
     else
       travis_retry composer install --prefer-dist --no-suggest
