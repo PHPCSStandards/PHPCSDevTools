@@ -29,7 +29,6 @@ env:
 # Note: for pull requests, "develop" is the base branch name.
 # See: https://docs.travis-ci.com/user/conditions-v1
 stages:
-  - name: sniff
   - name: quicktest
     if: type = push AND branch NOT IN (stable, develop)
   - name: test
@@ -38,39 +37,6 @@ stages:
 jobs:
   fast_finish: true
   include:
-    #### SNIFF STAGE ####
-    - stage: sniff
-      php: 7.4
-      addons:
-        apt:
-          packages:
-            - libxml2-utils
-
-      before_install:
-        - phpenv config-rm xdebug.ini || echo 'No xdebug config.'
-        - export XMLLINT_INDENT="    "
-        # Set up CS check.
-        # - Using PHPCS `master` as an early detection system for bugs upstream.
-        # - The sniff stage doesn't run the unit tests, so no need for PHPUnit.
-        - travis_retry composer remove --dev phpunit/phpunit --no-update --no-scripts
-        - travis_retry composer require --no-update squizlabs/php_codesniffer:"dev-master"
-        - travis_retry composer install --no-interaction
-
-      script:
-        # Check the code style of the code base.
-        - composer check-cs
-
-        # Validate the xml file.
-        # @link http://xmlsoft.org/xmllint.html
-        - xmllint --noout --schema ./vendor/squizlabs/php_codesniffer/phpcs.xsd ./PHPCSDebug/ruleset.xml
-
-        # Check the code-style consistency of the xml files.
-        - diff -B ./PHPCSDebug/ruleset.xml <(xmllint --format "./PHPCSDebug/ruleset.xml")
-
-        # Validate the composer.json file.
-        # @link https://getcomposer.org/doc/03-cli.md#validate
-        - composer validate --no-check-all --strict
-
     #### QUICK TEST STAGE ####
     # This is a much quicker test which only runs the unit tests and linting against the low/high
     # supported PHP/PHPCS combinations.
