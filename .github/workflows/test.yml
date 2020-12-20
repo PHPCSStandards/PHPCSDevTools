@@ -1,0 +1,120 @@
+name: Test
+
+on:
+  # Run on pushes to `master` and on all pull requests.
+  push:
+    branches:
+      - master
+  pull_request:
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  #### TEST STAGE ####
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      # Keys:
+      # - experimental: Whether the build is "allowed to fail".
+      matrix:
+        # IMPORTANT: test runs shouldn't fail because of PHPCS being incompatible with a PHP version.
+        # - PHPCS will run without errors on PHP 5.4 - 7.2 on any version.
+        # - PHP 7.3 needs PHPCS 3.3.1+ to run without errors.
+        # - PHP 7.4 needs PHPCS 3.5.0+ to run without errors.
+        # - PHP 8.0 needs PHPCS 3.5.7+ to run without errors.
+        php: ['5.4', '5.5', '5.6', '7.0', '7.1', '7.2']
+        phpcs_version: ['3.1.0', 'dev-master']
+        experimental: [false]
+
+        include:
+          # Complete the matrix, while preventing issues with PHPCS versions incompatible with certain PHP versions.
+          - php: '8.0'
+            phpcs_version: 'dev-master'
+            experimental: false
+          - php: '8.0'
+            phpcs_version: '3.5.7'
+            experimental: false
+
+          - php: '7.4'
+            phpcs_version: 'dev-master'
+            experimental: false
+          - php: '7.4'
+            phpcs_version: '3.5.0'
+            experimental: false
+
+          - php: '7.3'
+            phpcs_version: 'dev-master'
+            experimental: false
+          - php: '7.3'
+            phpcs_version: '3.3.1'
+            experimental: false
+
+          # Experimental builds. These are allowed to fail.
+          - php: '7.4'
+            phpcs_version: '4.0.x-dev'
+            experimental: true
+
+          - php: '8.1' # Nightly.
+            phpcs_version: 'dev-master'
+            experimental: true
+
+    name: "Test${{ matrix.phpcs_version == 'dev-master' && ' + Lint' || '' }}: PHP ${{ matrix.php }} - PHPCS ${{ matrix.phpcs_version }}"
+
+    continue-on-error: ${{ matrix.experimental }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup ini config
+        id: set_ini
+        run: |
+          # On stable PHPCS versions, allow for PHP deprecation notices.
+          # Unit tests don't need to fail on those for stable releases where those issues won't get fixed anymore.
+          if [[ "${{ matrix.phpcs_version }}" != "dev-master" && "${{ matrix.phpcs_version }}" != "4.0.x-dev" ]]; then
+            echo '::set-output name=PHP_INI::error_reporting=E_ALL & ~E_DEPRECATED'
+          else
+            echo '::set-output name=PHP_INI::error_reporting=E_ALL'
+          fi
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          ini-values: ${{ steps.set_ini.outputs.PHP_INI }}
+          coverage: none
+
+      - name: 'Composer: adjust dependencies'
+        run: |
+          # Set the PHPCS version to be used in the tests.
+          composer require --no-update squizlabs/php_codesniffer:"${{ matrix.phpcs_version }}" --no-scripts
+          # Remove the PHPCSDevCS dependency as it has different PHPCS requirements and would block installs.
+          composer remove --no-update --dev phpcsstandards/phpcsdevcs --no-scripts
+
+      # Install dependencies and handle caching in one go.
+      # @link https://github.com/marketplace/actions/install-composer-dependencies
+      - name: Install Composer dependencies - normal
+        if: ${{ matrix.php < 8.1 }}
+        uses: "ramsey/composer-install@v1"
+
+      # For PHP "nightly", we need to install with ignore platform reqs as not all dependencies allow installation.
+      - name: Install Composer dependencies - with ignore platform
+        if: ${{ matrix.php >= 8.1 }}
+        uses: "ramsey/composer-install@v1"
+        with:
+          composer-options: --ignore-platform-reqs
+
+      - name: Lint against parse errors
+        if: matrix.phpcs_version == 'dev-master'
+        run: composer lint
+
+      # Check that any sniffs available are feature complete.
+      # This also acts as an integration test for the feature completeness script,
+      # which is why it is run against various PHP versions and not in the "Sniff" stage.
+      - name: Check for feature completeness
+        if: matrix.phpcs_version == 'dev-master'
+        run: composer check-complete
+
+      - name: Run the unit tests
+        run: composer run-tests
