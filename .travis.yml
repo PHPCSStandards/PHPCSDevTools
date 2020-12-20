@@ -29,30 +29,12 @@ env:
 # Note: for pull requests, "develop" is the base branch name.
 # See: https://docs.travis-ci.com/user/conditions-v1
 stages:
-  - name: quicktest
-    if: type = push AND branch NOT IN (stable, develop)
   - name: test
     if: branch IN (stable, develop)
 
 jobs:
   fast_finish: true
   include:
-    #### QUICK TEST STAGE ####
-    # This is a much quicker test which only runs the unit tests and linting against the low/high
-    # supported PHP/PHPCS combinations.
-    - stage: quicktest
-      php: 7.4
-      env: PHPCS_VERSION="dev-master" LINT=1
-    - php: 7.2
-      env: PHPCS_VERSION="3.1.0"
-
-    - php: 5.4
-      dist: trusty
-      env: PHPCS_VERSION="dev-master" LINT=1
-    - php: 5.4
-      dist: trusty
-      env: PHPCS_VERSION="3.1.0"
-
     #### TEST STAGE ####
     # Additional builds to prevent issues with PHPCS versions incompatible with certain PHP versions.
     - stage: test
