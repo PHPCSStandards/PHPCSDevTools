@@ -10,6 +10,18 @@ This projects adheres to [Keep a CHANGELOG](http://keepachangelog.com/) and uses
 _Nothing yet._
 
 
+## [1.1.0] - 2020-12-20
+
+### Added
+* New column "nested parentheses count" - `( #)` - in the output of the `PHPCSDebug.Debug.TokenList` sniff.
+
+### Changed
+* The minimum required PHPCS version for the `PHPCSDebug` standard has been raised to PHPCS `3.1.0`.
+* `PHPCSDebug.Debug.TokenList`: The column separator has been changed from `::` to `|`.
+* All functionality is now also tested against PHP 8.0.
+* Miscellaneous updates to the development environment and CI scripts.
+
+
 ## [1.0.1] - 2020-06-28
 
 ### Changed
@@ -25,7 +37,8 @@ Initial release containing:
 * A `PHPCSDebug` standard to help debugging sniffs.
 
 
-[Unreleased]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/master...HEAD
+[Unreleased]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/stable...HEAD
+[1.1.0]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.0.1...1.1.0
 [1.0.1]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.0.0...1.0.1
 
 [Dealerdirect Composer PHPCS plugin]: https://github.com/Dealerdirect/phpcodesniffer-composer-installer/
