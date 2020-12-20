@@ -36,14 +36,6 @@ class TokenListUnitTest extends UtilityMethodTestCase
      */
     public function testOutput()
     {
-        \ob_start();
-        self::$phpcsFile->process();
-        $output = \ob_get_flush();
-
-        $output = \str_replace(["\r\n", "\r"], "\n", $output);
-
-        $this->assertNotEmpty($output);
-
         $expected  = "\n";
         $expected .= 'Ptr | Ln | Col  | Cond | ( #) | Token Type                 | [len]: Content' . "\n";
         $expected .= '-------------------------------------------------------------------------' . "\n";
@@ -52,6 +44,21 @@ class TokenListUnitTest extends UtilityMethodTestCase
         $expected .= '  2 | L3 | C  1 | CC 0 | ( 0) | T_FUNCTION                 | [8]: function' . "\n";
         $expected .= '  3 | L3 | C  9 | CC 0 | ( 0) | T_WHITESPACE               | [0]: ' . "\n\n";
 
-        $this->assertSame($expected, $output);
+        $this->expectOutputString($expected);
+        $this->setOutputCallback([$this, 'normalizeLineEndings']);
+
+        self::$phpcsFile->process();
+    }
+
+    /**
+     * Callback function to normalize line endings in generated output.
+     *
+     * @param string $output The output as send to screen.
+     *
+     * @return string The output with *nix line endings.
+     */
+    public function normalizeLineEndings($output)
+    {
+        return \str_replace(["\r\n", "\r"], "\n", $output);
     }
 }
