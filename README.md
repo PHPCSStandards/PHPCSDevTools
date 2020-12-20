@@ -2,15 +2,15 @@ PHPCSDevTools for developers of PHP_CodeSniffer sniffs
 =====================================================
 
 [![Latest Stable Version](https://poser.pugx.org/phpcsstandards/phpcsdevtools/v/stable)](https://packagist.org/packages/phpcsstandards/phpcsdevtools)
-[![Travis Build Status](https://travis-ci.com/PHPCSStandards/PHPCSDevTools.svg?branch=stable)](https://travis-ci.com/PHPCSStandards/PHPCSDevTools/branches)
 [![Release Date of the Latest Version](https://img.shields.io/github/release-date/PHPCSStandards/PHPCSDevTools.svg?maxAge=1800)](https://github.com/PHPCSStandards/PHPCSDevTools/releases)
 :construction:
 [![Latest Unstable Version](https://img.shields.io/badge/unstable-dev--develop-e68718.svg?maxAge=2419200)](https://packagist.org/packages/phpcsstandards/phpcsdevtools#dev-develop)
-[![Travis Build Status](https://travis-ci.com/PHPCSStandards/PHPCSDevTools.svg?branch=develop)](https://travis-ci.com/PHPCSStandards/PHPCSDevTools/branches)
 [![Last Commit to Unstable](https://img.shields.io/github/last-commit/PHPCSStandards/PHPCSDevTools/develop.svg)](https://github.com/PHPCSStandards/PHPCSDevTools/commits/develop)
 
 [![Minimum PHP Version](https://img.shields.io/packagist/php-v/phpcsstandards/phpcsdevtools.svg?maxAge=3600)](https://packagist.org/packages/phpcsstandards/phpcsdevtools)
-[![Tested on PHP 5.4 to nightly](https://img.shields.io/badge/tested%20on-PHP%205.4%20|%205.5%20|%205.6%20|%207.0%20|%207.1%20|%207.2%20|%207.3%20|%207.4%20|%20nightly-brightgreen.svg?maxAge=2419200)](https://travis-ci.com/PHPCSStandards/PHPCSDevTools)
+[![Build Status CS](https://github.com/PHPCSStandards/PHPCSDevTools/workflows/CS/badge.svg?branch=develop)](https://github.com/PHPCSStandards/PHPCSDevTools/actions)
+[![Build Status Test](https://github.com/PHPCSStandards/PHPCSDevTools/workflows/Test/badge.svg?branch=develop)](https://github.com/PHPCSStandards/PHPCSDevTools/actions)
+[![Tested on PHP 5.4 to nightly](https://img.shields.io/badge/tested%20on-PHP%205.4%20|%205.5%20|%205.6%20|%207.0%20|%207.1%20|%207.2%20|%207.3%20|%207.4%20|%208.0%20|%20nightly-brightgreen.svg?maxAge=2419200)](https://travis-ci.com/PHPCSStandards/PHPCSDevTools)
 
 [![License: LGPLv3](https://poser.pugx.org/phpcsstandards/phpcsdevtools/license)](https://github.com/PHPCSStandards/PHPCSDevTools/blob/stable/LICENSE)
 ![Awesome](https://img.shields.io/badge/awesome%3F-yes!-brightgreen.svg)
@@ -122,7 +122,7 @@ Once this project is installed, you will see a new `PHPCSDebug` ruleset in the l
 For now, this standard only contains one sniff: `PHPCSDebug.Debug.TokenList`.
 This sniff will display compact, but detailed information about the tokens found in a (test case) file.
 
-This sniff is compatible with PHPCS 3.0.2+.
+This sniff is compatible with PHPCS 3.1.0+.
 
 Typical usage:
 * Set up a test case file for a new sniff you intend to write.
@@ -137,34 +137,34 @@ phpcs ./SniffNameUnitTest.inc --standard=YourStandard,PHPCSDebug --sniffs=YourSt
 
 The output will look something along the lines of:
 ```
-Ptr :: Ln :: Col  :: Cond :: Token Type                 :: [len]: Content
+Ptr | Ln | Col  | Cond | ( #) | Token Type                 | [len]: Content
 -------------------------------------------------------------------------
-  0 :: L1 :: C  1 :: CC 0 :: T_OPEN_TAG                 :: [5]: <?php
+  0 | L1 | C  1 | CC 0 | ( 0) | T_OPEN_TAG                 | [5]: <?php
 
-  1 :: L2 :: C  1 :: CC 0 :: T_WHITESPACE               :: [0]:
+  1 | L2 | C  1 | CC 0 | ( 0) | T_WHITESPACE               | [0]:
 
-  2 :: L3 :: C  1 :: CC 0 :: T_COMMENT                  :: [32]: // Boolean not operator: All OK.
+  2 | L3 | C  1 | CC 0 | ( 0) | T_COMMENT                  | [32]: // Boolean not operator: All OK.
 
-  3 :: L4 :: C  1 :: CC 0 :: T_IF                       :: [2]: if
-  4 :: L4 :: C  3 :: CC 0 :: T_WHITESPACE               :: [1]:
-  5 :: L4 :: C  4 :: CC 0 :: T_OPEN_PARENTHESIS         :: [1]: (
-  6 :: L4 :: C  5 :: CC 0 :: T_WHITESPACE               :: [1]:
-  7 :: L4 :: C  6 :: CC 0 :: T_CONSTANT_ENCAPSED_STRING :: [4]: 'bb'
-  8 :: L4 :: C 10 :: CC 0 :: T_WHITESPACE               :: [1]:
-  9 :: L4 :: C 11 :: CC 0 :: T_IS_NOT_IDENTICAL         :: [3]: !==
- 10 :: L4 :: C 14 :: CC 0 :: T_WHITESPACE               :: [1]:
- 11 :: L4 :: C 15 :: CC 0 :: T_CONSTANT_ENCAPSED_STRING :: [4]: 'bb'
- 12 :: L4 :: C 19 :: CC 0 :: T_WHITESPACE               :: [1]:
- 13 :: L4 :: C 20 :: CC 0 :: T_CLOSE_PARENTHESIS        :: [1]: )
- 14 :: L4 :: C 21 :: CC 0 :: T_WHITESPACE               :: [1]:
- 15 :: L4 :: C 22 :: CC 0 :: T_OPEN_CURLY_BRACKET       :: [1]: {
- 16 :: L4 :: C 23 :: CC 0 :: T_WHITESPACE               :: [0]:
+  3 | L4 | C  1 | CC 0 | ( 0) | T_IF                       | [2]: if
+  4 | L4 | C  3 | CC 0 | ( 0) | T_WHITESPACE               | [1]:
+  5 | L4 | C  4 | CC 0 | ( 0) | T_OPEN_PARENTHESIS         | [1]: (
+  6 | L4 | C  5 | CC 0 | ( 1) | T_WHITESPACE               | [1]:
+  7 | L4 | C  6 | CC 0 | ( 1) | T_CONSTANT_ENCAPSED_STRING | [4]: 'bb'
+  8 | L4 | C 10 | CC 0 | ( 1) | T_WHITESPACE               | [1]:
+  9 | L4 | C 11 | CC 0 | ( 1) | T_IS_NOT_IDENTICAL         | [3]: !==
+ 10 | L4 | C 14 | CC 0 | ( 1) | T_WHITESPACE               | [1]:
+ 11 | L4 | C 15 | CC 0 | ( 1) | T_CONSTANT_ENCAPSED_STRING | [4]: 'bb'
+ 12 | L4 | C 19 | CC 0 | ( 1) | T_WHITESPACE               | [1]:
+ 13 | L4 | C 20 | CC 0 | ( 0) | T_CLOSE_PARENTHESIS        | [1]: )
+ 14 | L4 | C 21 | CC 0 | ( 0) | T_WHITESPACE               | [1]:
+ 15 | L4 | C 22 | CC 0 | ( 0) | T_OPEN_CURLY_BRACKET       | [1]: {
+ 16 | L4 | C 23 | CC 0 | ( 0) | T_WHITESPACE               | [0]:
 
- 17 :: L5 :: C  1 :: CC 0 :: T_WHITESPACE               :: [1]: \t
- 18 :: L5 :: C  2 :: CC 0 :: T_IF                       :: [2]: if
- 19 :: L5 :: C  4 :: CC 0 :: T_WHITESPACE               :: [1]:
- 20 :: L5 :: C  5 :: CC 0 :: T_OPEN_PARENTHESIS         :: [1]: (
- 21 :: L5 :: C  6 :: CC 0 :: T_WHITESPACE               :: [0]:
+ 17 | L5 | C  1 | CC 0 | ( 0) | T_WHITESPACE               | [1]: \t
+ 18 | L5 | C  2 | CC 0 | ( 0) | T_IF                       | [2]: if
+ 19 | L5 | C  4 | CC 0 | ( 0) | T_WHITESPACE               | [1]:
+ 20 | L5 | C  5 | CC 0 | ( 0) | T_OPEN_PARENTHESIS         | [1]: (
+ 21 | L5 | C  6 | CC 0 | ( 0) | T_WHITESPACE               | [0]:
 ```
 
 PHPCS itself can also display similar information using the `-vv` or `-vvv` verbosity flags, however, when using those, you will receive a *lot* more information than just the token list and, while useful for debugging PHPCS itself, the additional information is mostly just noise when developing a sniff.

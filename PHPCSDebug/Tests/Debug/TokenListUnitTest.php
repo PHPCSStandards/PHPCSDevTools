@@ -10,7 +10,7 @@
 
 namespace PHPCSDebug\Tests\Debug;
 
-use PHP_CodeSniffer\Tests\Standards\AbstractSniffUnitTest;
+use PHPCSUtils\TestUtils\UtilityMethodTestCase;
 
 /**
  * Unit test class for the TokenList sniff.
@@ -19,57 +19,46 @@ use PHP_CodeSniffer\Tests\Standards\AbstractSniffUnitTest;
  *
  * @since 1.0.0
  */
-class TokenListUnitTest extends AbstractSniffUnitTest
+class TokenListUnitTest extends UtilityMethodTestCase
 {
 
     /**
-     * Cache any output generated during the test.
+     * Set the name of a sniff to pass to PHPCS to limit the run (and force it to record errors).
      *
-     * @var string
+     * @var array
      */
-    public static $output = '';
+    protected static $selectedSniff = ['PHPCSDebug.Debug.TokenList'];
 
     /**
-     * Sets up this unit test.
+     * Test the actual output of the TokenList sniff.
      *
      * @return void
      */
-    protected function setUp()
+    public function testOutput()
     {
-        parent::setUp();
+        $expected  = "\n";
+        $expected .= 'Ptr | Ln | Col  | Cond | ( #) | Token Type                 | [len]: Content' . "\n";
+        $expected .= '-------------------------------------------------------------------------' . "\n";
+        $expected .= '  0 | L1 | C  1 | CC 0 | ( 0) | T_OPEN_TAG                 | [5]: <?php' . "\n\n";
+        $expected .= '  1 | L2 | C  1 | CC 0 | ( 0) | T_WHITESPACE               | [0]: ' . "\n\n";
+        $expected .= '  2 | L3 | C  1 | CC 0 | ( 0) | T_FUNCTION                 | [8]: function' . "\n";
+        $expected .= '  3 | L3 | C  9 | CC 0 | ( 0) | T_WHITESPACE               | [0]: ' . "\n\n";
 
-        \ob_start();
+        $this->expectOutputString($expected);
+        $this->setOutputCallback([$this, 'normalizeLineEndings']);
+
+        self::$phpcsFile->process();
     }
 
     /**
-     * Clean up.
+     * Callback function to normalize line endings in generated output.
      *
-     * @return void
-     */
-    protected function tearDown()
-    {
-        self::$output = \ob_get_flush();
-
-        parent::tearDown();
-    }
-
-    /**
-     * Returns the lines where errors should occur.
+     * @param string $output The output as send to screen.
      *
-     * @return array <int line number> => <int number of errors>
+     * @return string The output with *nix line endings.
      */
-    public function getErrorList()
+    public function normalizeLineEndings($output)
     {
-        return [];
-    }
-
-    /**
-     * Returns the lines where warnings should occur.
-     *
-     * @return array <int line number> => <int number of warnings>
-     */
-    public function getWarningList()
-    {
-        return [];
+        return \str_replace(["\r\n", "\r"], "\n", $output);
     }
 }
