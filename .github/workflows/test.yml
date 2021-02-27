@@ -6,8 +6,6 @@ on:
     branches:
       - stable
   pull_request:
-    paths-ignore:
-      - '**.md'
 
 jobs:
   #### TEST STAGE ####
