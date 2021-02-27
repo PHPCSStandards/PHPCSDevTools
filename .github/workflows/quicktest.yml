@@ -5,6 +5,8 @@ on:
   push:
     branches-ignore:
       - stable
+  # Allow manually triggering the workflow.
+  workflow_dispatch:
 
 jobs:
   #### QUICK TEST STAGE ####

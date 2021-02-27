@@ -6,6 +6,8 @@ on:
     branches:
       - stable
   pull_request:
+  # Allow manually triggering the workflow.
+  workflow_dispatch:
 
 jobs:
   #### TEST STAGE ####

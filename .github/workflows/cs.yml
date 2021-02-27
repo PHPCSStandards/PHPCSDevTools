@@ -5,6 +5,8 @@ on:
   # Prevent the build from running when there are only irrelevant changes.
   push:
   pull_request:
+  # Allow manually triggering the workflow.
+  workflow_dispatch:
 
 jobs:
   checkcs:
