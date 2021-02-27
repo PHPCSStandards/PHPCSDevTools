@@ -6,8 +6,8 @@ on:
     branches:
       - stable
   pull_request:
-    paths-ignore:
-      - '**.md'
+  # Allow manually triggering the workflow.
+  workflow_dispatch:
 
 jobs:
   #### TEST STAGE ####
@@ -84,6 +84,7 @@ jobs:
           php-version: ${{ matrix.php }}
           ini-values: ${{ steps.set_ini.outputs.PHP_INI }}
           coverage: none
+          tools: cs2pr
 
       - name: 'Composer: adjust dependencies'
         run: |
@@ -107,7 +108,7 @@ jobs:
 
       - name: Lint against parse errors
         if: matrix.phpcs_version == 'dev-master'
-        run: composer lint
+        run: composer lint -- --checkstyle | cs2pr
 
       # Check that any sniffs available are feature complete.
       # This also acts as an integration test for the feature completeness script,
