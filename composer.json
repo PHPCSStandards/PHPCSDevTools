@@ -32,6 +32,11 @@
         "phpcsstandards/phpcsdevcs": "^1.1.3",
         "phpcsstandards/phpcsutils" : "^1.0"
     },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
     "bin": [
         "bin/phpcs-check-feature-completeness"
     ],
