@@ -62,14 +62,14 @@ jobs:
       - name: 'Composer: adjust dependencies'
         run: |
           # Set the PHPCS version to be used in the tests.
-          composer require --no-update squizlabs/php_codesniffer:"${{ matrix.phpcs_version }}" --no-scripts
+          composer require --no-update squizlabs/php_codesniffer:"${{ matrix.phpcs_version }}" --no-scripts --no-interaction
           # Remove the PHPCSDevCS dependency as it has different PHPCS requirements and would block installs.
-          composer remove --no-update --dev phpcsstandards/phpcsdevcs --no-scripts
+          composer remove --no-update --dev phpcsstandards/phpcsdevcs --no-scripts --no-interaction
 
       # Install dependencies and handle caching in one go.
       # @link https://github.com/marketplace/actions/install-composer-dependencies
       - name: Install Composer dependencies
-        uses: "ramsey/composer-install@v1"
+        uses: "ramsey/composer-install@v2"
 
       - name: Lint against parse errors
         if: ${{ matrix.lint }}

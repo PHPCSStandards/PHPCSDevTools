@@ -103,20 +103,20 @@ jobs:
       - name: 'Composer: adjust dependencies'
         run: |
           # Set the PHPCS version to be used in the tests.
-          composer require --no-update squizlabs/php_codesniffer:"${{ matrix.phpcs_version }}" --no-scripts
+          composer require --no-update squizlabs/php_codesniffer:"${{ matrix.phpcs_version }}" --no-scripts --no-interaction
           # Remove the PHPCSDevCS dependency as it has different PHPCS requirements and would block installs.
-          composer remove --no-update --dev phpcsstandards/phpcsdevcs --no-scripts
+          composer remove --no-update --dev phpcsstandards/phpcsdevcs --no-scripts --no-interaction
 
       # Install dependencies and handle caching in one go.
       # @link https://github.com/marketplace/actions/install-composer-dependencies
       - name: Install Composer dependencies - normal
         if: ${{ matrix.php < 8.2 }}
-        uses: "ramsey/composer-install@v1"
+        uses: "ramsey/composer-install@v2"
 
       # For PHP "nightly", we need to install with ignore platform reqs as not all dependencies allow installation.
       - name: Install Composer dependencies - with ignore platform
         if: ${{ matrix.php >= 8.2 }}
-        uses: "ramsey/composer-install@v1"
+        uses: "ramsey/composer-install@v2"
         with:
           composer-options: --ignore-platform-reqs
 
