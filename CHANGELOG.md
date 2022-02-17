@@ -26,7 +26,7 @@ _Nothing yet._
 
 ### Changed
 * The `master` branch has been renamed to `stable`.
-* The version requirements for the [Dealerdirect Composer PHPCS plugin] have been widened to allow installation of releases from the `0.7.x` range, which brings compatibility with Composer 2.0.
+* The version requirements for the [Composer PHPCS plugin] have been widened to allow installation of releases from the `0.7.x` range, which brings compatibility with Composer 2.0.
 * Miscellaneous updates to the development environment and CI scripts.
 
 
@@ -41,4 +41,4 @@ Initial release containing:
 [1.1.0]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.0.1...1.1.0
 [1.0.1]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.0.0...1.0.1
 
-[Dealerdirect Composer PHPCS plugin]: https://github.com/Dealerdirect/phpcodesniffer-composer-installer/
+[Composer PHPCS plugin]: https://github.com/PHPCSStandards/composer-installer
