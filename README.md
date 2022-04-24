@@ -1,6 +1,8 @@
 PHPCSDevTools for developers of PHP_CodeSniffer sniffs
 =====================================================
 
+<div aria-hidden="true">
+
 [![Latest Stable Version](https://poser.pugx.org/phpcsstandards/phpcsdevtools/v/stable)](https://packagist.org/packages/phpcsstandards/phpcsdevtools)
 [![Release Date of the Latest Version](https://img.shields.io/github/release-date/PHPCSStandards/PHPCSDevTools.svg?maxAge=1800)](https://github.com/PHPCSStandards/PHPCSDevTools/releases)
 :construction:
@@ -8,13 +10,14 @@ PHPCSDevTools for developers of PHP_CodeSniffer sniffs
 [![Last Commit to Unstable](https://img.shields.io/github/last-commit/PHPCSStandards/PHPCSDevTools/develop.svg)](https://github.com/PHPCSStandards/PHPCSDevTools/commits/develop)
 
 [![Minimum PHP Version](https://img.shields.io/packagist/php-v/phpcsstandards/phpcsdevtools.svg?maxAge=3600)](https://packagist.org/packages/phpcsstandards/phpcsdevtools)
-[![Build Status CS](https://github.com/PHPCSStandards/PHPCSDevTools/workflows/CS/badge.svg?branch=develop)](https://github.com/PHPCSStandards/PHPCSDevTools/actions?query=workflow%3ACS)
-[![Build Status Test](https://github.com/PHPCSStandards/PHPCSDevTools/workflows/Test/badge.svg?branch=develop)](https://github.com/PHPCSStandards/PHPCSDevTools/actions?query=workflow%3ATest)
-[![Tested on PHP 5.4 to nightly](https://img.shields.io/badge/tested%20on-PHP%205.4%20|%205.5%20|%205.6%20|%207.0%20|%207.1%20|%207.2%20|%207.3%20|%207.4%20|%208.0%20|%20nightly-brightgreen.svg?maxAge=2419200)](https://github.com/PHPCSStandards/PHPCSDevTools/actions?query=workflow%3ATest)
+[![Build Status CS](https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/cs.yml/badge.svg?branch=develop)](https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/cs.yml)
+[![Build Status Test](https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/test.yml/badge.svg?branch=develop)](https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/test.yml)
+[![Tested on PHP 5.4 to nightly](https://img.shields.io/badge/tested%20on-PHP%205.4%20|%205.5%20|%205.6%20|%207.0%20|%207.1%20|%207.2%20|%207.3%20|%207.4%20|%208.0%20|%208.1%20|%20nightly-brightgreen.svg?maxAge=2419200)](https://github.com/PHPCSStandards/PHPCSDevTools/actions?query=workflow%3ATest)
 
 [![License: LGPLv3](https://poser.pugx.org/phpcsstandards/phpcsdevtools/license)](https://github.com/PHPCSStandards/PHPCSDevTools/blob/stable/LICENSE)
 ![Awesome](https://img.shields.io/badge/awesome%3F-yes!-brightgreen.svg)
 
+</div>
 
 This is a set of tools to aid developers of sniffs for [PHP CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer).
 
