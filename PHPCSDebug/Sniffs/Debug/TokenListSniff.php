@@ -128,7 +128,7 @@ class TokenListSniff implements Sniff
                 $sep, 'CC', \str_pad($token['level'], 2, ' ', \STR_PAD_LEFT),
                 $sep, '(', \str_pad($parenthesesCount, 2, ' ', \STR_PAD_LEFT), ')',
                 $sep, \str_pad($token['type'], 26), // Longest token type name is 26 chars.
-                $sep, '[', $token['length'], ']: ', $content, \PHP_EOL;
+                $sep, '[', \str_pad($token['length'], 3, ' ', \STR_PAD_LEFT), ']: ', $content, \PHP_EOL;
         }
 
         // Only do this once per file.
