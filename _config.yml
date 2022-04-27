@@ -1,1 +1,22 @@
 theme: jekyll-theme-midnight
+
+# Files to exclude when generating the site.
+exclude:
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
+  - Gemfile
+  - Gemfile.lock
+  - artifacts/
+  - node_modules/
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - CNAME
+  - README.md
+  - .jekyll-metadata
+  - .gitignore
+  - .github
+  - '*.bak'
+  - '*.orig'
