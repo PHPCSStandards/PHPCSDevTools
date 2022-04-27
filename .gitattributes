@@ -12,6 +12,7 @@
 /phpunit.xml.dist      export-ignore
 /phpunit-bootstrap.php export-ignore
 /PHPCSDebug/Tests      export-ignore
+/Tests                 export-ignore
 
 #
 # Auto detect text files and perform LF normalization

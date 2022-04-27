@@ -87,5 +87,8 @@ pointing to the PHPCSUtils directory.
     die(1);
 }
 
+// Load test related autoloader.
+require_once __DIR__ . '/vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
+
 // Clean up.
 unset($ds, $phpcsDir, $phpcsUtilsDir, $vendorDir);
