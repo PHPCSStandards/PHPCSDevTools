@@ -46,10 +46,10 @@
         "lint": [
             "@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --show-deprecated --exclude vendor --exclude .git"
         ],
-        "check-cs": [
+        "checkcs": [
             "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs"
         ],
-        "fix-cs": [
+        "fixcs": [
             "@php ./vendor/squizlabs/php_codesniffer/bin/phpcbf"
         ],
         "run-tests": [
