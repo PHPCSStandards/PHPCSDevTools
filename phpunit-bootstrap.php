@@ -87,5 +87,13 @@ pointing to the PHPCSUtils directory.
     die(1);
 }
 
+// Load test related autoloader.
+require_once __DIR__ . '/vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
+
+// Load the scripts for the Feature Complete tooling.
+require_once __DIR__ . '/Scripts/Utils/FileList.php';
+require_once __DIR__ . '/Scripts/FeatureComplete/Config.php';
+require_once __DIR__ . '/Scripts/FeatureComplete/Check.php';
+
 // Clean up.
 unset($ds, $phpcsDir, $phpcsUtilsDir, $vendorDir);

@@ -27,15 +27,21 @@
     },
     "require-dev" : {
         "roave/security-advisories" : "dev-master",
-        "phpunit/phpunit" : "^4.5 || ^5.0 || ^6.0 || ^7.0 || ^8.0 || ^9.0",
+        "phpunit/phpunit" : "^4.8.36 || ^5.7.21 || ^6.0 || ^7.0 || ^8.0 || ^9.0",
         "php-parallel-lint/php-parallel-lint": "^1.3.2",
         "php-parallel-lint/php-console-highlighter": "^1.0.0",
         "phpcsstandards/phpcsdevcs": "^1.1.3",
-        "phpcsstandards/phpcsutils" : "^1.0"
+        "phpcsstandards/phpcsutils" : "^1.0",
+        "yoast/phpunit-polyfills": "^1.0"
     },
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "autoload-dev" : {
+        "psr-4": {
+            "PHPCSDevTools\\Tests\\": "Tests/"
         }
     },
     "bin": [
@@ -56,8 +62,14 @@
         "fixcs": [
             "@php ./vendor/squizlabs/php_codesniffer/bin/phpcbf"
         ],
-        "run-tests": [
+        "test": [
             "@php ./vendor/phpunit/phpunit/phpunit"
+        ],
+        "test-sniff": [
+            "@php ./vendor/phpunit/phpunit/phpunit --testsuite DebugSniff"
+        ],
+        "test-tools": [
+            "@php ./vendor/phpunit/phpunit/phpunit --testsuite DevTools"
         ],
         "check-complete": [
             "@php ./bin/phpcs-check-feature-completeness ./PHPCSDebug"

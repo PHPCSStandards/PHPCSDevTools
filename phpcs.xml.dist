@@ -56,4 +56,8 @@
         <exclude-pattern>/phpunit-bootstrap\.php$</exclude-pattern>
     </rule>
 
+    <rule ref="Generic.Files.LineLength.TooLong">
+        <exclude-pattern>/Tests/*\.php$</exclude-pattern>
+    </rule>
+
 </ruleset>
