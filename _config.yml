@@ -3,12 +3,22 @@ theme: jekyll-theme-midnight
 
 plugins:
   - jekyll-remote-theme
+  - jekyll-seo-tag
 
 # Theme info.
 title: PHPCSDevTools
 description: "A set of tools to assist developers of sniffs for PHP CodeSniffer."
 show_downloads: false
 google_analytics:
+
+# SEO info.
+tagline: "A set of tools to assist developers of sniffs for PHP CodeSniffer."
+twitter:
+  username: jrf_nl
+  card: summary
+  hashtags: PHPCSDevTools
+author:
+  twitter: jrf_nl
 
 # Files to exclude when generating the site.
 exclude:
