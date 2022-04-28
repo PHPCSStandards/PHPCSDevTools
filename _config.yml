@@ -1,8 +1,12 @@
 baseurl: /
 theme: jekyll-theme-midnight
+repository: "PHPCSStandards/PHPCSDevTools"
+url: "https://phpcsstandards.github.io/PHPCSDevTools"
 
 plugins:
   - jekyll-remote-theme
+  - jemoji
+  - jekyll-mentions
   - jekyll-seo-tag
   - jekyll-sitemap
 
