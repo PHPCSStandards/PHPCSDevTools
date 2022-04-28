@@ -6,8 +6,14 @@ on:
     branches:
       - stable
   pull_request:
-    paths-ignore:
-      - '**.md'
+  # Allow manually triggering the workflow.
+  workflow_dispatch:
+
+# Cancels all previous workflow runs for the same branch that have not yet completed.
+concurrency:
+  # The concurrency group contains the workflow name and the branch name.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   #### TEST STAGE ####
@@ -23,12 +29,20 @@ jobs:
         # - PHP 7.3 needs PHPCS 3.3.1+ to run without errors.
         # - PHP 7.4 needs PHPCS 3.5.0+ to run without errors.
         # - PHP 8.0 needs PHPCS 3.5.7+ to run without errors.
+        # - PHP 8.1 needs PHPCS 3.6.1+ to run without errors.
         php: ['5.4', '5.5', '5.6', '7.0', '7.1', '7.2']
         phpcs_version: ['3.1.0', 'dev-master']
         experimental: [false]
 
         include:
           # Complete the matrix, while preventing issues with PHPCS versions incompatible with certain PHP versions.
+          - php: '8.1'
+            phpcs_version: 'dev-master'
+            experimental: false
+          - php: '8.1'
+            phpcs_version: '3.6.1'
+            experimental: false
+
           - php: '8.0'
             phpcs_version: 'dev-master'
             experimental: false
@@ -55,7 +69,7 @@ jobs:
             phpcs_version: '4.0.x-dev'
             experimental: true
 
-          - php: '8.1' # Nightly.
+          - php: '8.2' # Nightly.
             phpcs_version: 'dev-master'
             experimental: true
 
@@ -65,7 +79,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup ini config
         id: set_ini
@@ -73,9 +87,9 @@ jobs:
           # On stable PHPCS versions, allow for PHP deprecation notices.
           # Unit tests don't need to fail on those for stable releases where those issues won't get fixed anymore.
           if [[ "${{ matrix.phpcs_version }}" != "dev-master" && "${{ matrix.phpcs_version }}" != "4.0.x-dev" ]]; then
-            echo '::set-output name=PHP_INI::error_reporting=E_ALL & ~E_DEPRECATED'
+            echo '::set-output name=PHP_INI::error_reporting=E_ALL & ~E_DEPRECATED, display_errors=On'
           else
-            echo '::set-output name=PHP_INI::error_reporting=E_ALL'
+            echo '::set-output name=PHP_INI::error_reporting=-1, display_errors=On'
           fi
 
       - name: Install PHP
@@ -84,30 +98,35 @@ jobs:
           php-version: ${{ matrix.php }}
           ini-values: ${{ steps.set_ini.outputs.PHP_INI }}
           coverage: none
+          tools: cs2pr
 
       - name: 'Composer: adjust dependencies'
         run: |
           # Set the PHPCS version to be used in the tests.
-          composer require --no-update squizlabs/php_codesniffer:"${{ matrix.phpcs_version }}" --no-scripts
+          composer require --no-update squizlabs/php_codesniffer:"${{ matrix.phpcs_version }}" --no-scripts --no-interaction
           # Remove the PHPCSDevCS dependency as it has different PHPCS requirements and would block installs.
-          composer remove --no-update --dev phpcsstandards/phpcsdevcs --no-scripts
+          composer remove --no-update --dev phpcsstandards/phpcsdevcs --no-scripts --no-interaction
 
       # Install dependencies and handle caching in one go.
       # @link https://github.com/marketplace/actions/install-composer-dependencies
       - name: Install Composer dependencies - normal
-        if: ${{ matrix.php < 8.1 }}
-        uses: "ramsey/composer-install@v1"
+        if: ${{ matrix.php < 8.2 }}
+        uses: "ramsey/composer-install@v2"
 
       # For PHP "nightly", we need to install with ignore platform reqs as not all dependencies allow installation.
       - name: Install Composer dependencies - with ignore platform
-        if: ${{ matrix.php >= 8.1 }}
-        uses: "ramsey/composer-install@v1"
+        if: ${{ matrix.php >= 8.2 }}
+        uses: "ramsey/composer-install@v2"
         with:
           composer-options: --ignore-platform-reqs
 
-      - name: Lint against parse errors
-        if: matrix.phpcs_version == 'dev-master'
-        run: composer lint
+      - name: Lint against parse errors (PHP 7.2+)
+        if: ${{ matrix.phpcs_version == 'dev-master' && matrix.php >= '7.2' }}
+        run: composer lint -- --checkstyle | cs2pr
+
+      - name: Lint against parse errors (PHP < 7.2)
+        if: ${{ matrix.phpcs_version == 'dev-master' && matrix.php < '7.2' }}
+        run: composer lintlt72 -- --checkstyle | cs2pr
 
       # Check that any sniffs available are feature complete.
       # This also acts as an integration test for the feature completeness script,

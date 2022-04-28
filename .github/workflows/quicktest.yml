@@ -5,8 +5,14 @@ on:
   push:
     branches-ignore:
       - stable
-    paths-ignore:
-      - '**.md'
+  # Allow manually triggering the workflow.
+  workflow_dispatch:
+
+# Cancels all previous workflow runs for the same branch that have not yet completed.
+concurrency:
+  # The concurrency group contains the workflow name and the branch name.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   #### QUICK TEST STAGE ####
@@ -19,21 +25,18 @@ jobs:
       matrix:
         php: ['5.4', 'latest']
         phpcs_version: ['dev-master']
-        lint: [true]
 
         include:
           - php: '7.2'
             phpcs_version: '3.1.0'
-            lint: false
           - php: '5.4'
             phpcs_version: '3.1.0'
-            lint: false
 
     name: "QTest${{ matrix.lint && ' + Lint' || '' }}: PHP ${{ matrix.php }} - PHPCS ${{ matrix.phpcs_version }}"
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # On stable PHPCS versions, allow for PHP deprecation notices.
       # Unit tests don't need to fail on those for stable releases where those issues won't get fixed anymore.
@@ -41,9 +44,9 @@ jobs:
         id: set_ini
         run: |
           if [ "${{ matrix.phpcs_version }}" != "dev-master" ]; then
-            echo '::set-output name=PHP_INI::error_reporting=E_ALL & ~E_DEPRECATED'
+            echo '::set-output name=PHP_INI::error_reporting=E_ALL & ~E_DEPRECATED, display_errors=On'
           else
-            echo '::set-output name=PHP_INI::error_reporting=E_ALL'
+            echo '::set-output name=PHP_INI::error_reporting=-1, display_errors=On'
           fi
 
       - name: Install PHP
@@ -56,18 +59,22 @@ jobs:
       - name: 'Composer: adjust dependencies'
         run: |
           # Set the PHPCS version to be used in the tests.
-          composer require --no-update squizlabs/php_codesniffer:"${{ matrix.phpcs_version }}" --no-scripts
+          composer require --no-update squizlabs/php_codesniffer:"${{ matrix.phpcs_version }}" --no-scripts --no-interaction
           # Remove the PHPCSDevCS dependency as it has different PHPCS requirements and would block installs.
-          composer remove --no-update --dev phpcsstandards/phpcsdevcs --no-scripts
+          composer remove --no-update --dev phpcsstandards/phpcsdevcs --no-scripts --no-interaction
 
       # Install dependencies and handle caching in one go.
       # @link https://github.com/marketplace/actions/install-composer-dependencies
       - name: Install Composer dependencies
-        uses: "ramsey/composer-install@v1"
+        uses: "ramsey/composer-install@v2"
 
-      - name: Lint against parse errors
-        if: ${{ matrix.lint }}
+      - name: Lint against parse errors (PHP 7.2+)
+        if: ${{ matrix.phpcs_version == 'dev-master' && matrix.php >= '7.2' }}
         run: composer lint
+
+      - name: Lint against parse errors (PHP < 7.2)
+        if: ${{ matrix.phpcs_version == 'dev-master' && matrix.php < '7.2' }}
+        run: composer lintlt72
 
       # Check that any sniffs available are feature complete.
       # This also acts as an integration test for the feature completeness script,

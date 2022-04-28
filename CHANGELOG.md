@@ -10,6 +10,17 @@ This projects adheres to [Keep a CHANGELOG](http://keepachangelog.com/) and uses
 _Nothing yet._
 
 
+## [1.1.1] - 2022-04-27
+
+### Changed
+* `PHPCSDebug.Debug.TokenList`: readability improvement (alignment of content length).
+* All functionality is now also tested against PHP 8.1.
+* Update to the installation instructions to allow for Composer 2.2+.
+* Minor other documentation improvements.
+* The documentation of the project will now also be available at <https://phpcsstandards.github.io/PHPCSDevTools/>.
+* Miscellaneous updates to the development environment and CI scripts.
+
+
 ## [1.1.0] - 2020-12-20
 
 ### Added
@@ -26,7 +37,7 @@ _Nothing yet._
 
 ### Changed
 * The `master` branch has been renamed to `stable`.
-* The version requirements for the [Dealerdirect Composer PHPCS plugin] have been widened to allow installation of releases from the `0.7.x` range, which brings compatibility with Composer 2.0.
+* The version requirements for the [Composer PHPCS plugin] have been widened to allow installation of releases from the `0.7.x` range, which brings compatibility with Composer 2.0.
 * Miscellaneous updates to the development environment and CI scripts.
 
 
@@ -38,7 +49,8 @@ Initial release containing:
 
 
 [Unreleased]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/stable...HEAD
+[1.1.1]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.1.0...1.1.1
 [1.1.0]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.0.1...1.1.0
 [1.0.1]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.0.0...1.0.1
 
-[Dealerdirect Composer PHPCS plugin]: https://github.com/Dealerdirect/phpcodesniffer-composer-installer/
+[Composer PHPCS plugin]: https://github.com/PHPCSStandards/composer-installer

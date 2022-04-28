@@ -1,22 +1,26 @@
 PHPCSDevTools for developers of PHP_CodeSniffer sniffs
 =====================================================
 
+<div aria-hidden="true">
+
 [![Latest Stable Version](https://poser.pugx.org/phpcsstandards/phpcsdevtools/v/stable)](https://packagist.org/packages/phpcsstandards/phpcsdevtools)
 [![Release Date of the Latest Version](https://img.shields.io/github/release-date/PHPCSStandards/PHPCSDevTools.svg?maxAge=1800)](https://github.com/PHPCSStandards/PHPCSDevTools/releases)
+[![Changelog](https://img.shields.io/github/v/release/PHPCSStandards/PHPCSDevTools?label=Changelog&sort=semver)](https://github.com/PHPCSStandards/PHPCSDevTools/blob/stable/CHANGELOG.md)
 :construction:
 [![Latest Unstable Version](https://img.shields.io/badge/unstable-dev--develop-e68718.svg?maxAge=2419200)](https://packagist.org/packages/phpcsstandards/phpcsdevtools#dev-develop)
 [![Last Commit to Unstable](https://img.shields.io/github/last-commit/PHPCSStandards/PHPCSDevTools/develop.svg)](https://github.com/PHPCSStandards/PHPCSDevTools/commits/develop)
 
 [![Minimum PHP Version](https://img.shields.io/packagist/php-v/phpcsstandards/phpcsdevtools.svg?maxAge=3600)](https://packagist.org/packages/phpcsstandards/phpcsdevtools)
-[![Build Status CS](https://github.com/PHPCSStandards/PHPCSDevTools/workflows/CS/badge.svg?branch=develop)](https://github.com/PHPCSStandards/PHPCSDevTools/actions)
-[![Build Status Test](https://github.com/PHPCSStandards/PHPCSDevTools/workflows/Test/badge.svg?branch=develop)](https://github.com/PHPCSStandards/PHPCSDevTools/actions)
-[![Tested on PHP 5.4 to nightly](https://img.shields.io/badge/tested%20on-PHP%205.4%20|%205.5%20|%205.6%20|%207.0%20|%207.1%20|%207.2%20|%207.3%20|%207.4%20|%208.0%20|%20nightly-brightgreen.svg?maxAge=2419200)](https://travis-ci.com/PHPCSStandards/PHPCSDevTools)
+[![Build Status CS](https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/cs.yml/badge.svg)](https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/cs.yml)
+[![Build Status Test](https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/test.yml/badge.svg)](https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/test.yml)
+[![Tested on PHP 5.4 to nightly](https://img.shields.io/badge/tested%20on-PHP%205.4%20|%205.5%20|%205.6%20|%207.0%20|%207.1%20|%207.2%20|%207.3%20|%207.4%20|%208.0%20|%208.1%20|%20nightly-brightgreen.svg?maxAge=2419200)](https://github.com/PHPCSStandards/PHPCSDevTools/actions?query=workflow%3ATest)
 
 [![License: LGPLv3](https://poser.pugx.org/phpcsstandards/phpcsdevtools/license)](https://github.com/PHPCSStandards/PHPCSDevTools/blob/stable/LICENSE)
 ![Awesome](https://img.shields.io/badge/awesome%3F-yes!-brightgreen.svg)
 
+</div>
 
-This is a set of tools to aid developers of sniffs for [PHP CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer).
+This is a set of tools to assist developers of sniffs for [PHP CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer).
 
 * [Installation](#installation)
     + [Composer Project-based Installation](#composer-project-based-installation)
@@ -36,6 +40,7 @@ Installation
 
 Run the following from the root of your project:
 ```bash
+composer config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
 composer require --dev phpcsstandards/phpcsdevtools:^1.0
 ```
 
@@ -43,10 +48,11 @@ composer require --dev phpcsstandards/phpcsdevtools:^1.0
 
 If you work on several different sniff repos, you may want to install this toolset globally:
 ```bash
+composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
 composer global require --dev phpcsstandards/phpcsdevtools:^1.0
 ```
 
-Composer will automatically install dependencies and register the PHPCSDebug standard with PHP_CodeSniffer using the [DealerDirect Composer PHPCS plugin](https://github.com/Dealerdirect/phpcodesniffer-composer-installer/).
+Composer will automatically install dependencies and register the PHPCSDebug standard with PHP_CodeSniffer using the [Composer PHPCS plugin](https://github.com/PHPCSStandards/composer-installer).
 
 
 ### Stand-alone Installation
@@ -59,7 +65,7 @@ Composer will automatically install dependencies and register the PHPCSDebug sta
    ```bash
    phpcs --config-set installed_paths /path/to/PHPCSDevTools
    ```
-   :warning: **Warning**: The `installed_paths` command overwrites any previously set `installed_paths`. If you have previously set `installed_paths` for other external standards, run `phpcs --config-show` first and then run the `installed_paths` command with all the paths you need separated by comma's, i.e.:
+   :warning: **Warning**: The `installed_paths` command overwrites any previously set `installed_paths`. If you have previously set `installed_paths` for other external standards, run `phpcs --config-show` first and then run the `installed_paths` command with all the paths you need separated by commas, i.e.:
    ```bash
    phpcs --config-set installed_paths /path/1,/path/2,/path/3
    ```
@@ -139,32 +145,32 @@ The output will look something along the lines of:
 ```
 Ptr | Ln | Col  | Cond | ( #) | Token Type                 | [len]: Content
 -------------------------------------------------------------------------
-  0 | L1 | C  1 | CC 0 | ( 0) | T_OPEN_TAG                 | [5]: <?php
+  0 | L1 | C  1 | CC 0 | ( 0) | T_OPEN_TAG                 | [  5]: <?php
 
-  1 | L2 | C  1 | CC 0 | ( 0) | T_WHITESPACE               | [0]:
+  1 | L2 | C  1 | CC 0 | ( 0) | T_WHITESPACE               | [  0]:
 
-  2 | L3 | C  1 | CC 0 | ( 0) | T_COMMENT                  | [32]: // Boolean not operator: All OK.
+  2 | L3 | C  1 | CC 0 | ( 0) | T_COMMENT                  | [ 32]: // Boolean not operator: All OK.
 
-  3 | L4 | C  1 | CC 0 | ( 0) | T_IF                       | [2]: if
-  4 | L4 | C  3 | CC 0 | ( 0) | T_WHITESPACE               | [1]:
-  5 | L4 | C  4 | CC 0 | ( 0) | T_OPEN_PARENTHESIS         | [1]: (
-  6 | L4 | C  5 | CC 0 | ( 1) | T_WHITESPACE               | [1]:
-  7 | L4 | C  6 | CC 0 | ( 1) | T_CONSTANT_ENCAPSED_STRING | [4]: 'bb'
-  8 | L4 | C 10 | CC 0 | ( 1) | T_WHITESPACE               | [1]:
-  9 | L4 | C 11 | CC 0 | ( 1) | T_IS_NOT_IDENTICAL         | [3]: !==
- 10 | L4 | C 14 | CC 0 | ( 1) | T_WHITESPACE               | [1]:
- 11 | L4 | C 15 | CC 0 | ( 1) | T_CONSTANT_ENCAPSED_STRING | [4]: 'bb'
- 12 | L4 | C 19 | CC 0 | ( 1) | T_WHITESPACE               | [1]:
- 13 | L4 | C 20 | CC 0 | ( 0) | T_CLOSE_PARENTHESIS        | [1]: )
- 14 | L4 | C 21 | CC 0 | ( 0) | T_WHITESPACE               | [1]:
- 15 | L4 | C 22 | CC 0 | ( 0) | T_OPEN_CURLY_BRACKET       | [1]: {
- 16 | L4 | C 23 | CC 0 | ( 0) | T_WHITESPACE               | [0]:
+  3 | L4 | C  1 | CC 0 | ( 0) | T_IF                       | [  2]: if
+  4 | L4 | C  3 | CC 0 | ( 0) | T_WHITESPACE               | [  1]:
+  5 | L4 | C  4 | CC 0 | ( 0) | T_OPEN_PARENTHESIS         | [  1]: (
+  6 | L4 | C  5 | CC 0 | ( 1) | T_WHITESPACE               | [  1]:
+  7 | L4 | C  6 | CC 0 | ( 1) | T_CONSTANT_ENCAPSED_STRING | [  4]: 'bb'
+  8 | L4 | C 10 | CC 0 | ( 1) | T_WHITESPACE               | [  1]:
+  9 | L4 | C 11 | CC 0 | ( 1) | T_IS_NOT_IDENTICAL         | [  3]: !==
+ 10 | L4 | C 14 | CC 0 | ( 1) | T_WHITESPACE               | [  1]:
+ 11 | L4 | C 15 | CC 0 | ( 1) | T_CONSTANT_ENCAPSED_STRING | [  4]: 'bb'
+ 12 | L4 | C 19 | CC 0 | ( 1) | T_WHITESPACE               | [  1]:
+ 13 | L4 | C 20 | CC 0 | ( 0) | T_CLOSE_PARENTHESIS        | [  1]: )
+ 14 | L4 | C 21 | CC 0 | ( 0) | T_WHITESPACE               | [  1]:
+ 15 | L4 | C 22 | CC 0 | ( 0) | T_OPEN_CURLY_BRACKET       | [  1]: {
+ 16 | L4 | C 23 | CC 0 | ( 0) | T_WHITESPACE               | [  0]:
 
- 17 | L5 | C  1 | CC 0 | ( 0) | T_WHITESPACE               | [1]: \t
- 18 | L5 | C  2 | CC 0 | ( 0) | T_IF                       | [2]: if
- 19 | L5 | C  4 | CC 0 | ( 0) | T_WHITESPACE               | [1]:
- 20 | L5 | C  5 | CC 0 | ( 0) | T_OPEN_PARENTHESIS         | [1]: (
- 21 | L5 | C  6 | CC 0 | ( 0) | T_WHITESPACE               | [0]:
+ 17 | L5 | C  1 | CC 0 | ( 0) | T_WHITESPACE               | [  1]: \t
+ 18 | L5 | C  2 | CC 0 | ( 0) | T_IF                       | [  2]: if
+ 19 | L5 | C  4 | CC 0 | ( 0) | T_WHITESPACE               | [  1]:
+ 20 | L5 | C  5 | CC 0 | ( 0) | T_OPEN_PARENTHESIS         | [  1]: (
+ 21 | L5 | C  6 | CC 0 | ( 0) | T_WHITESPACE               | [  0]:
 ```
 
 PHPCS itself can also display similar information using the `-vv` or `-vvv` verbosity flags, however, when using those, you will receive a *lot* more information than just the token list and, while useful for debugging PHPCS itself, the additional information is mostly just noise when developing a sniff.
@@ -178,4 +184,4 @@ If unsure whether the changes you are proposing would be welcome, open an issue 
 
 License
 -------
-This code is released under the GNU Lesser General Public License (LGPLv3). For more information, visit http://www.gnu.org/copyleft/lesser.html
+This code is released under the [GNU Lesser General Public License (LGPLv3)](http://www.gnu.org/copyleft/lesser.html).
