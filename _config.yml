@@ -4,6 +4,7 @@ theme: jekyll-theme-midnight
 plugins:
   - jekyll-remote-theme
   - jekyll-seo-tag
+  - jekyll-sitemap
 
 # Theme info.
 title: PHPCSDevTools

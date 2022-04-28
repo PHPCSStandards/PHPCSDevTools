@@ -1,0 +1,5 @@
+# /robots.txt file for https://phpcsstandards.github.io/PHPCSDevTools/
+
+User-agent: *
+Allow: /
+Sitemap: https://phpcsstandards.github.io/PHPCSDevTools//sitemap.xml
