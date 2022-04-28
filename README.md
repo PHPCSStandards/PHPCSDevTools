@@ -20,7 +20,7 @@ PHPCSDevTools for developers of PHP_CodeSniffer sniffs
 
 </div>
 
-This is a set of tools to aid developers of sniffs for [PHP CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer).
+This is a set of tools to assist developers of sniffs for [PHP CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer).
 
 * [Installation](#installation)
     + [Composer Project-based Installation](#composer-project-based-installation)
@@ -65,7 +65,7 @@ Composer will automatically install dependencies and register the PHPCSDebug sta
    ```bash
    phpcs --config-set installed_paths /path/to/PHPCSDevTools
    ```
-   :warning: **Warning**: The `installed_paths` command overwrites any previously set `installed_paths`. If you have previously set `installed_paths` for other external standards, run `phpcs --config-show` first and then run the `installed_paths` command with all the paths you need separated by comma's, i.e.:
+   :warning: **Warning**: The `installed_paths` command overwrites any previously set `installed_paths`. If you have previously set `installed_paths` for other external standards, run `phpcs --config-show` first and then run the `installed_paths` command with all the paths you need separated by commas, i.e.:
    ```bash
    phpcs --config-set installed_paths /path/1,/path/2,/path/3
    ```
