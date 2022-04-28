@@ -46,6 +46,9 @@
         "lint": [
             "@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --show-deprecated --exclude vendor --exclude .git"
         ],
+        "lintlt72": [
+            "@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --show-deprecated --exclude vendor --exclude .git --exclude .github/build"
+        ],
         "checkcs": [
             "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs"
         ],
