@@ -120,9 +120,13 @@ jobs:
         with:
           composer-options: --ignore-platform-reqs
 
-      - name: Lint against parse errors
-        if: matrix.phpcs_version == 'dev-master'
+      - name: Lint against parse errors (PHP 7.2+)
+        if: ${{ matrix.phpcs_version == 'dev-master' && matrix.php >= '7.2' }}
         run: composer lint -- --checkstyle | cs2pr
+
+      - name: Lint against parse errors (PHP < 7.2)
+        if: ${{ matrix.phpcs_version == 'dev-master' && matrix.php < '7.2' }}
+        run: composer lintlt72 -- --checkstyle | cs2pr
 
       # Check that any sniffs available are feature complete.
       # This also acts as an integration test for the feature completeness script,

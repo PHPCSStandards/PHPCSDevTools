@@ -1,3 +1,4 @@
+deploy/
 vendor/
 composer.lock
 .phpcs.xml

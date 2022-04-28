@@ -1,0 +1,100 @@
+name: Build website
+
+on:
+  # Trigger the workflow whenever a new tag is created.
+  push:
+    branches:
+      - 'stable'
+  # And whenever this workflow or one of the associated scripts is updated (for a dry-run).
+  pull_request:
+    branches-ignore:
+      - 'stable'
+    paths:
+      - '.github/workflows/update-website.yml'
+      - '.github/build/**'
+  # Also allow manually triggering the workflow.
+  workflow_dispatch:
+
+# Cancels all previous workflow runs for the same branch that have not yet completed.
+concurrency:
+  # The concurrency group contains the workflow name and the branch name.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  prepare:
+    name: "Update website files"
+    # Don't run on forks.
+    if: github.repository == 'PHPCSStandards/PHPCSDevTools'
+
+    runs-on: ubuntu-latest
+    steps:
+      # By default use the `stable` branch as the published docs should always
+      # reflect the latest release.
+      # For testing changes to the workflow or the scripts, use the PR branch
+      # to have access to the latest version of the workflow/scripts.
+      - name: Determine branch to use
+        id: base_branch
+        env:
+          REF: ${{ github.ref }}
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "::set-output name=BRANCH::$REF"
+          else
+            echo '::set-output name=BRANCH::stable'
+          fi
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.base_branch.outputs.BRANCH }}
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          ini-values: error_reporting=-1, display_errors=On, log_errors_max_len=0
+          coverage: none
+
+      - name: Prepare the files which will be deployed to the GH Pages website
+        run: php .github/build/update-website.php
+
+      - name: "Set variable: short sha"
+        id: set_sha
+        env:
+          SHA: ${{ github.sha }}
+        run: |
+          shortsha=$(echo "$SHA" | cut -b 1-6)
+          echo "::set-output name=SHORTSHA::$shortsha"
+
+      - name: Prepare commit message
+        id: commit_msg
+        env:
+          REF_NAME: ${{ github.ref_name }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          if [[ "${{ github.event_name }}" == 'push' && "${{ github.ref_type }}" == 'tag' ]]; then
+            echo "::set-output name=MSG::Update website for release of version $REF_NAME"
+          else
+            echo "::set-output name=MSG::Sync website after commit (sha: ${{ steps.set_sha.outputs.SHORTSHA }})"
+          fi
+
+      - name: Check GitHub Pages status
+        uses: crazy-max/ghaction-github-status@v2
+        with:
+          pages_threshold: major_outage
+
+      - name: Deploy the website
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          build_dir: 'deploy'
+          target_branch: 'gh-pages'
+          keep_history: true
+          #allow_empty_commit: false # Turn on after verification that it all works as expected.
+          jekyll: true
+          commit_message: ${{ steps.commit_msg.outputs.MSG }}
+          dry_run: ${{ steps.base_branch.outputs.BRANCH != 'stable' }}
+          verbose: ${{ matrix.verbose }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
