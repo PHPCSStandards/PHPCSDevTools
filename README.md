@@ -145,32 +145,32 @@ The output will look something along the lines of:
 ```
 Ptr | Ln | Col  | Cond | ( #) | Token Type                 | [len]: Content
 -------------------------------------------------------------------------
-  0 | L1 | C  1 | CC 0 | ( 0) | T_OPEN_TAG                 | [5]: <?php
+  0 | L1 | C  1 | CC 0 | ( 0) | T_OPEN_TAG                 | [  5]: <?php
 
-  1 | L2 | C  1 | CC 0 | ( 0) | T_WHITESPACE               | [0]:
+  1 | L2 | C  1 | CC 0 | ( 0) | T_WHITESPACE               | [  0]:
 
-  2 | L3 | C  1 | CC 0 | ( 0) | T_COMMENT                  | [32]: // Boolean not operator: All OK.
+  2 | L3 | C  1 | CC 0 | ( 0) | T_COMMENT                  | [ 32]: // Boolean not operator: All OK.
 
-  3 | L4 | C  1 | CC 0 | ( 0) | T_IF                       | [2]: if
-  4 | L4 | C  3 | CC 0 | ( 0) | T_WHITESPACE               | [1]:
-  5 | L4 | C  4 | CC 0 | ( 0) | T_OPEN_PARENTHESIS         | [1]: (
-  6 | L4 | C  5 | CC 0 | ( 1) | T_WHITESPACE               | [1]:
-  7 | L4 | C  6 | CC 0 | ( 1) | T_CONSTANT_ENCAPSED_STRING | [4]: 'bb'
-  8 | L4 | C 10 | CC 0 | ( 1) | T_WHITESPACE               | [1]:
-  9 | L4 | C 11 | CC 0 | ( 1) | T_IS_NOT_IDENTICAL         | [3]: !==
- 10 | L4 | C 14 | CC 0 | ( 1) | T_WHITESPACE               | [1]:
- 11 | L4 | C 15 | CC 0 | ( 1) | T_CONSTANT_ENCAPSED_STRING | [4]: 'bb'
- 12 | L4 | C 19 | CC 0 | ( 1) | T_WHITESPACE               | [1]:
- 13 | L4 | C 20 | CC 0 | ( 0) | T_CLOSE_PARENTHESIS        | [1]: )
- 14 | L4 | C 21 | CC 0 | ( 0) | T_WHITESPACE               | [1]:
- 15 | L4 | C 22 | CC 0 | ( 0) | T_OPEN_CURLY_BRACKET       | [1]: {
- 16 | L4 | C 23 | CC 0 | ( 0) | T_WHITESPACE               | [0]:
+  3 | L4 | C  1 | CC 0 | ( 0) | T_IF                       | [  2]: if
+  4 | L4 | C  3 | CC 0 | ( 0) | T_WHITESPACE               | [  1]:
+  5 | L4 | C  4 | CC 0 | ( 0) | T_OPEN_PARENTHESIS         | [  1]: (
+  6 | L4 | C  5 | CC 0 | ( 1) | T_WHITESPACE               | [  1]:
+  7 | L4 | C  6 | CC 0 | ( 1) | T_CONSTANT_ENCAPSED_STRING | [  4]: 'bb'
+  8 | L4 | C 10 | CC 0 | ( 1) | T_WHITESPACE               | [  1]:
+  9 | L4 | C 11 | CC 0 | ( 1) | T_IS_NOT_IDENTICAL         | [  3]: !==
+ 10 | L4 | C 14 | CC 0 | ( 1) | T_WHITESPACE               | [  1]:
+ 11 | L4 | C 15 | CC 0 | ( 1) | T_CONSTANT_ENCAPSED_STRING | [  4]: 'bb'
+ 12 | L4 | C 19 | CC 0 | ( 1) | T_WHITESPACE               | [  1]:
+ 13 | L4 | C 20 | CC 0 | ( 0) | T_CLOSE_PARENTHESIS        | [  1]: )
+ 14 | L4 | C 21 | CC 0 | ( 0) | T_WHITESPACE               | [  1]:
+ 15 | L4 | C 22 | CC 0 | ( 0) | T_OPEN_CURLY_BRACKET       | [  1]: {
+ 16 | L4 | C 23 | CC 0 | ( 0) | T_WHITESPACE               | [  0]:
 
- 17 | L5 | C  1 | CC 0 | ( 0) | T_WHITESPACE               | [1]: \t
- 18 | L5 | C  2 | CC 0 | ( 0) | T_IF                       | [2]: if
- 19 | L5 | C  4 | CC 0 | ( 0) | T_WHITESPACE               | [1]:
- 20 | L5 | C  5 | CC 0 | ( 0) | T_OPEN_PARENTHESIS         | [1]: (
- 21 | L5 | C  6 | CC 0 | ( 0) | T_WHITESPACE               | [0]:
+ 17 | L5 | C  1 | CC 0 | ( 0) | T_WHITESPACE               | [  1]: \t
+ 18 | L5 | C  2 | CC 0 | ( 0) | T_IF                       | [  2]: if
+ 19 | L5 | C  4 | CC 0 | ( 0) | T_WHITESPACE               | [  1]:
+ 20 | L5 | C  5 | CC 0 | ( 0) | T_OPEN_PARENTHESIS         | [  1]: (
+ 21 | L5 | C  6 | CC 0 | ( 0) | T_WHITESPACE               | [  0]:
 ```
 
 PHPCS itself can also display similar information using the `-vv` or `-vvv` verbosity flags, however, when using those, you will receive a *lot* more information than just the token list and, while useful for debugging PHPCS itself, the additional information is mostly just noise when developing a sniff.
