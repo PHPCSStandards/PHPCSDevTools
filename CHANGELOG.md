@@ -10,7 +10,7 @@ This projects adheres to [Keep a CHANGELOG](http://keepachangelog.com/) and uses
 _Nothing yet._
 
 
-## [1.1.1] - 2022-04-27
+## [1.1.1] - 2022-04-28
 
 ### Changed
 * `PHPCSDebug.Debug.TokenList`: readability improvement (alignment of content length).
