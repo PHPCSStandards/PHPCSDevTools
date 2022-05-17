@@ -21,7 +21,7 @@ use PHP_CodeSniffer\Files\File;
  *
  * @since 1.0.0
  */
-class TokenListSniff implements Sniff
+final class TokenListSniff implements Sniff
 {
 
     /**

@@ -20,7 +20,7 @@ use RegexIterator;
  *
  * @since 1.0.0
  */
-class FileList
+final class FileList
 {
 
     /**
