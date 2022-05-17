@@ -36,7 +36,7 @@ if (is_file(__DIR__.'/../autoload.php') === true) {
     require_once __DIR__.'/../autoload.php';
 } else {
     // Presume git clone.
-    require_once __DIR__ . '/../Scripts/FileList.php';
+    require_once __DIR__ . '/../Scripts/Utils/FileList.php';
     require_once __DIR__ . '/../Scripts/FeatureComplete/Check.php';
 }
 

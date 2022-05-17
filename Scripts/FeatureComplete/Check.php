@@ -10,7 +10,7 @@
 
 namespace PHPCSDevTools\Scripts\FeatureComplete;
 
-use PHPCSDevTools\Scripts\FileList;
+use PHPCSDevTools\Scripts\Utils\FileList;
 
 /**
  * Check that each sniff is feature complete, i.e. has unit tests and documentation.
