@@ -8,14 +8,20 @@
  * @link      https://github.com/PHPCSStandards/PHPCSDevTools
  */
 
-namespace PHPCSDevTools\Scripts;
+namespace PHPCSDevTools\Scripts\FeatureComplete;
+
+use PHPCSDevTools\Scripts\FileList;
 
 /**
  * Check that each sniff is feature complete, i.e. has unit tests and documentation.
  *
+ * ---------------------------------------------------------------------------------------------
+ * This class is not part of the public API. Backward compatibility is not guaranteed.
+ * ---------------------------------------------------------------------------------------------
+ *
  * @since 1.0.0
  */
-final class CheckSniffCompleteness
+final class Check
 {
 
     /**
@@ -451,7 +457,7 @@ final class CheckSniffCompleteness
     protected function showVersion()
     {
         echo 'PHPCSDevTools: Sniff feature completeness checker version ';
-        include __DIR__ . '/../VERSION';
+        include __DIR__ . '/../../VERSION';
         echo \PHP_EOL,
             'by Juliette Reinders Folmer', \PHP_EOL, \PHP_EOL;
     }
