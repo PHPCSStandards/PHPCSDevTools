@@ -37,8 +37,10 @@ if (is_file(__DIR__.'/../autoload.php') === true) {
 } else {
     // Presume git clone.
     require_once __DIR__ . '/../Scripts/Utils/FileList.php';
+    require_once __DIR__ . '/../Scripts/FeatureComplete/Config.php';
     require_once __DIR__ . '/../Scripts/FeatureComplete/Check.php';
 }
 
-$validate = new PHPCSDevTools\Scripts\FeatureComplete\Check();
+$config   = new PHPCSDevTools\Scripts\FeatureComplete\Config();
+$validate = new PHPCSDevTools\Scripts\FeatureComplete\Check($config);
 $validate->validate();

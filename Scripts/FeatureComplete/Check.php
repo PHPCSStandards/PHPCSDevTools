@@ -10,6 +10,7 @@
 
 namespace PHPCSDevTools\Scripts\FeatureComplete;
 
+use PHPCSDevTools\Scripts\FeatureComplete\Config;
 use PHPCSDevTools\Scripts\Utils\FileList;
 
 /**
@@ -32,65 +33,11 @@ final class Check
     const FILTER_REGEX = '`%1$s%2$s.*?/Sniffs/(?!Abstract).+Sniff\.php$`Di';
 
     /**
-     * Whether or not to show progress.
+     * Configuration as passed on the command line
      *
-     * To disable showing progress, pass `--no-progress` on the command line
-     * when calling the script.
-     *
-     * @var boolean
+     * @var \PHPCSDevTools\Scripts\FeatureComplete\Config
      */
-    protected $showProgress = true;
-
-    /**
-     * Whether to use "quiet" mode.
-     *
-     * This will silence all warnings, but still show the errors.
-     *
-     * To enable "quiet" mode, pass `-q` on the command line when calling
-     * the script.
-     *
-     * @var boolean
-     */
-    protected $quietMode = false;
-
-    /**
-     * Whether or not to show colored output.
-     *
-     * This will be automatically detected if not set from the command-line.
-     *
-     * @var boolean
-     */
-    protected $showColored;
-
-    /**
-     * Verbosity level.
-     *
-     * @var int
-     */
-    protected $verbose = 0;
-
-    /**
-     * The target directories to examine.
-     *
-     * @var array
-     */
-    protected $targetDirs = [];
-
-    /**
-     * The root directory of the project.
-     *
-     * @var string
-     */
-    protected $projectRoot = '';
-
-    /**
-     * Directories to exclude from the scan.
-     *
-     * @var array
-     */
-    protected $excludedDirs = [
-        'vendor',
-    ];
+    protected $config;
 
     /**
      * List of all files in the repo.
@@ -146,15 +93,18 @@ final class Check
 
     /**
      * Constructor.
+     *
+     * @param \PHPCSDevTools\Scripts\FeatureComplete\Config $config Configuration as passed on the
+     *                                                              command line.
      */
-    public function __construct()
+    public function __construct(Config $config)
     {
-        $this->processCliCommand();
+        $this->config = $config;
 
         $sep = '/';
-        if (empty($this->targetDirs)) {
+        if (empty($this->config->targetDirs)) {
             // If the user didn't provide a path, use the directory from which the script was run.
-            $this->targetDirs[] = $this->projectRoot;
+            $this->targetDirs[] = $this->config->projectRoot;
         } else {
             // Handle Windows vs Unix file paths.
             $sep = \DIRECTORY_SEPARATOR;
@@ -162,17 +112,17 @@ final class Check
 
         // Handle excluded dirs.
         $exclude = '(?!\.git/)';
-        if (empty($this->excludedDirs) === false) {
+        if (empty($this->config->excludedDirs) === false) {
             $excludedDirs = \array_map(
                 'preg_quote',
-                $this->excludedDirs,
-                \array_fill(0, \count($this->excludedDirs), '`')
+                $this->config->excludedDirs,
+                \array_fill(0, \count($this->config->excludedDirs), '`')
             );
             $exclude      = '(?!(\.git|' . \implode('|', $excludedDirs) . ')/)';
         }
 
         // Prepare the regexes.
-        $quotedProjectRoot = \preg_quote($this->projectRoot . $sep, '`');
+        $quotedProjectRoot = \preg_quote($this->config->projectRoot . $sep, '`');
         $allFilesRegex     = \str_replace('(?!\.git/)', $exclude, FileList::BASE_REGEX);
         $allFilesRegex     = \sprintf($allFilesRegex, $quotedProjectRoot);
         $sniffsRegex       = \sprintf(self::FILTER_REGEX, $quotedProjectRoot, $exclude);
@@ -180,12 +130,12 @@ final class Check
         // Get the file lists.
         $allFiles  = [];
         $allSniffs = [];
-        foreach ($this->targetDirs as $targetDir) {
+        foreach ($this->config->targetDirs as $targetDir) {
             // Get a list of all files in the target directory.
-            $allFiles[] = (new FileList($targetDir, $this->projectRoot, $allFilesRegex))->getList();
+            $allFiles[] = (new FileList($targetDir, $this->config->projectRoot, $allFilesRegex))->getList();
 
             // Get a list of all sniffs in the target directory.
-            $allSniffs[] = (new FileList($targetDir, $this->projectRoot, $sniffsRegex))->getList();
+            $allSniffs[] = (new FileList($targetDir, $this->config->projectRoot, $sniffsRegex))->getList();
         }
 
         $allFiles = \call_user_func_array('array_merge', $allFiles);
@@ -198,107 +148,17 @@ final class Check
     }
 
     /**
-     * Process the received command arguments.
-     *
-     * @return void
-     */
-    protected function processCliCommand()
-    {
-        $args = $_SERVER['argv'];
-
-        // Remove the call to the script itself.
-        \array_shift($args);
-
-        $this->projectRoot = \getcwd();
-
-        if (empty($args)) {
-            // No options set.
-            $this->showColored = $this->isColorSupported();
-
-            return;
-        }
-
-        $argsFlipped = \array_flip($args);
-
-        if (isset($argsFlipped['-h'])
-            || isset($argsFlipped['--help'])
-        ) {
-            $this->showHelp();
-            exit(0);
-        }
-
-        if (isset($argsFlipped['-V'])
-            || isset($argsFlipped['--version'])
-        ) {
-            $this->showVersion();
-            exit(0);
-        }
-
-        if (isset($argsFlipped['-q'])
-            || isset($argsFlipped['--quiet'])
-        ) {
-            $this->quietMode = true;
-        }
-
-        if (isset($argsFlipped['--no-progress'])) {
-            $this->showProgress = false;
-        }
-
-        if (isset($argsFlipped['--no-colors'])) {
-            $this->showColored = false;
-        } elseif (isset($argsFlipped['--colors'])) {
-            $this->showColored = true;
-        } else {
-            $this->showColored = $this->isColorSupported();
-        }
-
-        if (isset($argsFlipped['-v'])) {
-            $this->verbose = 1;
-        }
-
-        foreach ($args as $arg) {
-            if (\strpos($arg, '--exclude=') === 0) {
-                $exclude = \substr($arg, 10);
-                if (empty($exclude)) {
-                    $this->excludedDirs = [];
-                    continue;
-                }
-
-                $exclude = \explode(',', $exclude);
-                $exclude = \array_map(
-                    static function ($subdir) {
-                        return \trim($subdir, '/');
-                    },
-                    $exclude
-                );
-
-                $this->excludedDirs = $exclude;
-                continue;
-            }
-
-            if ($arg[0] !== '-') {
-                // The user must have set a path to search. Let's ensure it is a valid path.
-                $realpath = \realpath($arg);
-
-                if ($realpath !== false) {
-                    $this->targetDirs[] = $realpath;
-                }
-            }
-        }
-    }
-
-    /**
      * Validate the completeness of the sniffs in the repository.
      *
      * @return void
      */
     public function validate()
     {
-        $this->showVersion();
+        $this->config->showVersion();
 
-        if ($this->verbose > 0) {
+        if ($this->config->verbose > 0) {
             echo 'Target dir(s):', \PHP_EOL,
-                '- ' . \implode(\PHP_EOL . '- ', $this->targetDirs),
+                '- ' . \implode(\PHP_EOL . '- ', $this->config->targetDirs),
                 \PHP_EOL, \PHP_EOL;
         }
 
@@ -326,7 +186,7 @@ final class Check
         $testError     = 'ERROR: Unit tests missing for %s.';
         $testCaseError = 'ERROR: Unit test case file missing for %s.';
 
-        if ($this->showColored === true) {
+        if ($this->config->showColored === true) {
             $docWarning    = \str_replace('WARNING', "\033[33mWARNING\033[0m", $docWarning);
             $testError     = \str_replace('ERROR', "\033[31mERROR\033[0m", $testError);
             $testCaseError = \str_replace('ERROR', "\033[31mERROR\033[0m", $testCaseError);
@@ -336,7 +196,7 @@ final class Check
         $warningCount = 0;
         $errorCount   = 0;
         foreach ($this->allSniffs as $i => $file) {
-            if ($this->quietMode === false) {
+            if ($this->config->quietMode === false) {
                 $docFile = \str_replace(\array_keys($this->sniffToDoc), $this->sniffToDoc, $file);
                 if (isset($this->allFiles[$docFile]) === false) {
                     $notices[] = \sprintf($docWarning, $file);
@@ -365,7 +225,7 @@ final class Check
             }
 
             // Show progress.
-            if ($this->showProgress === true) {
+            if ($this->config->showProgress === true) {
                 echo '.';
 
                 $current = ($i + 1);
@@ -404,13 +264,13 @@ final class Check
                 $feedback = "Found $sniffCount sniff";
             }
 
-            if ($this->quietMode === false) {
+            if ($this->config->quietMode === false) {
                 $feedback .= ' accompanied by unit tests and documentation.';
             } else {
                 $feedback .= ' accompanied by unit tests.';
             }
 
-            if ($this->showColored === true) {
+            if ($this->config->showColored === true) {
                 $feedback = "\033[32m{$feedback}\033[0m";
             }
 
@@ -418,77 +278,5 @@ final class Check
 
             return true;
         }
-    }
-
-    /**
-     * Detect whether or not the CLI supports colored output.
-     *
-     * @return bool
-     */
-    protected function isColorSupported()
-    {
-        // Windows.
-        if (\DIRECTORY_SEPARATOR === '\\') {
-            if (\getenv('ANSICON') !== false || \getenv('ConEmuANSI') === 'ON') {
-                return true;
-            }
-
-            if (\function_exists('sapi_windows_vt100_support')) {
-                // phpcs:ignore PHPCompatibility.FunctionUse.NewFunctions.sapi_windows_vt100_supportFound
-                return @\sapi_windows_vt100_support(\STDOUT);
-            }
-
-            return false;
-        }
-
-        // Linux/MacOS.
-        if (\function_exists('posix_isatty')) {
-            return @\posix_isatty(\STDOUT);
-        }
-
-        return false;
-    }
-
-    /**
-     * Display the version number of this script.
-     *
-     * @return void
-     */
-    protected function showVersion()
-    {
-        echo 'PHPCSDevTools: Sniff feature completeness checker version ';
-        include __DIR__ . '/../../VERSION';
-        echo \PHP_EOL,
-            'by Juliette Reinders Folmer', \PHP_EOL, \PHP_EOL;
-    }
-
-    /**
-     * Display usage instructions.
-     *
-     * @return void
-     */
-    protected function showHelp()
-    {
-        $this->showVersion();
-
-        echo 'Usage:', \PHP_EOL,
-            '    phpcs-check-feature-completeness', \PHP_EOL,
-            '    phpcs-check-feature-completeness [-q] [--exclude=<dir>] [directories]', \PHP_EOL;
-
-        echo \PHP_EOL,
-            'Options:', \PHP_EOL,
-            '    directories   One or more specific directories to examine.', \PHP_EOL,
-            '                  Defaults to the directory from which the script is run.', \PHP_EOL,
-            '    -q, --quiet   Turn off warnings for missing documentation.', \PHP_EOL,
-            '    --exclude     Comma-delimited list of (relative) directories to exclude', \PHP_EOL,
-            '                  from the scan.', \PHP_EOL,
-            '                  Defaults to excluding the /vendor/ directory.', \PHP_EOL,
-            '    --no-progress Disable progress in console output.', \PHP_EOL,
-            '    --colors      Enable colors in console output.', \PHP_EOL,
-            '                  (disables auto detection of color support)', \PHP_EOL,
-            '    --no-colors   Disable colors in console output.', \PHP_EOL,
-            '    -v            Verbose mode.', \PHP_EOL,
-            '    -h, --help    Print this help.', \PHP_EOL,
-            '    -V, --version Display the current version of this script.', \PHP_EOL;
     }
 }
