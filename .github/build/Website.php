@@ -216,7 +216,7 @@ final class Website
      */
     private function mdBadgeToHtml(string $mdBadge): string
     {
-        $mdBadge = trim($mdBadge);
+        $mdBadge = \trim($mdBadge);
 
         $matched = \preg_match(
             '`^\[!\[(?<alt>[^\]]+)\]\((?<imgurl>[^\)]+)\)\]\((?<href>[^\)]+)\)$`',
