@@ -86,13 +86,20 @@ final class Config
     ];
 
     /**
+     * Whether or not to execute the completeness check.
+     *
+     * @var bool
+     */
+    private $executeCheck = true;
+
+    /**
      * Constructor.
      */
     public function __construct()
     {
         $this->processCliCommand();
 
-        if (empty($this->targetDirs)) {
+        if ($this->executeCheck === true && empty($this->targetDirs)) {
             // If the user didn't provide a path, use the directory from which the script was run.
             $this->targetDirs[] = $this->projectRoot;
         }
@@ -181,14 +188,16 @@ final class Config
             || isset($argsFlipped['--help'])
         ) {
             $this->showHelp();
-            exit(0);
+            $this->executeCheck = false;
+            return;
         }
 
         if (isset($argsFlipped['-V'])
             || isset($argsFlipped['--version'])
         ) {
             $this->showVersion();
-            exit(0);
+            $this->executeCheck = false;
+            return;
         }
 
         if (isset($argsFlipped['-q'])

@@ -41,6 +41,11 @@ if (is_file(__DIR__.'/../autoload.php') === true) {
     require_once __DIR__ . '/../Scripts/FeatureComplete/Check.php';
 }
 
-$config   = new PHPCSDevTools\Scripts\FeatureComplete\Config();
+$config = new PHPCSDevTools\Scripts\FeatureComplete\Config();
+if ($config->executeCheck === false) {
+    // This was a help request or version check.
+    exit(0);
+}
+
 $validate = new PHPCSDevTools\Scripts\FeatureComplete\Check($config);
 $validate->validate();
