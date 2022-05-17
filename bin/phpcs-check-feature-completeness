@@ -48,4 +48,4 @@ if ($config->executeCheck === false) {
 }
 
 $validate = new PHPCSDevTools\Scripts\FeatureComplete\Check($config);
-$validate->validate();
+exit($validate->validate());

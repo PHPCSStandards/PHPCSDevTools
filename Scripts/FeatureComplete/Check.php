@@ -143,7 +143,7 @@ final class Check
     /**
      * Validate the completeness of the sniffs in the repository.
      *
-     * @return void
+     * @return int Exit code.
      */
     public function validate()
     {
@@ -156,10 +156,10 @@ final class Check
         }
 
         if ($this->isComplete() !== true) {
-            exit(1);
+            return 1;
         }
 
-        exit(0);
+        return 0;
     }
 
     /**
