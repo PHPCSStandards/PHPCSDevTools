@@ -63,7 +63,9 @@ final class MarkProgressTest extends CheckTestCase
         $command        = 'phpcs-check-feature-completeness --no-colors --no-progress ' . $fixtureDir;
         $expectedOutput = 'by Juliette Reinders Folmer
 
-All 3 sniffs are accompanied by unit tests and documentation.';
+All 3 sniffs are accompanied by unit tests and documentation.
+
+No orphaned documentation or test files found.';
 
         $regex = '`' .  \preg_quote($expectedOutput, '`') . '[\r\n]$`';
 
@@ -79,7 +81,7 @@ All 3 sniffs are accompanied by unit tests and documentation.';
     {
         $this->createDummySniffs(10);
 
-        $command        = 'phpcs-check-feature-completeness --no-colors .' . self::FIXTURE_DIR;
+        $command        = 'phpcs-check-feature-completeness --no-colors --no-orphans .' . self::FIXTURE_DIR;
         $expectedOutput = '.......... 10 / 10 (100%)';
         $regex          = '`[\r\n]+' .  \preg_quote($expectedOutput, '`') . '[\r\n]+`';
 
@@ -95,7 +97,7 @@ All 3 sniffs are accompanied by unit tests and documentation.';
     {
         $this->createDummySniffs(60);
 
-        $command        = 'phpcs-check-feature-completeness --no-colors .' . self::FIXTURE_DIR;
+        $command        = 'phpcs-check-feature-completeness --no-colors --no-orphans .' . self::FIXTURE_DIR;
         $expectedOutput = '............................................................ 60 / 60 (100%)';
         $regex          = '`[\r\n]+' .  \preg_quote($expectedOutput, '`') . '[\r\n]+`';
 
@@ -111,7 +113,7 @@ All 3 sniffs are accompanied by unit tests and documentation.';
     {
         $this->createDummySniffs(80);
 
-        $command        = 'phpcs-check-feature-completeness --no-colors .' . self::FIXTURE_DIR;
+        $command        = 'phpcs-check-feature-completeness --no-colors --no-orphans .' . self::FIXTURE_DIR;
         $expectedOutput = '
 ............................................................ 60 / 80 ( 75%)
 ....................                                         80 / 80 (100%)';
@@ -130,7 +132,7 @@ All 3 sniffs are accompanied by unit tests and documentation.';
     {
         $this->createDummySniffs(120);
 
-        $command        = 'phpcs-check-feature-completeness --no-colors .' . self::FIXTURE_DIR;
+        $command        = 'phpcs-check-feature-completeness --no-colors --no-orphans .' . self::FIXTURE_DIR;
         $expectedOutput = '
 ............................................................  60 / 120 ( 50%)
 ............................................................ 120 / 120 (100%)';
@@ -149,7 +151,7 @@ All 3 sniffs are accompanied by unit tests and documentation.';
     {
         $this->createDummySniffs(145);
 
-        $command        = 'phpcs-check-feature-completeness --no-colors .' . self::FIXTURE_DIR;
+        $command        = 'phpcs-check-feature-completeness --no-colors --no-orphans .' . self::FIXTURE_DIR;
         $expectedOutput = '
 ............................................................  60 / 145 ( 41%)
 ............................................................ 120 / 145 ( 83%)

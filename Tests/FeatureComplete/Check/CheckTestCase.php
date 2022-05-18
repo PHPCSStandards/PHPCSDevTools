@@ -39,6 +39,6 @@ abstract class CheckTestCase extends TestCase
         $config          = new Config();
         $check           = new Check($config);
 
-        $this->assertSame($expectedExitcode, $check->validate());
+        $this->assertSame($expectedExitcode, $check->validate(), 'Exit code does not match expectation');
     }
 }

@@ -56,6 +56,16 @@ final class Config
     protected $checkDocs = true;
 
     /**
+     * Whether or not to check for orphaned files.
+     *
+     * To disable checking for orphaned files, pass `--no-orphans` on the command line
+     * when calling the script or use "quiet" mode by passing `-q`.
+     *
+     * @var bool
+     */
+    protected $checkOrphans = true;
+
+    /**
      * Whether or not to show progress.
      *
      * To disable showing progress, pass `--no-progress` on the command line
@@ -122,7 +132,7 @@ final class Config
             ],
             [
                 'arg'  => '-q, --quiet',
-                'desc' => 'Turn off warnings for missing documentation. Equivalent to running with "--no-docs".',
+                'desc' => 'Turn off warnings for missing documentation and orphaned files. Equivalent to running with "--no-docs --no-orphans".',
             ],
             [
                 'arg'  => '--exclude=<dir1,dir2>',
@@ -131,6 +141,10 @@ final class Config
             [
                 'arg'  => '--no-docs',
                 'desc' => 'Disable missing documentation check.',
+            ],
+            [
+                'arg'  => '--no-orphans',
+                'desc' => 'Disable orphaned files check.',
             ],
             [
                 'arg'  => '--no-progress',
@@ -280,11 +294,16 @@ final class Config
         if (isset($argsFlipped['-q'])
             || isset($argsFlipped['--quiet'])
         ) {
-            $this->checkDocs = false;
+            $this->checkDocs    = false;
+            $this->checkOrphans = false;
         }
 
         if (isset($argsFlipped['--no-docs'])) {
             $this->checkDocs = false;
+        }
+
+        if (isset($argsFlipped['--no-orphans'])) {
+            $this->checkOrphans = false;
         }
 
         if (isset($argsFlipped['--no-progress'])) {
