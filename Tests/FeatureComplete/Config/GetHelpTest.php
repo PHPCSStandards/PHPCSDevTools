@@ -32,19 +32,19 @@ Usage:
     phpcs-check-feature-completeness [-q] [--exclude=<dir>] [directories]
 
 Options:
-    directories   One or more specific directories to examine.
-                  Defaults to the directory from which the script is run.
-    -q, --quiet   Turn off warnings for missing documentation.
-    --exclude     Comma-delimited list of (relative) directories to exclude
-                  from the scan.
-                  Defaults to excluding the /vendor/ directory.
-    --no-progress Disable progress in console output.
-    --colors      Enable colors in console output.
-                  (disables auto detection of color support)
-    --no-colors   Disable colors in console output.
-    -v            Verbose mode.
-    -h, --help    Print this help.
-    -V, --version Display the current version of this script.';
+    directories <dir>     One or more specific directories to examine.
+                          Defaults to the directory from which the script is run.
+    -q, --quiet           Turn off warnings for missing documentation.
+    --exclude=<dir1,dir2> Comma-delimited list of (relative) directories to
+                          exclude from the scan.
+                          Defaults to excluding the /vendor/ directory.
+    --no-progress         Disable progress in console output.
+    --colors              Enable colors in console output.
+                          (disables auto detection of color support)
+    --no-colors           Disable colors in console output.
+    -v                    Verbose mode.
+    -h, --help            Print this help.
+    -V, --version         Display the current version of this script.';
 
     /**
      * Verify the "show help" command generates the expected output.

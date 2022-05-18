@@ -313,19 +313,19 @@ final class Config
 
         $text .= \PHP_EOL;
         $text .= 'Options:' . \PHP_EOL;
-        $text .= '    directories   One or more specific directories to examine.' . \PHP_EOL;
-        $text .= '                  Defaults to the directory from which the script is run.' . \PHP_EOL;
-        $text .= '    -q, --quiet   Turn off warnings for missing documentation.' . \PHP_EOL;
-        $text .= '    --exclude     Comma-delimited list of (relative) directories to exclude' . \PHP_EOL;
-        $text .= '                  from the scan.' . \PHP_EOL;
-        $text .= '                  Defaults to excluding the /vendor/ directory.' . \PHP_EOL;
-        $text .= '    --no-progress Disable progress in console output.' . \PHP_EOL;
-        $text .= '    --colors      Enable colors in console output.' . \PHP_EOL;
-        $text .= '                  (disables auto detection of color support)' . \PHP_EOL;
-        $text .= '    --no-colors   Disable colors in console output.' . \PHP_EOL;
-        $text .= '    -v            Verbose mode.' . \PHP_EOL;
-        $text .= '    -h, --help    Print this help.' . \PHP_EOL;
-        $text .= '    -V, --version Display the current version of this script.' . \PHP_EOL;
+        $text .= '    directories <dir>     One or more specific directories to examine.' . \PHP_EOL;
+        $text .= '                          Defaults to the directory from which the script is run.' . \PHP_EOL;
+        $text .= '    -q, --quiet           Turn off warnings for missing documentation.' . \PHP_EOL;
+        $text .= '    --exclude=<dir1,dir2> Comma-delimited list of (relative) directories to' . \PHP_EOL;
+        $text .= '                          exclude from the scan.' . \PHP_EOL;
+        $text .= '                          Defaults to excluding the /vendor/ directory.' . \PHP_EOL;
+        $text .= '    --no-progress         Disable progress in console output.' . \PHP_EOL;
+        $text .= '    --colors              Enable colors in console output.' . \PHP_EOL;
+        $text .= '                          (disables auto detection of color support)' . \PHP_EOL;
+        $text .= '    --no-colors           Disable colors in console output.' . \PHP_EOL;
+        $text .= '    -v                    Verbose mode.' . \PHP_EOL;
+        $text .= '    -h, --help            Print this help.' . \PHP_EOL;
+        $text .= '    -V, --version         Display the current version of this script.' . \PHP_EOL;
 
         return $text;
     }
