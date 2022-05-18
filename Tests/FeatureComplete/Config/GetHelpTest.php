@@ -12,6 +12,7 @@ namespace PHPCSDevTools\Tests\FeatureComplete\Config;
 
 use PHPCSDevTools\Scripts\FeatureComplete\Config;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 /**
  * Test the "show help" feature.
@@ -26,25 +27,51 @@ final class GetHelpTest extends TestCase
      *
      * @var string
      */
-    private $expectedOutput = '
+    private $expectedOutputNoColors = '
 Usage:
-    phpcs-check-feature-completeness
-    phpcs-check-feature-completeness [-q] [--exclude=<dir>] [directories]
+  phpcs-check-feature-completeness
+  phpcs-check-feature-completeness [-q] [--exclude=<dir>] [directories]
 
 Options:
-    directories <dir>     One or more specific directories to examine.
-                          Defaults to the directory from which the script is run.
-    -q, --quiet           Turn off warnings for missing documentation.
-    --exclude=<dir1,dir2> Comma-delimited list of (relative) directories to
-                          exclude from the scan.
-                          Defaults to excluding the /vendor/ directory.
-    --no-progress         Disable progress in console output.
-    --colors              Enable colors in console output.
-                          (disables auto detection of color support)
-    --no-colors           Disable colors in console output.
-    -v                    Verbose mode.
-    -h, --help            Print this help.
-    -V, --version         Display the current version of this script.';
+  directories <dir>     One or more specific directories to examine.
+                        Defaults to the directory from which the script is run.
+  -q, --quiet           Turn off warnings for missing documentation.
+  --exclude=<dir1,dir2> Comma-delimited list of (relative) directories to
+                        exclude from the scan.
+                        Defaults to excluding the /vendor/ directory.
+  --no-progress         Disable progress in console output.
+  --colors              Enable colors in console output.
+                        (disables auto detection of color support).
+  --no-colors           Disable colors in console output.
+  -v                    Verbose mode.
+  -h, --help            Print this help.
+  -V, --version         Display the current version of this script.';
+
+    /**
+     * Expected help text output with colors.
+     *
+     * @var string
+     */
+    private $expectedOutputColorized = "\033[33mUsage:\033[0m
+  phpcs-check-feature-completeness
+  phpcs-check-feature-completeness \033[36m[-q]\033[0m \033[36m[--exclude=<dir>]\033[0m \033[36m[directories]\033[0m
+
+\033[33mOptions:\033[0m
+  \033[32mdirectories \033[0m\033[36m<dir>    \033[0m One or more specific directories to examine.
+                        Defaults to the directory from which the script is run.
+  \033[32m-q, --quiet          \033[0m Turn off warnings for missing documentation.
+  \033[32m--exclude=\033[0m\033[36m<dir1,dir2>\033[0m Comma-delimited list of (relative) directories to
+                        exclude from the scan.
+                        Defaults to excluding the /vendor/ directory.
+  \033[32m--no-progress        \033[0m Disable progress in console output.
+  \033[32m--colors             \033[0m Enable colors in console output.
+                        (disables auto detection of color support).
+  \033[32m--no-colors          \033[0m Disable colors in console output.
+  \033[32m-v                   \033[0m Verbose mode.
+  \033[32m-h, --help           \033[0m Print this help.
+  \033[32m-V, --version        \033[0m Display the current version of this script.
+
+";
 
     /**
      * Verify the "show help" command generates the expected output.
@@ -55,14 +82,14 @@ Options:
      *
      * @return void
      */
-    public function testShowHelp($command)
+    public function testShowHelpNoColors($command)
     {
-        $regex = '`' .  \preg_quote($this->expectedOutput, '`') . '`';
+        $regex = '`' .  \preg_quote($this->expectedOutputNoColors, '`') . '`';
         // Make the regex ignore differences in line endings.
         $regex = \preg_replace('`[\r\n]+`', '[\r\n]+', $regex);
         $this->expectOutputRegex($regex);
 
-        $_SERVER['argv'] = \explode(' ', $command);
+        $_SERVER['argv'] = \explode(' ', $command . ' --no-colors');
         new Config();
     }
 
@@ -81,5 +108,27 @@ Options:
                 'command' => './phpcs-check-feature-completeness --help',
             ],
         ];
+    }
+
+    /**
+     * Verify the help text will be colorized correctly when colored output is enabled.
+     *
+     * @return void
+     */
+    public function testGetHelpWithColors()
+    {
+        $_SERVER['argv'] = \explode(' ', 'command --colors');
+        $config          = new Config();
+
+        $getHelp = new ReflectionMethod($config, 'getHelp');
+        $getHelp->setAccessible(true);
+
+        $actual = $getHelp->invoke($config);
+        $actual = \str_replace(["\r\n", "\r"], "\n", $actual);
+
+        // Reset to prevent influencing other tests, even if this test would fail.
+        $getHelp->setAccessible(false);
+
+        $this->assertSame($this->expectedOutputColorized, $actual);
     }
 }
