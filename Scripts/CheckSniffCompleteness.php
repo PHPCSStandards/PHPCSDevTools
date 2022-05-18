@@ -408,7 +408,7 @@ final class CheckSniffCompleteness
                 $feedback = "\033[32m{$feedback}\033[0m";
             }
 
-            echo \PHP_EOL, \PHP_EOL, $feedback, \PHP_EOL;
+            echo \PHP_EOL, $feedback, \PHP_EOL;
 
             return true;
         }
