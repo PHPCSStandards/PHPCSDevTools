@@ -78,14 +78,9 @@ class CheckSniffCompleteness
     protected $projectRoot = '';
 
     /**
-     * Whether to use "quiet" mode.
+     * Directories to exclude from the scan.
      *
-     * This will silence all warnings, but still show the errors.
-     *
-     * To enable "quiet" mode, pass `-q` on the command line when calling
-     * the `check-sniff-completeness` script.
-     *
-     * @var boolean
+     * @var array
      */
     protected $excludedDirs = [
         'vendor',
@@ -276,7 +271,7 @@ class CheckSniffCompleteness
             }
 
             if ($arg[0] !== '-') {
-                // The user must have set a path to search.
+                // The user must have set a path to search. Let's ensure it is a valid path.
                 $realpath = \realpath($arg);
 
                 if ($realpath !== false) {
@@ -311,7 +306,7 @@ class CheckSniffCompleteness
     /**
      * Verify if all files needed for a sniff to be considered complete are available.
      *
-     * @return void
+     * @return bool
      */
     public function isComplete()
     {
