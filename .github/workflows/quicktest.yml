@@ -80,7 +80,7 @@ jobs:
       # This also acts as an integration test for the feature completeness script,
       # which is why it is run against various PHP versions and not in the "Sniff" stage.
       - name: Check for feature completeness
-        if: ${{ matrix.lint }}
+        if: ${{ matrix.phpcs_version == 'dev-master' }}
         run: composer check-complete
 
       - name: Run the unit tests
