@@ -187,7 +187,8 @@ final class Config
         if (isset($argsFlipped['-h'])
             || isset($argsFlipped['--help'])
         ) {
-            $this->showHelp();
+            echo $this->getVersion();
+            echo $this->getHelp();
             $this->executeCheck = false;
             return;
         }
@@ -297,32 +298,32 @@ final class Config
     }
 
     /**
-     * Display usage instructions.
+     * Retrieve usage instructions.
      *
-     * @return void
+     * @return string
      */
-    private function showHelp()
+    private function getHelp()
     {
-        echo $this->getVersion();
+        $text  = 'Usage:' . \PHP_EOL;
+        $text .= '    phpcs-check-feature-completeness' . \PHP_EOL;
+        $text .= '    phpcs-check-feature-completeness [-q] [--exclude=<dir>] [directories]' . \PHP_EOL;
 
-        echo 'Usage:', \PHP_EOL,
-            '    phpcs-check-feature-completeness', \PHP_EOL,
-            '    phpcs-check-feature-completeness [-q] [--exclude=<dir>] [directories]', \PHP_EOL;
+        $text .= \PHP_EOL;
+        $text .= 'Options:' . \PHP_EOL;
+        $text .= '    directories   One or more specific directories to examine.' . \PHP_EOL;
+        $text .= '                  Defaults to the directory from which the script is run.' . \PHP_EOL;
+        $text .= '    -q, --quiet   Turn off warnings for missing documentation.' . \PHP_EOL;
+        $text .= '    --exclude     Comma-delimited list of (relative) directories to exclude' . \PHP_EOL;
+        $text .= '                  from the scan.' . \PHP_EOL;
+        $text .= '                  Defaults to excluding the /vendor/ directory.' . \PHP_EOL;
+        $text .= '    --no-progress Disable progress in console output.' . \PHP_EOL;
+        $text .= '    --colors      Enable colors in console output.' . \PHP_EOL;
+        $text .= '                  (disables auto detection of color support)' . \PHP_EOL;
+        $text .= '    --no-colors   Disable colors in console output.' . \PHP_EOL;
+        $text .= '    -v            Verbose mode.' . \PHP_EOL;
+        $text .= '    -h, --help    Print this help.' . \PHP_EOL;
+        $text .= '    -V, --version Display the current version of this script.' . \PHP_EOL;
 
-        echo \PHP_EOL,
-            'Options:', \PHP_EOL,
-            '    directories   One or more specific directories to examine.', \PHP_EOL,
-            '                  Defaults to the directory from which the script is run.', \PHP_EOL,
-            '    -q, --quiet   Turn off warnings for missing documentation.', \PHP_EOL,
-            '    --exclude     Comma-delimited list of (relative) directories to exclude', \PHP_EOL,
-            '                  from the scan.', \PHP_EOL,
-            '                  Defaults to excluding the /vendor/ directory.', \PHP_EOL,
-            '    --no-progress Disable progress in console output.', \PHP_EOL,
-            '    --colors      Enable colors in console output.', \PHP_EOL,
-            '                  (disables auto detection of color support)', \PHP_EOL,
-            '    --no-colors   Disable colors in console output.', \PHP_EOL,
-            '    -v            Verbose mode.', \PHP_EOL,
-            '    -h, --help    Print this help.', \PHP_EOL,
-            '    -V, --version Display the current version of this script.', \PHP_EOL;
+        return $text;
     }
 }
