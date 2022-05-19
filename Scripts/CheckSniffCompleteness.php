@@ -15,7 +15,7 @@ namespace PHPCSDevTools\Scripts;
  *
  * @since 1.0.0
  */
-class CheckSniffCompleteness
+final class CheckSniffCompleteness
 {
 
     /**
