@@ -101,14 +101,7 @@ final class Check
     {
         $this->config = $config;
 
-        $sep = '/';
-        if (empty($this->config->targetDirs)) {
-            // If the user didn't provide a path, use the directory from which the script was run.
-            $this->targetDirs[] = $this->config->projectRoot;
-        } else {
-            // Handle Windows vs Unix file paths.
-            $sep = \DIRECTORY_SEPARATOR;
-        }
+        $sep = \DIRECTORY_SEPARATOR;
 
         // Handle excluded dirs.
         $exclude = '(?!\.git/)';

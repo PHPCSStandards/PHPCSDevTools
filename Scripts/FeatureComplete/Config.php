@@ -91,6 +91,11 @@ final class Config
     public function __construct()
     {
         $this->processCliCommand();
+
+        if (empty($this->targetDirs)) {
+            // If the user didn't provide a path, use the directory from which the script was run.
+            $this->targetDirs[] = $this->projectRoot;
+        }
     }
 
     /**
