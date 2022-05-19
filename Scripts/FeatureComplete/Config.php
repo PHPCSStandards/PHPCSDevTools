@@ -195,7 +195,7 @@ final class Config
         if (isset($argsFlipped['-V'])
             || isset($argsFlipped['--version'])
         ) {
-            $this->showVersion();
+            echo $this->getVersion();
             $this->executeCheck = false;
             return;
         }
@@ -283,16 +283,17 @@ final class Config
     }
 
     /**
-     * Display the version number of this script.
+     * Retrieve the version number of this script.
      *
-     * @return void
+     * @return string
      */
-    public function showVersion()
+    public function getVersion()
     {
-        echo 'PHPCSDevTools: Sniff feature completeness checker version ';
-        include __DIR__ . '/../../VERSION';
-        echo \PHP_EOL,
-            'by Juliette Reinders Folmer', \PHP_EOL, \PHP_EOL;
+        $text  = 'PHPCSDevTools: Sniff feature completeness checker version ';
+        $text .= \file_get_contents(__DIR__ . '/../../VERSION');
+        $text .= \PHP_EOL . 'by Juliette Reinders Folmer' . \PHP_EOL . \PHP_EOL;
+
+        return $text;
     }
 
     /**
@@ -302,7 +303,7 @@ final class Config
      */
     private function showHelp()
     {
-        $this->showVersion();
+        echo $this->getVersion();
 
         echo 'Usage:', \PHP_EOL,
             '    phpcs-check-feature-completeness', \PHP_EOL,

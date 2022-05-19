@@ -147,7 +147,7 @@ final class Check
      */
     public function validate()
     {
-        $this->config->showVersion();
+        echo $this->config->getVersion();
 
         if ($this->config->verbose > 0) {
             echo 'Target dir(s):', \PHP_EOL,
