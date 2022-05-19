@@ -217,6 +217,20 @@ final class ProcessCliCommandTest extends TestCase
                     ],
                 ],
             ],
+            'Exclude, complete value wrapped in quotes' => [
+                'command'         => './phpcs-check-feature-completeness --exclude=".git,./.github/,Tests/FeatureComplete"',
+                'expectedChanged' => [
+                    'projectRoot'  => $projectRoot,
+                    'targetDirs'   => [
+                        $projectRoot,
+                    ],
+                    'excludedDirs' => [
+                        '.git',
+                        './.github',
+                        'Tests/FeatureComplete',
+                    ],
+                ],
+            ],
             'Exclude, no value' => [
                 'command'         => './phpcs-check-feature-completeness --exclude=',
                 'expectedChanged' => [

@@ -231,6 +231,7 @@ final class Config
                     continue;
                 }
 
+                $exclude = \trim($exclude, '"\''); // Strip potential quotes.
                 $exclude = \explode(',', $exclude);
                 $exclude = \array_map(
                     static function ($subdir) {
