@@ -16,6 +16,8 @@ use PHPCSDevTools\Tests\IOTestCase;
  * Test the Docs XSD feature.
  *
  * @coversNothing
+ *
+ * @phpcs:disable Squiz.Arrays.ArrayDeclaration.DoubleArrowNotAligned -- If needed, fix once replaced by better sniff.
  */
 final class DocsXsdTest extends IOTestCase
 {
@@ -46,7 +48,10 @@ final class DocsXsdTest extends IOTestCase
 
         $this->assertSame(0, $result['exitcode'], 'Exit code does not match 0');
         $this->assertSame('', $result['stdout'], 'Unexpected output in stdout');
-        $this->assertNotFalse(strpos($result['stderr'], "Tests/Fixtures/DocsXsd/{$fixtureFile} validates\n"), $result['stderr'], 'Unexpected output in stderr');
+        $this->assertNotFalse(
+            \strpos($result['stderr'], "Tests/Fixtures/DocsXsd/{$fixtureFile} validates\n"),
+            'Unexpected output in stderr'
+        );
     }
 
     /**
@@ -64,11 +69,11 @@ final class DocsXsdTest extends IOTestCase
                 'fixtureFile' => 'ValidSingleStandard.xml',
             ],
             'Valid docs example with multiple attributes' => [
-                'fixtureFile' => 'ValidDocumentationWithAdditionalAttributes.xml'
+                'fixtureFile' => 'ValidDocumentationWithAdditionalAttributes.xml',
             ],
             'Valid docs example with multiple attributes on the standard element' => [
-                'fixtureFile' => 'ValidStandardWithAdditionalAttributes.xml'
-            ]
+                'fixtureFile' => 'ValidStandardWithAdditionalAttributes.xml',
+            ],
         ];
     }
 
@@ -90,7 +95,7 @@ final class DocsXsdTest extends IOTestCase
 
         $this->assertGreaterThan(0, $result['exitcode'], 'Exit code does not match 0');
         $this->assertSame($expectedStdOut, $result['stdout'], 'Unexpected output in stdout');
-        $this->assertNotFalse(strpos($result['stderr'], $expectedStdErr), $result['stderr'], 'Unexpected output in stderr');
+        $this->assertNotFalse(\strpos($result['stderr'], $expectedStdErr), 'Unexpected output in stderr');
     }
 
     /**
@@ -117,35 +122,35 @@ final class DocsXsdTest extends IOTestCase
                 'expectedStdErr' => "Element 'documentation': The attribute 'title' is required but missing.",
             ],
             'Missing standard element in the sequence group' => [
-                'fixtureFile' => 'InvalidMissingStandardElement.xml',
+                'fixtureFile'    => 'InvalidMissingStandardElement.xml',
                 'expectedStdOut' => '',
                 'expectedStdErr' => "Element 'code_comparison': This element is not expected. Expected is ( standard ).",
             ],
             'Missing code comparison element in the sequence group' => [
-                'fixtureFile' => 'InvalidMissingCodeComparisonElement.xml',
+                'fixtureFile'    => 'InvalidMissingCodeComparisonElement.xml',
                 'expectedStdOut' => '',
                 'expectedStdErr' => "Element 'documentation': Missing child element(s). Expected is ( code_comparison )",
             ],
             'Missing sequence group' => [
-                'fixtureFile' => 'InvalidMissingRuleGroup.xml',
+                'fixtureFile'    => 'InvalidMissingRuleGroup.xml',
                 'expectedStdOut' => '',
                 'expectedStdErr' => "Element 'documentation': Missing child element(s). Expected is ( standard )",
             ],
             'More than two code blocks in one comparison group' => [
-                'fixtureFile' => 'InvalidMoreThanTwoCodeBlocksInComparison.xml',
+                'fixtureFile'    => 'InvalidMoreThanTwoCodeBlocksInComparison.xml',
                 'expectedStdOut' => '',
                 'expectedStdErr' => "Schemas validity error : Element 'code': This element is not expected.",
             ],
             'Less than two code blocks in one comparison group' => [
-                'fixtureFile' => 'InvalidLessThanTwoCodeBlocksInComparison.xml',
+                'fixtureFile'    => 'InvalidLessThanTwoCodeBlocksInComparison.xml',
                 'expectedStdOut' => '',
                 'expectedStdErr' => "Element 'code_comparison': Missing child element(s). Expected is ( code ).",
             ],
             'Code element missing title attribute' => [
-                'fixtureFile' => 'InvalidCodeElementMissingTitle.xml',
+                'fixtureFile'    => 'InvalidCodeElementMissingTitle.xml',
                 'expectedStdOut' => '',
                 'expectedStdErr' => "Element 'code': The attribute 'title' is required but missing.",
-            ]
+            ],
         ];
     }
 }
