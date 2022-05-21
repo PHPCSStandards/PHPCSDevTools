@@ -41,7 +41,7 @@
     <xs:complexType name="standardType">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:anyAttribute/>
+                <xs:anyAttribute processContents="lax"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
