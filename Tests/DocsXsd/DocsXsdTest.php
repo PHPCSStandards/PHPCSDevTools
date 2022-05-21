@@ -69,11 +69,11 @@ final class DocsXsdTest extends IOTestCase
                 'fixtureFile' => 'ValidSingleStandard.xml',
             ],
             'Valid docs example with multiple attributes' => [
-                'fixtureFile' => 'ValidDocumentationWithAdditionalAttributes.xml',
+                'fixtureFile' => 'ValidDocumentationWithAdditionalAttributes.xml'
             ],
             'Valid docs example with multiple attributes on the standard element' => [
-                'fixtureFile' => 'ValidStandardWithAdditionalAttributes.xml',
-            ],
+                'fixtureFile' => 'ValidStandardWithAdditionalAttributes.xml'
+            ]
         ];
     }
 
