@@ -1,0 +1,20 @@
+<documentation title="Example docs">
+    <code_comparison>
+        <code title="Valid: A valid code example">
+        <![CDATA[
+$number = 3;
+if(3 <em>===</em> $number) {
+    echo 'Number equals three.';
+}
+        ]]>
+        </code>
+        <code title="Invalid: An invalid code example">
+        <![CDATA[
+$number = 3;
+if(3 <em>=</em> $number) {
+    echo 'Number equals three.';
+}
+        ]]>
+        </code>
+    </code_comparison>
+</documentation>
