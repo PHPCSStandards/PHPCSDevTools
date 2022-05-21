@@ -63,6 +63,12 @@ final class DocsXsdTest extends IOTestCase
             'Valid docs example with multiple standards in the file' => [
                 'fixtureFile' => 'ValidSingleStandard.xml',
             ],
+            'Valid docs example with multiple attributes' => [
+                'fixtureFile' => 'ValidDocumentationWithAdditionalAttributes.xml'
+            ],
+            'Valid docs example with multiple attributes on the standard element' => [
+                'fixtureFile' => 'ValidStandardWithAdditionalAttributes.xml'
+            ]
         ];
     }
 
@@ -95,11 +101,51 @@ final class DocsXsdTest extends IOTestCase
     public function dataInvalidXsd()
     {
         return [
-            'test case name' => [
-                'fixtureFile'    => 'TitleTooLong.xml',
+            'Title attribute too long' => [
+                'fixtureFile'    => 'InvalidTitleTooLong.xml',
                 'expectedStdOut' => '',
                 'expectedStdErr' => "this exceeds the allowed maximum length of '58'",
             ],
+            'Documentation root element missing' => [
+                'fixtureFile'    => 'InvalidMissingDocumentationRoot.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "Element 'standard': No matching global declaration available for the validation root",
+            ],
+            'Missing title attribute in the documentation root element' => [
+                'fixtureFile'    => 'InvalidMissingTitleAttribute.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "Element 'documentation': The attribute 'title' is required but missing.",
+            ],
+            'Missing standard element in the sequence group' => [
+                'fixtureFile' => 'InvalidMissingStandardElement.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "Element 'code_comparison': This element is not expected. Expected is ( standard ).",
+            ],
+            'Missing code comparison element in the sequence group' => [
+                'fixtureFile' => 'InvalidMissingCodeComparisonElement.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "Element 'documentation': Missing child element(s). Expected is ( code_comparison )",
+            ],
+            'Missing sequence group' => [
+                'fixtureFile' => 'InvalidMissingRuleGroup.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "Element 'documentation': Missing child element(s). Expected is ( standard )",
+            ],
+            'More than two code blocks in one comparison group' => [
+                'fixtureFile' => 'InvalidMoreThanTwoCodeBlocksInComparison.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "Schemas validity error : Element 'code': This element is not expected.",
+            ],
+            'Less than two code blocks in one comparison group' => [
+                'fixtureFile' => 'InvalidLessThanTwoCodeBlocksInComparison.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "Element 'code_comparison': Missing child element(s). Expected is ( code ).",
+            ],
+            'Code element missing title attribute' => [
+                'fixtureFile' => 'InvalidCodeElementMissingTitle.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "Element 'code': The attribute 'title' is required but missing.",
+            ]
         ];
     }
 }
