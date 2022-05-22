@@ -260,7 +260,7 @@ class CheckSniffCompleteness
 
                 $exclude = \explode(',', $exclude);
                 $exclude = \array_map(
-                    function ($subdir) {
+                    static function ($subdir) {
                         return \trim($subdir, '/');
                     },
                     $exclude
@@ -405,7 +405,7 @@ class CheckSniffCompleteness
             }
 
             if ($this->showColored === true) {
-                $feedback = "\033[32m" . $feedback . "\033[0m";
+                $feedback = "\033[32m{$feedback}\033[0m";
             }
 
             echo \PHP_EOL, \PHP_EOL, $feedback, \PHP_EOL;
