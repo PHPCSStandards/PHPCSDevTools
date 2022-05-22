@@ -323,7 +323,7 @@ class CheckSniffCompleteness
         if ($this->showColored === true) {
             $docWarning    = \str_replace('WARNING', "\033[33mWARNING\033[0m", $docWarning);
             $testError     = \str_replace('ERROR', "\033[31mERROR\033[0m", $testError);
-            $testCaseError = \str_replace('ERROR', "\033[31mERROR\033[0m", $testError);
+            $testCaseError = \str_replace('ERROR', "\033[31mERROR\033[0m", $testCaseError);
         }
 
         $notices      = [];
