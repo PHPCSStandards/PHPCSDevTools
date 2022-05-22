@@ -143,6 +143,15 @@ final class ProcessCliCommandTest extends TestCase
                     ],
                 ],
             ],
+            'No arguments at all and trailing whitespace in the command' => [
+                'command'         => './phpcs-check-feature-completeness    ',
+                'expectedChanged' => [
+                    'projectRoot' => $projectRoot,
+                    'targetDirs'  => [
+                        $projectRoot,
+                    ],
+                ],
+            ],
             'No arguments other than a path' => [
                 'command'         => './phpcs-check-feature-completeness .',
                 'expectedChanged' => [
@@ -289,9 +298,9 @@ final class ProcessCliCommandTest extends TestCase
                     ],
                 ],
             ],
-            'All together now' => [
-                'command'          => 'phpcs-check-feature-completeness src -q --exclude=ignoreme,/other,./tests/'
-                    . ' PHPCSDebug --no-progress ./Tests --colors -v .',
+            'All together now, includes testing for handling of additional whitespace between arguments' => [
+                'command'          => 'phpcs-check-feature-completeness src    -q --exclude=ignoreme,/other,./tests/'
+                    . ' PHPCSDebug   --no-progress    ./Tests   --colors -v .',
                 'expectedChanged'  => [
                     'projectRoot'  => $projectRoot,
                     'quietMode'    => true,
