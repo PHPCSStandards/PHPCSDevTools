@@ -72,7 +72,7 @@ WARNING: Documentation missing for       ' . $sniffDirRegex . 'CategoryB[\\\\/]T
 ERROR:   Unit tests missing for          ' . $sniffDirRegex . 'CategoryB[\\\\/]TwoSniff\.php
 
 ---------------------------------------
-Found 3 errors and 2 warnings[\r\n]+$`';
+Found 3 errors and 2 warnings\.[\r\n]+$`';
 
         $this->runValidation($command, $regex, 1);
     }
@@ -104,7 +104,7 @@ WARNING: Documentation missing for       ' . $sniffDir2Regex . 'CategoryA[\\\\/]
 ERROR:   Unit tests missing for          ' . $sniffDir2Regex . 'CategoryA[\\\\/]DummySniff\.php
 
 ---------------------------------------
-Found 4 errors and 3 warnings[\r\n]+$`';
+Found 4 errors and 3 warnings\.[\r\n]+$`';
 
         $this->runValidation($command, $regex, 1);
     }
@@ -127,13 +127,15 @@ WARNING: Documentation missing for       ' . $sniffDirRegex . 'CategoryA[\\\\/]D
 ERROR:   Unit tests missing for          ' . $sniffDirRegex . 'CategoryA[\\\\/]DummySniff\.php
 
 ---------------------------------------
-Found 1 errors and 1 warnings[\r\n]+$`';
+Found 1 error and 1 warning\.[\r\n]+$`';
 
         $this->runValidation($command, $regex, 1);
     }
 
     /**
      * Verify that enabling the "quiet" option still reports on missing tests, but no longer reports on missing docs.
+     *
+     * Includes verification that the "summary" message no longer mentions warnings.
      *
      * @return void
      */
@@ -151,7 +153,7 @@ ERROR:   Unit test case file missing for ' . $sniffDirRegex . 'CategoryB[\\\\/]O
 ERROR:   Unit tests missing for          ' . $sniffDirRegex . 'CategoryB[\\\\/]TwoSniff\.php
 
 ---------------------------------------
-Found 3 errors and 0 warnings[\r\n]+$`';
+Found 3 errors\.[\r\n]+$`';
 
         $this->runValidation($command, $regex, 1);
     }

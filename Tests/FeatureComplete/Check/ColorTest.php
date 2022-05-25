@@ -37,12 +37,13 @@ final class ColorTest extends CheckTestCase
      * @param string $fixtureDir     Relative path within the fixture directory to use for the test.
      * @param string $expectedOutput Colorized snippet of the expected output.
      * @param int    $exitCode       The expected exit code.
+     * @param string $cliExtra       Optional. Additional CLI arguments to pass.
      *
      * @return void
      */
-    public function testColors($fixtureDir, $expectedOutput, $exitCode)
+    public function testColors($fixtureDir, $expectedOutput, $exitCode, $cliExtra = '')
     {
-        $command = 'phpcs-check-feature-completeness --colors ' . self::FIXTURE_DIR . $fixtureDir;
+        $command = 'phpcs-check-feature-completeness --colors ' . $cliExtra . ' ' . self::FIXTURE_DIR . $fixtureDir;
         $regex   = '`' .  \preg_quote($expectedOutput, '`') . '`';
 
         $this->runValidation($command, $regex, $exitCode);
@@ -70,6 +71,27 @@ final class ColorTest extends CheckTestCase
                 'fixtureDir'     => 'ValidStandards/CompleteSingleSniff',
                 'expectedOutput' => "\033[32mFound 1 sniff accompanied by unit tests and documentation.\033[0m",
                 'exitCode'       => 0,
+            ],
+            'feature complete - summary: has errors and warnings' => [
+                'fixtureDir'     => 'MissingTestsAndDocs/MultipleSniffs',
+                'expectedOutput' => "Found \033[31m3 errors\033[0m and \033[33m2 warnings\033[0m.",
+                'exitCode'       => 1,
+            ],
+            'feature complete - summary: has errors, no warnings' => [
+                'fixtureDir'     => 'MissingTestFiles/MultipleSniffs',
+                'expectedOutput' => "Found \033[31m3 errors\033[0m and 0 warnings.",
+                'exitCode'       => 1,
+            ],
+            'feature complete - summary: no errors, has warnings' => [
+                'fixtureDir'     => 'MissingDocFiles/MultipleSniffs',
+                'expectedOutput' => "Found 0 errors and \033[33m2 warnings\033[0m.",
+                'exitCode'       => 1,
+            ],
+            'feature complete - summary: quiet mode - has errors' => [
+                'fixtureDir'     => 'MissingTestsAndDocs/MultipleSniffs',
+                'expectedOutput' => "Found \033[31m3 errors\033[0m",
+                'exitCode'       => 1,
+                'cliExtra'       => '-q',
             ],
         ];
     }
