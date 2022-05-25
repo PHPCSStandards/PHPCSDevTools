@@ -65,10 +65,10 @@ final class MissingDocFilesTest extends CheckTestCase
 
 \.{3} 3 / 3 \(100%\)
 
-WARNING: Documentation missing for ' . $sniffDirRegex . 'CategoryB[\\\\/]OneSniff\.php\.
-WARNING: Documentation missing for ' . $sniffDirRegex . 'CategoryB[\\\\/]TwoSniff\.php\.
+WARNING: Documentation missing for       ' . $sniffDirRegex . 'CategoryB[\\\\/]OneSniff\.php
+WARNING: Documentation missing for       ' . $sniffDirRegex . 'CategoryB[\\\\/]TwoSniff\.php
 
------------------------------------------
+---------------------------------------
 Found 0 errors and 2 warnings[\r\n]+$`';
 
         $this->runValidation($command, $regex, 1);
@@ -91,11 +91,11 @@ Found 0 errors and 2 warnings[\r\n]+$`';
 
 \.{4} 4 / 4 \(100%\)
 
-WARNING: Documentation missing for ' . $sniffDir1Regex . 'CategoryB[\\\\/]OneSniff\.php\.
-WARNING: Documentation missing for ' . $sniffDir1Regex . 'CategoryB[\\\\/]TwoSniff\.php\.
-WARNING: Documentation missing for ' . $sniffDir2Regex . 'CategoryA[\\\\/]DummySniff\.php\.
+WARNING: Documentation missing for       ' . $sniffDir1Regex . 'CategoryB[\\\\/]OneSniff\.php
+WARNING: Documentation missing for       ' . $sniffDir1Regex . 'CategoryB[\\\\/]TwoSniff\.php
+WARNING: Documentation missing for       ' . $sniffDir2Regex . 'CategoryA[\\\\/]DummySniff\.php
 
------------------------------------------
+---------------------------------------
 Found 0 errors and 3 warnings[\r\n]+$`';
 
         $this->runValidation($command, $regex, 1);
@@ -115,9 +115,9 @@ Found 0 errors and 3 warnings[\r\n]+$`';
 
 \. 1 / 1 \(100%\)
 
-WARNING: Documentation missing for ' . $sniffDirRegex . 'CategoryA[\\\\/]DummySniff\.php\.
+WARNING: Documentation missing for       ' . $sniffDirRegex . 'CategoryA[\\\\/]DummySniff\.php
 
------------------------------------------
+---------------------------------------
 Found 0 errors and 1 warnings[\r\n]+$`';
 
         $this->runValidation($command, $regex, 1);

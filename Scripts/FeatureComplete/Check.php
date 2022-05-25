@@ -175,9 +175,9 @@ final class Check
             return true;
         }
 
-        $docWarning    = 'WARNING: Documentation missing for %s.';
-        $testError     = 'ERROR: Unit tests missing for %s.';
-        $testCaseError = 'ERROR: Unit test case file missing for %s.';
+        $docWarning    = 'WARNING: Documentation missing for       %s';
+        $testError     = 'ERROR:   Unit tests missing for          %s';
+        $testCaseError = 'ERROR:   Unit test case file missing for %s';
 
         if ($this->config->showColored === true) {
             $docWarning    = \str_replace('WARNING', "\033[33mWARNING\033[0m", $docWarning);
@@ -247,7 +247,7 @@ final class Check
             echo \PHP_EOL,
                 \implode(\PHP_EOL, $notices), \PHP_EOL,
                 \PHP_EOL,
-                '-----------------------------------------', \PHP_EOL,
+                \str_repeat('-', 39), \PHP_EOL,
                 \sprintf('Found %d errors and %d warnings', $errorCount, $warningCount), \PHP_EOL;
 
             return false;

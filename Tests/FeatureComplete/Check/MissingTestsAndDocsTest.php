@@ -65,13 +65,13 @@ final class MissingTestsAndDocsTest extends CheckTestCase
 
 \.{3} 3 / 3 \(100%\)
 
-ERROR: Unit tests missing for ' . $sniffDirRegex . 'CategoryA[\\\\/]DummySniff\.php\.
-WARNING: Documentation missing for ' . $sniffDirRegex . 'CategoryB[\\\\/]OneSniff\.php\.
-ERROR: Unit test case file missing for ' . $sniffDirRegex . 'CategoryB[\\\\/]OneSniff\.php\.
-WARNING: Documentation missing for ' . $sniffDirRegex . 'CategoryB[\\\\/]TwoSniff\.php\.
-ERROR: Unit tests missing for ' . $sniffDirRegex . 'CategoryB[\\\\/]TwoSniff\.php\.
+ERROR:   Unit tests missing for          ' . $sniffDirRegex . 'CategoryA[\\\\/]DummySniff\.php
+WARNING: Documentation missing for       ' . $sniffDirRegex . 'CategoryB[\\\\/]OneSniff\.php
+ERROR:   Unit test case file missing for ' . $sniffDirRegex . 'CategoryB[\\\\/]OneSniff\.php
+WARNING: Documentation missing for       ' . $sniffDirRegex . 'CategoryB[\\\\/]TwoSniff\.php
+ERROR:   Unit tests missing for          ' . $sniffDirRegex . 'CategoryB[\\\\/]TwoSniff\.php
 
------------------------------------------
+---------------------------------------
 Found 3 errors and 2 warnings[\r\n]+$`';
 
         $this->runValidation($command, $regex, 1);
@@ -95,15 +95,15 @@ Found 3 errors and 2 warnings[\r\n]+$`';
 
 \.{4} 4 / 4 \(100%\)
 
-ERROR: Unit tests missing for ' . $sniffDir1Regex . 'CategoryA[\\\\/]DummySniff\.php\.
-WARNING: Documentation missing for ' . $sniffDir1Regex . 'CategoryB[\\\\/]OneSniff\.php\.
-ERROR: Unit test case file missing for ' . $sniffDir1Regex . 'CategoryB[\\\\/]OneSniff\.php\.
-WARNING: Documentation missing for ' . $sniffDir1Regex . 'CategoryB[\\\\/]TwoSniff\.php\.
-ERROR: Unit tests missing for ' . $sniffDir1Regex . 'CategoryB[\\\\/]TwoSniff\.php\.
-WARNING: Documentation missing for ' . $sniffDir2Regex . 'CategoryA[\\\\/]DummySniff\.php\.
-ERROR: Unit tests missing for ' . $sniffDir2Regex . 'CategoryA[\\\\/]DummySniff\.php\.
+ERROR:   Unit tests missing for          ' . $sniffDir1Regex . 'CategoryA[\\\\/]DummySniff\.php
+WARNING: Documentation missing for       ' . $sniffDir1Regex . 'CategoryB[\\\\/]OneSniff\.php
+ERROR:   Unit test case file missing for ' . $sniffDir1Regex . 'CategoryB[\\\\/]OneSniff\.php
+WARNING: Documentation missing for       ' . $sniffDir1Regex . 'CategoryB[\\\\/]TwoSniff\.php
+ERROR:   Unit tests missing for          ' . $sniffDir1Regex . 'CategoryB[\\\\/]TwoSniff\.php
+WARNING: Documentation missing for       ' . $sniffDir2Regex . 'CategoryA[\\\\/]DummySniff\.php
+ERROR:   Unit tests missing for          ' . $sniffDir2Regex . 'CategoryA[\\\\/]DummySniff\.php
 
------------------------------------------
+---------------------------------------
 Found 4 errors and 3 warnings[\r\n]+$`';
 
         $this->runValidation($command, $regex, 1);
@@ -123,10 +123,10 @@ Found 4 errors and 3 warnings[\r\n]+$`';
 
 \. 1 / 1 \(100%\)
 
-WARNING: Documentation missing for ' . $sniffDirRegex . 'CategoryA[\\\\/]DummySniff\.php\.
-ERROR: Unit tests missing for ' . $sniffDirRegex . 'CategoryA[\\\\/]DummySniff\.php\.
+WARNING: Documentation missing for       ' . $sniffDirRegex . 'CategoryA[\\\\/]DummySniff\.php
+ERROR:   Unit tests missing for          ' . $sniffDirRegex . 'CategoryA[\\\\/]DummySniff\.php
 
------------------------------------------
+---------------------------------------
 Found 1 errors and 1 warnings[\r\n]+$`';
 
         $this->runValidation($command, $regex, 1);
@@ -146,11 +146,11 @@ Found 1 errors and 1 warnings[\r\n]+$`';
 
 \.{3} 3 / 3 \(100%\)
 
-ERROR: Unit tests missing for ' . $sniffDirRegex . 'CategoryA[\\\\/]DummySniff\.php\.
-ERROR: Unit test case file missing for ' . $sniffDirRegex . 'CategoryB[\\\\/]OneSniff\.php\.
-ERROR: Unit tests missing for ' . $sniffDirRegex . 'CategoryB[\\\\/]TwoSniff\.php\.
+ERROR:   Unit tests missing for          ' . $sniffDirRegex . 'CategoryA[\\\\/]DummySniff\.php
+ERROR:   Unit test case file missing for ' . $sniffDirRegex . 'CategoryB[\\\\/]OneSniff\.php
+ERROR:   Unit tests missing for          ' . $sniffDirRegex . 'CategoryB[\\\\/]TwoSniff\.php
 
------------------------------------------
+---------------------------------------
 Found 3 errors and 0 warnings[\r\n]+$`';
 
         $this->runValidation($command, $regex, 1);
