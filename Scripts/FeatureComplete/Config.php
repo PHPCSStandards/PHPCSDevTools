@@ -46,16 +46,14 @@ final class Config
     private $projectRoot = '';
 
     /**
-     * Whether to use "quiet" mode.
+     * Whether or not to check the documentation completeness.
      *
-     * This will silence all warnings, but still show the errors.
-     *
-     * To enable "quiet" mode, pass `-q` on the command line when calling
-     * the script.
+     * To disable checking for documentation, pass `--no-docs` on the command line
+     * when calling the script or use "quiet" mode by passing `-q`.
      *
      * @var bool
      */
-    private $quietMode = false;
+    protected $checkDocs = true;
 
     /**
      * Whether or not to show progress.
@@ -124,11 +122,15 @@ final class Config
             ],
             [
                 'arg'  => '-q, --quiet',
-                'desc' => 'Turn off warnings for missing documentation.',
+                'desc' => 'Turn off warnings for missing documentation. Equivalent to running with "--no-docs".',
             ],
             [
                 'arg'  => '--exclude=<dir1,dir2>',
                 'desc' => 'Comma-delimited list of (relative) directories to exclude from the scan. Defaults to excluding the /vendor/ directory.',
+            ],
+            [
+                'arg'  => '--no-docs',
+                'desc' => 'Disable missing documentation check.',
             ],
             [
                 'arg'  => '--no-progress',
@@ -278,7 +280,11 @@ final class Config
         if (isset($argsFlipped['-q'])
             || isset($argsFlipped['--quiet'])
         ) {
-            $this->quietMode = true;
+            $this->checkDocs = false;
+        }
+
+        if (isset($argsFlipped['--no-docs'])) {
+            $this->checkDocs = false;
         }
 
         if (isset($argsFlipped['--no-progress'])) {
