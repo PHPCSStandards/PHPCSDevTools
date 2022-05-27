@@ -244,7 +244,7 @@ final class Config
                 continue;
             }
 
-            if ($arg[0] !== '-') {
+            if (isset($arg[0]) && $arg[0] !== '-') {
                 // The user must have set a path to search. Let's ensure it is a valid path.
                 $realpath = \realpath($arg);
 
