@@ -36,9 +36,16 @@ if (is_file(__DIR__.'/../autoload.php') === true) {
     require_once __DIR__.'/../autoload.php';
 } else {
     // Presume git clone.
-    require_once __DIR__ . '/../Scripts/FileList.php';
-    require_once __DIR__ . '/../Scripts/CheckSniffCompleteness.php';
+    require_once __DIR__ . '/../Scripts/Utils/FileList.php';
+    require_once __DIR__ . '/../Scripts/FeatureComplete/Config.php';
+    require_once __DIR__ . '/../Scripts/FeatureComplete/Check.php';
 }
 
-$validate = new PHPCSDevTools\Scripts\CheckSniffCompleteness();
-$validate->validate();
+$config = new PHPCSDevTools\Scripts\FeatureComplete\Config();
+if ($config->executeCheck === false) {
+    // This was a help request or version check.
+    exit(0);
+}
+
+$validate = new PHPCSDevTools\Scripts\FeatureComplete\Check($config);
+exit($validate->validate());
