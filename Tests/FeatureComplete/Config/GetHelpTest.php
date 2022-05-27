@@ -36,9 +36,11 @@ Options:
   directories <dir>     One or more specific directories to examine.
                         Defaults to the directory from which the script is run.
   -q, --quiet           Turn off warnings for missing documentation.
+                        Equivalent to running with "--no-docs".
   --exclude=<dir1,dir2> Comma-delimited list of (relative) directories to
                         exclude from the scan.
                         Defaults to excluding the /vendor/ directory.
+  --no-docs             Disable missing documentation check.
   --no-progress         Disable progress in console output.
   --colors              Enable colors in console output.
                         (disables auto detection of color support).
@@ -60,9 +62,11 @@ Options:
   \033[32mdirectories \033[0m\033[36m<dir>    \033[0m One or more specific directories to examine.
                         Defaults to the directory from which the script is run.
   \033[32m-q, --quiet          \033[0m Turn off warnings for missing documentation.
+                        Equivalent to running with \"--no-docs\".
   \033[32m--exclude=\033[0m\033[36m<dir1,dir2>\033[0m Comma-delimited list of (relative) directories to
                         exclude from the scan.
                         Defaults to excluding the /vendor/ directory.
+  \033[32m--no-docs            \033[0m Disable missing documentation check.
   \033[32m--no-progress        \033[0m Disable progress in console output.
   \033[32m--colors             \033[0m Enable colors in console output.
                         (disables auto detection of color support).

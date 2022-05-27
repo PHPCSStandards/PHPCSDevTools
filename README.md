@@ -108,9 +108,11 @@ phpcs-check-feature-completeness ./StandardName
 directories <dir>     One or more specific directories to examine.
                       Defaults to the directory from which the script is run.
 -q, --quiet           Turn off warnings for missing documentation.
+                      Equivalent to running with "--no-docs".
 --exclude=<dir1,dir2> Comma-delimited list of (relative) directories to
                       exclude from the scan.
                       Defaults to excluding the /vendor/ directory.
+--no-docs             Disable missing documentation check.
 --no-progress         Disable progress in console output.
 --colors              Enable colors in console output.
                       (disables auto detection of color support)

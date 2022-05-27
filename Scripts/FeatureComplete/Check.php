@@ -189,7 +189,7 @@ final class Check
         $warningCount = 0;
         $errorCount   = 0;
         foreach ($this->allSniffs as $i => $file) {
-            if ($this->config->quietMode === false) {
+            if ($this->config->checkDocs === true) {
                 $docFile = \str_replace(\array_keys($this->sniffToDoc), $this->sniffToDoc, $file);
                 if (isset($this->allFiles[$docFile]) === false) {
                     $notices[] = \sprintf($docWarning, $file);
@@ -226,7 +226,7 @@ final class Check
          */
         if (empty($notices) === false) {
             $template = 'Found %1$s%2$d error%3$s%4$s and %5$s%6$d warning%7$s%8$s.';
-            if ($this->config->quietMode === true) {
+            if ($this->config->checkDocs === false) {
                 $template = 'Found %1$s%2$d error%3$s%4$s.';
             }
 
@@ -256,7 +256,7 @@ final class Check
                 $feedback = "Found $sniffCount sniff";
             }
 
-            if ($this->config->quietMode === false) {
+            if ($this->config->checkDocs === true) {
                 $feedback .= ' accompanied by unit tests and documentation.';
             } else {
                 $feedback .= ' accompanied by unit tests.';

@@ -31,7 +31,7 @@ final class ProcessCliCommandTest extends TestCase
      */
     private $defaultSettings = [
         'projectRoot'  => '',
-        'quietMode'    => false,
+        'checkDocs'    => true,
         'showProgress' => true,
         'showColored'  => null,
         'verbose'      => 0,
@@ -186,7 +186,7 @@ final class ProcessCliCommandTest extends TestCase
                 'command'         => 'phpcs-check-feature-completeness -q -v .',
                 'expectedChanged' => [
                     'projectRoot' => $projectRoot,
-                    'quietMode'   => true,
+                    'checkDocs'   => false,
                     'verbose'     => 1,
                     'targetDirs'  => [
                         \realpath('.'),
@@ -254,7 +254,7 @@ final class ProcessCliCommandTest extends TestCase
                 'command'         => './phpcs-check-feature-completeness -q',
                 'expectedChanged' => [
                     'projectRoot' => $projectRoot,
-                    'quietMode'   => true,
+                    'checkDocs'   => false,
                     'targetDirs'  => [
                         $projectRoot,
                     ],
@@ -264,9 +264,19 @@ final class ProcessCliCommandTest extends TestCase
                 'command'         => 'aliased-command --quiet',
                 'expectedChanged' => [
                     'projectRoot' => $projectRoot,
-                    'quietMode'   => true,
+                    'checkDocs'   => false,
                     'targetDirs'  => [
                         $projectRoot,
+                    ],
+                ],
+            ],
+            'No docs' => [
+                'command'         => 'phpcs-check-feature-completeness . --no-docs',
+                'expectedChanged' => [
+                    'projectRoot'  => $projectRoot,
+                    'checkDocs'    => false,
+                    'targetDirs'   => [
+                        \realpath('.'),
                     ],
                 ],
             ],
@@ -317,7 +327,7 @@ final class ProcessCliCommandTest extends TestCase
                     . ' PHPCSDebug   --no-progress    ./Tests   --colors -v .',
                 'expectedChanged'  => [
                     'projectRoot'  => $projectRoot,
-                    'quietMode'    => true,
+                    'checkDocs'   => false,
                     'showProgress' => false,
                     'showColored'  => true,
                     'verbose'      => 1,
