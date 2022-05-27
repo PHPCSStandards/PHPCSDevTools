@@ -175,9 +175,9 @@ final class Check
             return true;
         }
 
-        $docWarning    = 'WARNING: Documentation missing for %s.';
-        $testError     = 'ERROR: Unit tests missing for %s.';
-        $testCaseError = 'ERROR: Unit test case file missing for %s.';
+        $docWarning    = 'WARNING: Documentation missing for       %s';
+        $testError     = 'ERROR:   Unit tests missing for          %s';
+        $testCaseError = 'ERROR:   Unit test case file missing for %s';
 
         if ($this->config->showColored === true) {
             $docWarning    = \str_replace('WARNING', "\033[33mWARNING\033[0m", $docWarning);
@@ -243,12 +243,29 @@ final class Check
          * Show feedback to the user.
          */
         if (empty($notices) === false) {
+            $template = 'Found %1$s%2$d error%3$s%4$s and %5$s%6$d warning%7$s%8$s.';
+            if ($this->config->quietMode === true) {
+                $template = 'Found %1$s%2$d error%3$s%4$s.';
+            }
+
             // Show the errors and warnings.
+            $summary = \sprintf(
+                $template,
+                ($errorCount > 0 && $this->config->showColored === true) ? "\033[31m" : '',
+                $errorCount,
+                ($errorCount === 1) ? '' : 's',
+                ($errorCount > 0 && $this->config->showColored === true) ? "\033[0m" : '',
+                ($warningCount > 0 && $this->config->showColored === true) ? "\033[33m" : '',
+                $warningCount,
+                ($warningCount === 1) ? '' : 's',
+                ($warningCount > 0 && $this->config->showColored === true) ? "\033[0m" : ''
+            );
+
             echo \PHP_EOL,
                 \implode(\PHP_EOL, $notices), \PHP_EOL,
                 \PHP_EOL,
-                '-----------------------------------------', \PHP_EOL,
-                \sprintf('Found %d errors and %d warnings', $errorCount, $warningCount), \PHP_EOL;
+                \str_repeat('-', 39), \PHP_EOL,
+                $summary, \PHP_EOL;
 
             return false;
         } else {

@@ -65,12 +65,12 @@ final class MissingTestFilesTest extends CheckTestCase
 
 \.{3} 3 / 3 \(100%\)
 
-ERROR: Unit test case file missing for ' . $sniffDirRegex . 'CategoryA[\\\\/]DummySniff\.php\.
-ERROR: Unit tests missing for ' . $sniffDirRegex . 'CategoryB[\\\\/]OneSniff\.php\.
-ERROR: Unit tests missing for ' . $sniffDirRegex . 'CategoryB[\\\\/]TwoSniff\.php\.
+ERROR:   Unit test case file missing for ' . $sniffDirRegex . 'CategoryA[\\\\/]DummySniff\.php
+ERROR:   Unit tests missing for          ' . $sniffDirRegex . 'CategoryB[\\\\/]OneSniff\.php
+ERROR:   Unit tests missing for          ' . $sniffDirRegex . 'CategoryB[\\\\/]TwoSniff\.php
 
------------------------------------------
-Found 3 errors and 0 warnings[\r\n]$`';
+---------------------------------------
+Found 3 errors and 0 warnings\.[\r\n]$`';
 
         $this->runValidation($command, $regex, 1);
     }
@@ -92,13 +92,13 @@ Found 3 errors and 0 warnings[\r\n]$`';
 
 \.{4} 4 / 4 \(100%\)
 
-ERROR: Unit test case file missing for ' . $sniffDir1Regex . 'CategoryA[\\\\/]DummySniff\.php\.
-ERROR: Unit tests missing for ' . $sniffDir1Regex . 'CategoryB[\\\\/]OneSniff\.php\.
-ERROR: Unit tests missing for ' . $sniffDir1Regex . 'CategoryB[\\\\/]TwoSniff\.php\.
-ERROR: Unit test case file missing for ' . $sniffDir2Regex . 'CategoryA[\\\\/]DummySniff\.php\.
+ERROR:   Unit test case file missing for ' . $sniffDir1Regex . 'CategoryA[\\\\/]DummySniff\.php
+ERROR:   Unit tests missing for          ' . $sniffDir1Regex . 'CategoryB[\\\\/]OneSniff\.php
+ERROR:   Unit tests missing for          ' . $sniffDir1Regex . 'CategoryB[\\\\/]TwoSniff\.php
+ERROR:   Unit test case file missing for ' . $sniffDir2Regex . 'CategoryA[\\\\/]DummySniff\.php
 
------------------------------------------
-Found 4 errors and 0 warnings[\r\n]$`';
+---------------------------------------
+Found 4 errors and 0 warnings\.[\r\n]$`';
 
         $this->runValidation($command, $regex, 1);
     }
@@ -117,16 +117,17 @@ Found 4 errors and 0 warnings[\r\n]$`';
 
 \. 1 / 1 \(100%\)
 
-ERROR: Unit test case file missing for ' . $sniffDirRegex . 'CategoryA[\\\\/]DummySniff\.php\.
+ERROR:   Unit test case file missing for ' . $sniffDirRegex . 'CategoryA[\\\\/]DummySniff\.php
 
------------------------------------------
-Found 1 errors and 0 warnings[\r\n]+$`';
+---------------------------------------
+Found 1 error and 0 warnings\.[\r\n]+$`';
 
         $this->runValidation($command, $regex, 1);
     }
 
     /**
-     * Verify that enabling the "quiet" option still reports on missing tests.
+     * Verify that enabling the "quiet" option still reports on missing tests, but does adjust
+     * the "summary" to only mention errors.
      *
      * @return void
      */
@@ -139,12 +140,12 @@ Found 1 errors and 0 warnings[\r\n]+$`';
 
 \.{3} 3 / 3 \(100%\)
 
-ERROR: Unit test case file missing for ' . $sniffDirRegex . 'CategoryA[\\\\/]DummySniff\.php\.
-ERROR: Unit tests missing for ' . $sniffDirRegex . 'CategoryB[\\\\/]OneSniff\.php\.
-ERROR: Unit tests missing for ' . $sniffDirRegex . 'CategoryB[\\\\/]TwoSniff\.php\.
+ERROR:   Unit test case file missing for ' . $sniffDirRegex . 'CategoryA[\\\\/]DummySniff\.php
+ERROR:   Unit tests missing for          ' . $sniffDirRegex . 'CategoryB[\\\\/]OneSniff\.php
+ERROR:   Unit tests missing for          ' . $sniffDirRegex . 'CategoryB[\\\\/]TwoSniff\.php
 
------------------------------------------
-Found 3 errors and 0 warnings[\r\n]+$`';
+---------------------------------------
+Found 3 errors\.[\r\n]+$`';
 
         $this->runValidation($command, $regex, 1);
     }
