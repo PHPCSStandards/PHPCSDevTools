@@ -124,5 +124,9 @@ jobs:
         if: matrix.phpcs_version == 'dev-master'
         run: composer check-complete
 
-      - name: Run the unit tests
-        run: composer run-tests
+      - name: Run the unit tests for the PHPCSDebug sniff
+        run: composer test-sniff
+
+      - name: Run the unit tests for the DevTools
+        if: ${{ matrix.phpcs_version == 'dev-master' }}
+        run: composer test-tools

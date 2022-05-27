@@ -257,6 +257,8 @@ final class Config
     /**
      * Detect whether or not the CLI supports colored output.
      *
+     * @codeCoverageIgnore
+     *
      * @return bool
      */
     protected function isColorSupported()
