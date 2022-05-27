@@ -25,6 +25,20 @@ final class Config
 {
 
     /**
+     * Max width for help text.
+     *
+     * @var int
+     */
+    const MAX_WIDTH = 80;
+
+    /**
+     * Margin for help options.
+     *
+     * @var string
+     */
+    const LEFT_MARGIN = '  ';
+
+    /**
      * The root directory of the project.
      *
      * @var string
@@ -93,6 +107,58 @@ final class Config
     private $executeCheck = true;
 
     /**
+     * Help texts.
+     *
+     * @var array
+     */
+    private $helpTexts = [
+        // phpcs:disable Generic.Files.LineLength.TooLong
+        'Usage'   => [
+            ['text' => 'phpcs-check-feature-completeness'],
+            ['text' => 'phpcs-check-feature-completeness [-q] [--exclude=<dir>] [directories]'],
+        ],
+        'Options' => [
+            [
+                'arg'  => 'directories <dir>',
+                'desc' => 'One or more specific directories to examine. Defaults to the directory from which the script is run.',
+            ],
+            [
+                'arg'  => '-q, --quiet',
+                'desc' => 'Turn off warnings for missing documentation.',
+            ],
+            [
+                'arg'  => '--exclude=<dir1,dir2>',
+                'desc' => 'Comma-delimited list of (relative) directories to exclude from the scan. Defaults to excluding the /vendor/ directory.',
+            ],
+            [
+                'arg'  => '--no-progress',
+                'desc' => 'Disable progress in console output.',
+            ],
+            [
+                'arg'  => '--colors',
+                'desc' => 'Enable colors in console output. (disables auto detection of color support)',
+            ],
+            [
+                'arg'  => '--no-colors',
+                'desc' => 'Disable colors in console output.',
+            ],
+            [
+                'arg'  => '-v',
+                'desc' => 'Verbose mode.',
+            ],
+            [
+                'arg'  => '-h, --help',
+                'desc' => 'Print this help.',
+            ],
+            [
+                'arg'  => '-V, --version',
+                'desc' => 'Display the current version of this script.',
+            ],
+        ],
+        // phpcs:enable
+    ];
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -114,7 +180,7 @@ final class Config
      */
     public function __get($name)
     {
-        if (isset($this->$name)) {
+        if (isset($this->$name) && $name !== 'helpTexts') {
             return $this->$name;
         }
 
@@ -130,7 +196,7 @@ final class Config
      */
     public function __isset($name)
     {
-        return isset($this->$name);
+        return isset($this->$name) && $name !== 'helpTexts';
     }
 
     /**
@@ -184,6 +250,14 @@ final class Config
 
         $argsFlipped = \array_flip($args);
 
+        if (isset($argsFlipped['--no-colors'])) {
+            $this->showColored = false;
+        } elseif (isset($argsFlipped['--colors'])) {
+            $this->showColored = true;
+        } else {
+            $this->showColored = $this->isColorSupported();
+        }
+
         if (isset($argsFlipped['-h'])
             || isset($argsFlipped['--help'])
         ) {
@@ -209,14 +283,6 @@ final class Config
 
         if (isset($argsFlipped['--no-progress'])) {
             $this->showProgress = false;
-        }
-
-        if (isset($argsFlipped['--no-colors'])) {
-            $this->showColored = false;
-        } elseif (isset($argsFlipped['--colors'])) {
-            $this->showColored = true;
-        } else {
-            $this->showColored = $this->isColorSupported();
         }
 
         if (isset($argsFlipped['-v'])) {
@@ -307,26 +373,58 @@ final class Config
      */
     private function getHelp()
     {
-        $text  = 'Usage:' . \PHP_EOL;
-        $text .= '    phpcs-check-feature-completeness' . \PHP_EOL;
-        $text .= '    phpcs-check-feature-completeness [-q] [--exclude=<dir>] [directories]' . \PHP_EOL;
+        $output = '';
+        foreach ($this->helpTexts as $section => $options) {
+            $longestOptionLength = 0;
+            foreach ($options as $option) {
+                if (isset($option['arg'])) {
+                    $longestOptionLength = \max($longestOptionLength, \strlen($option['arg']));
+                }
+            }
 
-        $text .= \PHP_EOL;
-        $text .= 'Options:' . \PHP_EOL;
-        $text .= '    directories   One or more specific directories to examine.' . \PHP_EOL;
-        $text .= '                  Defaults to the directory from which the script is run.' . \PHP_EOL;
-        $text .= '    -q, --quiet   Turn off warnings for missing documentation.' . \PHP_EOL;
-        $text .= '    --exclude     Comma-delimited list of (relative) directories to exclude' . \PHP_EOL;
-        $text .= '                  from the scan.' . \PHP_EOL;
-        $text .= '                  Defaults to excluding the /vendor/ directory.' . \PHP_EOL;
-        $text .= '    --no-progress Disable progress in console output.' . \PHP_EOL;
-        $text .= '    --colors      Enable colors in console output.' . \PHP_EOL;
-        $text .= '                  (disables auto detection of color support)' . \PHP_EOL;
-        $text .= '    --no-colors   Disable colors in console output.' . \PHP_EOL;
-        $text .= '    -v            Verbose mode.' . \PHP_EOL;
-        $text .= '    -h, --help    Print this help.' . \PHP_EOL;
-        $text .= '    -V, --version Display the current version of this script.' . \PHP_EOL;
+            if ($this->showColored === true) {
+                $output .= "\033[33m{$section}:\033[0m" . \PHP_EOL;
+            } else {
+                $output .= "{$section}:" . \PHP_EOL;
+            }
 
-        return $text;
+            $descWidth = (self::MAX_WIDTH - ($longestOptionLength + 1 + \strlen(self::LEFT_MARGIN)));
+            $descBreak = \PHP_EOL . self::LEFT_MARGIN . \str_pad(' ', ($longestOptionLength + 1));
+
+            foreach ($options as $option) {
+                if (isset($option['text'])) {
+                    $text = $option['text'];
+                    if ($this->showColored === true) {
+                        $text = \preg_replace('`(\[[^\]]+\])`', "\033[36m" . '$1' . "\033[0m", $text);
+                    }
+                    $output .= self::LEFT_MARGIN . $text . \PHP_EOL;
+                }
+
+                if (isset($option['arg'])) {
+                    $arg = \str_pad($option['arg'], $longestOptionLength);
+                    if ($this->showColored === true) {
+                        $arg = \preg_replace('`(<[^>]+>)`', "\033[0m\033[36m" . '$1', $arg);
+                        $arg = "\033[32m{$arg}\033[0m";
+                    }
+
+                    $descText = \wordwrap($option['desc'], $descWidth, $descBreak);
+                    $desc     = \explode('. ', $option['desc']);
+                    if (\count($desc) > 1) {
+                        $descText = '';
+                        foreach ($desc as $key => $sentence) {
+                            $descText .= ($key === 0) ? '' : $descBreak;
+                            $descText .= \wordwrap($sentence, $descWidth, $descBreak);
+                            $descText  = \rtrim($descText, '.') . '.';
+                        }
+                    }
+
+                    $output .= self::LEFT_MARGIN . $arg . ' ' . $descText . \PHP_EOL;
+                }
+            }
+
+            $output .= \PHP_EOL;
+        }
+
+        return $output;
     }
 }
