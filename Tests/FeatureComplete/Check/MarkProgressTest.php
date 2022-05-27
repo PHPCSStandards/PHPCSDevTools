@@ -15,9 +15,9 @@ use PHPCSDevTools\Tests\FeatureComplete\Check\CheckTestCase;
 /**
  * Test the progress bar display.
  *
- * @covers \PHPCSDevTools\Scripts\FeatureComplete\Check::isComplete
+ * @covers \PHPCSDevTools\Scripts\FeatureComplete\Check::markProgress
  */
-final class ProgressBarTest extends CheckTestCase
+final class MarkProgressTest extends CheckTestCase
 {
 
     /**

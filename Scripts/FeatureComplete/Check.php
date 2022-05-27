@@ -218,25 +218,7 @@ final class Check
             }
 
             // Show progress.
-            if ($this->config->showProgress === true) {
-                echo '.';
-
-                $current = ($i + 1);
-                if (($current % 60) === 0 || $current === $sniffCount) {
-                    $padding = \strlen($sniffCount);
-
-                    $filling = '';
-                    if ($current === $sniffCount) {
-                        $lines = \ceil($current / 60);
-                        if ($lines > 1) {
-                            $filling = \str_repeat(' ', (($lines * 60) - $sniffCount));
-                        }
-                    }
-
-                    echo $filling, ' ', \str_pad($current, $padding, ' ', \STR_PAD_LEFT), ' / ', $sniffCount,
-                        ' (', \str_pad(\round(($current / $sniffCount) * 100), 3, ' ', \STR_PAD_LEFT), '%)', \PHP_EOL;
-                }
-            }
+            $this->markProgress($i, $sniffCount);
         }
 
         /*
@@ -287,6 +269,39 @@ final class Check
             echo \PHP_EOL, $feedback, \PHP_EOL;
 
             return true;
+        }
+    }
+
+    /**
+     * Display progress markers.
+     *
+     * @param int $i     Current file being scanned.
+     * @param int $total Total files being scanned.
+     *
+     * @return void
+     */
+    private function markProgress($i, $total)
+    {
+        if ($this->config->showProgress !== true) {
+            return;
+        }
+
+        echo '.';
+
+        $current = ($i + 1);
+        if (($current % 60) === 0 || $current === $total) {
+            $padding = \strlen($total);
+
+            $filling = '';
+            if ($current === $total) {
+                $lines = \ceil($current / 60);
+                if ($lines > 1) {
+                    $filling = \str_repeat(' ', (($lines * 60) - $total));
+                }
+            }
+
+            echo $filling, ' ', \str_pad($current, $padding, ' ', \STR_PAD_LEFT), ' / ', $total,
+                ' (', \str_pad(\round(($current / $total) * 100), 3, ' ', \STR_PAD_LEFT), '%)', \PHP_EOL;
         }
     }
 }
