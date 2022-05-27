@@ -95,5 +95,8 @@ require_once __DIR__ . '/Scripts/Utils/FileList.php';
 require_once __DIR__ . '/Scripts/FeatureComplete/Config.php';
 require_once __DIR__ . '/Scripts/FeatureComplete/Check.php';
 
+// Load test related files.
+require_once __DIR__ . '/Tests/FeatureComplete/Check/CheckTestCase.php';
+
 // Clean up.
 unset($ds, $phpcsDir, $phpcsUtilsDir, $vendorDir);

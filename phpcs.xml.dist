@@ -12,6 +12,7 @@
     <file>.</file>
 
     <!-- Exclude Composer vendor directory. -->
+    <exclude-pattern>*/Tests/Fixtures/*</exclude-pattern>
     <exclude-pattern>*/vendor/*</exclude-pattern>
 
     <!-- Only check PHP files. -->
