@@ -47,7 +47,7 @@ final class VerboseTest extends CheckTestCase
 Target dir\(s\):
 - ' . self::FIXTURE_DIR_REGEX . 'ValidStandards[\\\\/]CompleteMixed
 
-\.+`';
+Checking sniff completeness:[\r\n]+`';
 
         $this->runValidation($command, $regex, 0);
     }
@@ -68,7 +68,7 @@ Target dir\(s\):
 - ' . self::FIXTURE_DIR_REGEX . 'ValidStandards[\\\\/]CompleteMixed
 - ' . self::FIXTURE_DIR_REGEX . 'ValidStandards[\\\\/]CompleteSingleSniff
 
-\.+`';
+Checking sniff completeness:[\r\n]+`';
 
         $this->runValidation($command, $regex, 0);
     }

@@ -15,7 +15,9 @@ use PHPCSDevTools\Tests\FeatureComplete\Check\CheckTestCase;
 /**
  * Test reporting on standards missing both test and documentation files for select sniffs.
  *
- * @covers \PHPCSDevTools\Scripts\FeatureComplete\Check
+ * @covers \PHPCSDevTools\Scripts\FeatureComplete\Check::__construct
+ * @covers \PHPCSDevTools\Scripts\FeatureComplete\Check::validate
+ * @covers \PHPCSDevTools\Scripts\FeatureComplete\Check::isComplete
  */
 final class MissingTestsAndDocsTest extends CheckTestCase
 {
@@ -58,7 +60,7 @@ final class MissingTestsAndDocsTest extends CheckTestCase
      */
     public function testMissingTestsAndDocs()
     {
-        $command = 'phpcs-check-feature-completeness --no-colors ' . self::FIXTURE_DIR . self::FIXTURE_MULTISNIFF;
+        $command = 'phpcs-check-feature-completeness --no-colors --no-orphans ' . self::FIXTURE_DIR . self::FIXTURE_MULTISNIFF;
 
         $sniffDirRegex = \sprintf(self::SNIFF_DIR_REGEX, self::FIXTURE_MULTISNIFF);
         $regex         = '`by Juliette Reinders Folmer
@@ -85,7 +87,7 @@ Found 3 errors and 2 warnings\.[\r\n]+$`';
      */
     public function testMissingTestsAndDocsMultipleSources()
     {
-        $command = 'phpcs-check-feature-completeness --no-colors'
+        $command = 'phpcs-check-feature-completeness --no-colors --no-orphans'
             . ' ' . self::FIXTURE_DIR . self::FIXTURE_MULTISNIFF
             . ' ' . self::FIXTURE_DIR . self::FIXTURE_SINGLESNIFF;
 
@@ -116,7 +118,7 @@ Found 4 errors and 3 warnings\.[\r\n]+$`';
      */
     public function testMissingTestsAndDocsSingleSniff()
     {
-        $command = 'phpcs-check-feature-completeness --no-colors ' . self::FIXTURE_DIR . self::FIXTURE_SINGLESNIFF;
+        $command = 'phpcs-check-feature-completeness --no-colors --no-orphans ' . self::FIXTURE_DIR . self::FIXTURE_SINGLESNIFF;
 
         $sniffDirRegex = \sprintf(self::SNIFF_DIR_REGEX, self::FIXTURE_SINGLESNIFF);
         $regex         = '`by Juliette Reinders Folmer

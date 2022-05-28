@@ -30,7 +30,21 @@ final class Check
      *
      * @var string
      */
-    const FILTER_REGEX = '`%1$s%2$s.*?/Sniffs/(?!Abstract).+Sniff\.php$`Di';
+    const SNIFF_FILTER_REGEX = '`%1$s%2$s.*?/Sniffs/(?!Abstract).+Sniff\.php$`Di';
+
+    /**
+     * Regex used to filter the files down to docs only.
+     *
+     * @var string
+     */
+    const DOC_FILTER_REGEX = '`%1$s%2$s.*?/Docs/.+Standard\.xml$`Di';
+
+    /**
+     * Regex used to filter the files down to tests only.
+     *
+     * @var string
+     */
+    const TEST_FILTER_REGEX = '`(%1$s%2$s.*?)/Tests/([^/]+)/([^/\.]+)UnitTest(?:\.[0-9]+)?\.(inc|css|js|php)$`Di';
 
     /**
      * Configuration as passed on the command line
@@ -52,6 +66,20 @@ final class Check
      * @var array
      */
     protected $allSniffs = [];
+
+    /**
+     * List of all docs files in the repo.
+     *
+     * @var array
+     */
+    protected $allDocs = [];
+
+    /**
+     * List of all test files in the repo.
+     *
+     * @var array
+     */
+    protected $allTests = [];
 
     /**
      * Search & replace values to convert a sniff file path into a docs file path.
@@ -118,17 +146,29 @@ final class Check
         $quotedProjectRoot = \preg_quote($this->config->projectRoot . $sep, '`');
         $allFilesRegex     = \str_replace('(?!\.git/)', $exclude, FileList::BASE_REGEX);
         $allFilesRegex     = \sprintf($allFilesRegex, $quotedProjectRoot);
-        $sniffsRegex       = \sprintf(self::FILTER_REGEX, $quotedProjectRoot, $exclude);
+        $sniffsRegex       = \sprintf(self::SNIFF_FILTER_REGEX, $quotedProjectRoot, $exclude);
+        $docsRegex         = \sprintf(self::DOC_FILTER_REGEX, $quotedProjectRoot, $exclude);
+        $testsRegex        = \sprintf(self::TEST_FILTER_REGEX, $quotedProjectRoot, $exclude);
 
         // Get the file lists.
         $allFiles  = [];
         $allSniffs = [];
+        $allDocs   = [];
+        $allTests  = [];
         foreach ($this->config->targetDirs as $targetDir) {
             // Get a list of all files in the target directory.
             $allFiles[] = (new FileList($targetDir, $this->config->projectRoot, $allFilesRegex))->getList();
 
             // Get a list of all sniffs in the target directory.
             $allSniffs[] = (new FileList($targetDir, $this->config->projectRoot, $sniffsRegex))->getList();
+
+            if ($this->config->checkOrphans === true) {
+                // Get a list of all docs in the target directory.
+                $allDocs[] = (new FileList($targetDir, $this->config->projectRoot, $docsRegex))->getList();
+
+                // Get a list of all test files in the target directory.
+                $allTests[] = (new FileList($targetDir, $this->config->projectRoot, $testsRegex))->getList();
+            }
         }
 
         $allFiles = \call_user_func_array('array_merge', $allFiles);
@@ -138,6 +178,16 @@ final class Check
         $allSniffs = \call_user_func_array('array_merge', $allSniffs);
         \sort($allSniffs, \SORT_NATURAL);
         $this->allSniffs = $allSniffs;
+
+        if ($this->config->checkOrphans === true) {
+            $allDocs = \call_user_func_array('array_merge', $allDocs);
+            \sort($allDocs, \SORT_NATURAL);
+            $this->allDocs = $allDocs;
+
+            $allTests = \call_user_func_array('array_merge', $allTests);
+            \sort($allTests, \SORT_NATURAL);
+            $this->allTests = $allTests;
+        }
     }
 
     /**
@@ -155,11 +205,36 @@ final class Check
                 \PHP_EOL, \PHP_EOL;
         }
 
-        if ($this->isComplete() !== true) {
-            return 1;
+        $exitCode = 0;
+
+        if ($this->config->showProgress === true && $this->config->checkOrphans === true) {
+            // Only show subheader if both checks are run.
+            $header = 'Checking sniff completeness:';
+            if ($this->config->showColored === true) {
+                $header = "\033[34m{$header}\033[0m";
+            }
+            echo $header, \PHP_EOL;
         }
 
-        return 0;
+        if ($this->isComplete() !== true) {
+            $exitCode = 1;
+        }
+
+        if ($this->config->checkOrphans === true) {
+            if ($this->config->showProgress === true) {
+                $header = 'Checking for orphaned files:';
+                if ($this->config->showColored === true) {
+                    $header = "\033[34m{$header}\033[0m";
+                }
+                echo \PHP_EOL, $header, \PHP_EOL;
+            }
+
+            if ($this->hasOrphans() === true) {
+                $exitCode = 1;
+            }
+        }
+
+        return $exitCode;
     }
 
     /**
@@ -269,6 +344,97 @@ final class Check
             echo \PHP_EOL, $feedback, \PHP_EOL;
 
             return true;
+        }
+    }
+
+    /**
+     * Check is there are any "orphaned" documentation or test files, i.e. without a corresponding sniff.
+     *
+     * @return bool
+     */
+    protected function hasOrphans()
+    {
+        $noOrphansFeedback = function ($showColored) {
+            $feedback = 'No orphaned documentation or test files found.';
+            if ($showColored === true) {
+                $feedback = "\033[32m" . $feedback . "\033[0m";
+            }
+
+            echo $feedback, \PHP_EOL;
+        };
+
+        $filesToCheck = \count($this->allDocs) + \count($this->allTests);
+        if ($filesToCheck === 0) {
+            $noOrphansFeedback($this->config->showColored);
+            return false;
+        }
+
+        $notices = [];
+        $i       = 0;
+
+        $warning = 'WARNING: Orphaned documentation file found %s';
+        if ($this->config->showColored === true) {
+            $warning = \str_replace('WARNING', "\033[33mWARNING\033[0m", $warning);
+        }
+
+        foreach ($this->allDocs as $i => $file) {
+            $sniffFile = \str_replace($this->sniffToDoc, \array_keys($this->sniffToDoc), $file);
+            if (isset($this->allFiles[$sniffFile]) === false) {
+                $notices[] = \sprintf($warning, $file);
+            }
+
+            $this->markProgress($i, $filesToCheck);
+        }
+
+        $subtotal = ($i + 1);
+
+        $warning = 'WARNING: Orphaned test file found          %s';
+        if ($this->config->showColored === true) {
+            $warning = \str_replace('WARNING', "\033[33mWARNING\033[0m", $warning);
+        }
+
+        $testToSniffRegex = sprintf(self::TEST_FILTER_REGEX, '', '');
+
+        foreach ($this->allTests as $j => $file) {
+            /*
+             * This uses a more specific preg_replace(), instead of a str_replace() based on
+             * the $sniffToUnitTest property, to:
+             * a) handle all possible extensions
+             * b) not mangle the paths for our own test fixtures, which are also in a "Tests" directory.
+             */
+            $sniffFile = \preg_replace($testToSniffRegex, '$1/Sniffs/$2/$3Sniff.php', $file);
+            if (isset($this->allFiles[$sniffFile]) === false) {
+                $notices[] = \sprintf($warning, $file);
+            }
+
+            $this->markProgress(($subtotal + $j), $filesToCheck);
+        }
+
+        /*
+         * Show feedback to the user.
+         */
+        if (empty($notices) === false) {
+            // Show the warnings.
+            $noticeCount = \count($notices);
+            $summary     = \sprintf(
+                'Found %1$s%2$d orphaned file%3$s%4$s.',
+                ($noticeCount > 0 && $this->config->showColored === true) ? "\033[33m" : '',
+                $noticeCount,
+                ($noticeCount === 1) ? '' : 's',
+                ($noticeCount > 0 && $this->config->showColored === true) ? "\033[0m" : ''
+            );
+
+            echo \PHP_EOL,
+                \implode(\PHP_EOL, $notices), \PHP_EOL,
+                \PHP_EOL,
+                \str_repeat('-', 41), \PHP_EOL,
+                $summary, \PHP_EOL;
+
+            return true;
+        } else {
+            echo \PHP_EOL;
+            $noOrphansFeedback($this->config->showColored);
+            return false;
         }
     }
 

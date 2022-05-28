@@ -13,7 +13,7 @@ namespace PHPCSDevTools\Tests\FeatureComplete\Check;
 use PHPCSDevTools\Tests\FeatureComplete\Check\CheckTestCase;
 
 /**
- * Test reporting on standards which are feature complete.
+ * Test reporting on standards which are feature complete and have no orphaned files.
  *
  * @covers \PHPCSDevTools\Scripts\FeatureComplete\Check
  * @covers \PHPCSDevTools\Scripts\Utils\FileList
@@ -33,18 +33,26 @@ final class ValidStandardsTest extends CheckTestCase
      *
      * @dataProvider dataFeatureCompleteStandard
      *
-     * @param string $fixtureDir Relative path within the fixture directory to use for the test.
+     * @param string $fixtureDir   Relative path within the fixture directory to use for the test.
+     * @param int    $testDocCount Count of the number of test and doc files for the orphaned file check progress bar.
      *
      * @return void
      */
-    public function testFeatureCompleteStandard($fixtureDir)
+    public function testFeatureCompleteStandard($fixtureDir, $testDocCount)
     {
         $command        = 'phpcs-check-feature-completeness --no-colors ' . self::FIXTURE_DIR . $fixtureDir;
+        $orphanProgress = \str_repeat('.', $testDocCount) . " $testDocCount / $testDocCount (100%)";
         $expectedOutput = 'by Juliette Reinders Folmer
 
+Checking sniff completeness:
 ... 3 / 3 (100%)
 
-All 3 sniffs are accompanied by unit tests and documentation.';
+All 3 sniffs are accompanied by unit tests and documentation.
+
+Checking for orphaned files:
+' . $orphanProgress . '
+
+No orphaned documentation or test files found.';
         $regex          = '`' .  \preg_quote($expectedOutput, '`') . '[\r\n]+$`';
 
         $this->runValidation($command, $regex, 0);
@@ -58,10 +66,22 @@ All 3 sniffs are accompanied by unit tests and documentation.';
     public function dataFeatureCompleteStandard()
     {
         return [
-            'feature complete with CSS test files'      => ['CompleteCSS'],
-            'feature complete with JS test files'       => ['CompleteJS'],
-            'feature complete with PHP test files'      => ['CompletePHP'],
-            'feature complete with a mix of test files' => ['CompleteMixed'],
+            'feature complete with CSS test files'      => [
+                'fixtureDir'   => 'CompleteCSS',
+                'testDocCount' => 11,
+            ],
+            'feature complete with JS test files'       => [
+                'fixtureDir'   => 'CompleteJS',
+                'testDocCount' => 10,
+            ],
+            'feature complete with PHP test files'      => [
+                'fixtureDir'   => 'CompletePHP',
+                'testDocCount' => 11,
+            ],
+            'feature complete with a mix of test files' => [
+                'fixtureDir'   => 'CompleteMixed',
+                'testDocCount' => 16,
+            ],
         ];
     }
 
@@ -79,9 +99,15 @@ All 3 sniffs are accompanied by unit tests and documentation.';
             . ' ' . self::FIXTURE_DIR . 'CompleteMixed';
         $expectedOutput = 'by Juliette Reinders Folmer
 
+Checking sniff completeness:
 ............ 12 / 12 (100%)
 
-All 12 sniffs are accompanied by unit tests and documentation.';
+All 12 sniffs are accompanied by unit tests and documentation.
+
+Checking for orphaned files:
+................................................ 48 / 48 (100%)
+
+No orphaned documentation or test files found.';
         $regex          = '`' .  \preg_quote($expectedOutput, '`') . '[\r\n]+$`';
 
         $this->runValidation($command, $regex, 0);
@@ -97,16 +123,24 @@ All 12 sniffs are accompanied by unit tests and documentation.';
         $command        = 'phpcs-check-feature-completeness --no-colors ' . self::FIXTURE_DIR . 'CompleteSingleSniff';
         $expectedOutput = 'by Juliette Reinders Folmer
 
+Checking sniff completeness:
 . 1 / 1 (100%)
 
-Found 1 sniff accompanied by unit tests and documentation.';
+Found 1 sniff accompanied by unit tests and documentation.
+
+Checking for orphaned files:
+..... 5 / 5 (100%)
+
+No orphaned documentation or test files found.';
         $regex          = '`' .  \preg_quote($expectedOutput, '`') . '[\r\n]+$`';
 
         $this->runValidation($command, $regex, 0);
     }
 
     /**
-     * Verify that the summary message is adapted correctly when quiet mode is used.
+     * Verify that the summary message is adapted correctly when quiet mode is used,
+     * that the "checking sniff completeness" subheader doesn't show and that
+     * the orphaned file check is not executed.
      *
      * @return void
      */
@@ -118,6 +152,25 @@ Found 1 sniff accompanied by unit tests and documentation.';
 ... 3 / 3 (100%)
 
 All 3 sniffs are accompanied by unit tests.';
+        $regex          = '`' .  \preg_quote($expectedOutput, '`') . '[\r\n]+$`';
+
+        $this->runValidation($command, $regex, 0);
+    }
+
+    /**
+     * Verify that the "subheaders" don't show when progress reporting is turned off.
+     *
+     * @return void
+     */
+    public function testFeatureCompleteNoProgress()
+    {
+        $command        = 'phpcs-check-feature-completeness --no-progress --no-colors ' . self::FIXTURE_DIR . 'CompleteMixed';
+        $expectedOutput = 'by Juliette Reinders Folmer
+
+
+All 3 sniffs are accompanied by unit tests and documentation.
+
+No orphaned documentation or test files found.';
         $regex          = '`' .  \preg_quote($expectedOutput, '`') . '[\r\n]+$`';
 
         $this->runValidation($command, $regex, 0);

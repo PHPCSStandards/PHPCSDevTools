@@ -63,7 +63,11 @@ final class NoSniffsTest extends CheckTestCase
         $command = 'phpcs-check-feature-completeness --no-colors ' . self::FIXTURE_DIR . $fixtureDir;
         $regex   = '`by Juliette Reinders Folmer
 
-No sniffs found\.[\r\n]+$`';
+Checking sniff completeness:
+No sniffs found\.
+
+Checking for orphaned files:
+No orphaned documentation or test files found\.[\r\n]+$`';
 
         $this->runValidation($command, $regex, 0);
     }

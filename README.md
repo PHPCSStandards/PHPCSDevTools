@@ -77,6 +77,7 @@ Features
 ### Checking whether all sniffs in a PHPCS standard are feature complete
 
 You can now check whether each and every sniff in your standard is accompanied by a documentation XML file (warning) as well as unit test files (error).
+The tool will also verify that there are no documentation or test files in your standard which are not associated with a sniff ("orphaned" files).
 
 To use the tool, run it from the root of your standards repo like so:
 ```bash
@@ -90,12 +91,22 @@ phpcs-check-feature-completeness
 php -f "path/to/PHPCSDevTools/bin/phpcs-check-feature-completeness"
 ```
 
-If all is good, you will see a `All # sniffs are accompanied by unit tests and documentation.` message.
+If all is good, you will see the following messages:
+```
+All # sniffs are accompanied by unit tests and documentation.
+No orphaned documentation or test files found.
+```
 
 If there are files missing, you will see errors/warnings for each missing file, like so:
 ```
 WARNING: Documentation missing for path/to/project/StandardName/Sniffs/Category/SniffNameSniff.php.
 ERROR: Unit tests missing for path/to/project/StandardName/Sniffs/Category/SniffNameSniff.php.
+```
+
+If orphaned files are found you will receive a warning for each orphaned file found, like so:
+```
+WARNING: Orphaned documentation file found path/to/project/StandardName/Docs/Category/NonExistantSniffStandard.xml.
+WARNING: Orphaned test file found path/to/project/StandardName/Test/Category/NonExistantSniffUnitTest.inc.
 ```
 
 For the fastest results, it is recommended to pass the name of the subdirectory where your standard is located to the script, like so:
@@ -107,15 +118,17 @@ phpcs-check-feature-completeness ./StandardName
 ```
 directories <dir>     One or more specific directories to examine.
                       Defaults to the directory from which the script is run.
--q, --quiet           Turn off warnings for missing documentation.
-                      Equivalent to running with "--no-docs".
+-q, --quiet           Turn off warnings for missing documentation and orphaned
+                      files.
+                      Equivalent to running with "--no-docs --no-orphans".
 --exclude=<dir1,dir2> Comma-delimited list of (relative) directories to
                       exclude from the scan.
                       Defaults to excluding the /vendor/ directory.
 --no-docs             Disable missing documentation check.
+--no-orphans          Disable orphaned files check.
 --no-progress         Disable progress in console output.
 --colors              Enable colors in console output.
-                      (disables auto detection of color support)
+                      (disables auto detection of color support).
 --no-colors           Disable colors in console output.
 -v                    Verbose mode.
 -h, --help            Print this help.

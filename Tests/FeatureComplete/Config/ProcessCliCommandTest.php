@@ -32,6 +32,7 @@ final class ProcessCliCommandTest extends TestCase
     private $defaultSettings = [
         'projectRoot'  => '',
         'checkDocs'    => true,
+        'checkOrphans' => true,
         'showProgress' => true,
         'showColored'  => null,
         'verbose'      => 0,
@@ -185,10 +186,11 @@ final class ProcessCliCommandTest extends TestCase
             'Multiple short arguments: -q -v' => [
                 'command'         => 'phpcs-check-feature-completeness -q -v .',
                 'expectedChanged' => [
-                    'projectRoot' => $projectRoot,
-                    'checkDocs'   => false,
-                    'verbose'     => 1,
-                    'targetDirs'  => [
+                    'projectRoot'  => $projectRoot,
+                    'checkDocs'    => false,
+                    'checkOrphans' => false,
+                    'verbose'      => 1,
+                    'targetDirs'   => [
                         \realpath('.'),
                     ],
                 ],
@@ -253,9 +255,10 @@ final class ProcessCliCommandTest extends TestCase
             'Quiet mode (short arg)' => [
                 'command'         => './phpcs-check-feature-completeness -q',
                 'expectedChanged' => [
-                    'projectRoot' => $projectRoot,
-                    'checkDocs'   => false,
-                    'targetDirs'  => [
+                    'projectRoot'  => $projectRoot,
+                    'checkDocs'    => false,
+                    'checkOrphans' => false,
+                    'targetDirs'   => [
                         $projectRoot,
                     ],
                 ],
@@ -263,9 +266,10 @@ final class ProcessCliCommandTest extends TestCase
             'Quiet mode (long arg)' => [
                 'command'         => 'aliased-command --quiet',
                 'expectedChanged' => [
-                    'projectRoot' => $projectRoot,
-                    'checkDocs'   => false,
-                    'targetDirs'  => [
+                    'projectRoot'  => $projectRoot,
+                    'checkDocs'    => false,
+                    'checkOrphans' => false,
+                    'targetDirs'   => [
                         $projectRoot,
                     ],
                 ],
@@ -275,6 +279,16 @@ final class ProcessCliCommandTest extends TestCase
                 'expectedChanged' => [
                     'projectRoot'  => $projectRoot,
                     'checkDocs'    => false,
+                    'targetDirs'   => [
+                        \realpath('.'),
+                    ],
+                ],
+            ],
+            'No orphans' => [
+                'command'         => 'phpcs-check-feature-completeness . --no-orphans',
+                'expectedChanged' => [
+                    'projectRoot'  => $projectRoot,
+                    'checkOrphans' => false,
                     'targetDirs'   => [
                         \realpath('.'),
                     ],
@@ -323,11 +337,12 @@ final class ProcessCliCommandTest extends TestCase
                 ],
             ],
             'All together now, includes testing for handling of additional whitespace between arguments' => [
-                'command'          => 'phpcs-check-feature-completeness src    -q --exclude=ignoreme,/other,./tests/'
-                    . ' PHPCSDebug   --no-progress    ./Tests   --colors -v .',
+                'command'          => 'phpcs-check-feature-completeness src    --no-docs --exclude=ignoreme,/other,./tests/'
+                    . ' PHPCSDebug   --no-progress    ./Tests   --colors -v  --no-orphans .',
                 'expectedChanged'  => [
                     'projectRoot'  => $projectRoot,
-                    'checkDocs'   => false,
+                    'checkDocs'    => false,
+                    'checkOrphans' => false,
                     'showProgress' => false,
                     'showColored'  => true,
                     'verbose'      => 1,

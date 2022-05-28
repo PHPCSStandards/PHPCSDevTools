@@ -15,7 +15,9 @@ use PHPCSDevTools\Tests\FeatureComplete\Check\CheckTestCase;
 /**
  * Test colorized output.
  *
+ * @covers \PHPCSDevTools\Scripts\FeatureComplete\Check::validate
  * @covers \PHPCSDevTools\Scripts\FeatureComplete\Check::isComplete
+ * @covers \PHPCSDevTools\Scripts\FeatureComplete\Check::hasOrphans
  *
  * @phpcs:disable Squiz.Arrays.ArrayDeclaration.DoubleArrowNotAligned -- If needed, fix once replaced by better sniff.
  */
@@ -57,6 +59,11 @@ final class ColorTest extends CheckTestCase
     public function dataColors()
     {
         return [
+            'feature complete - header' => [
+                'fixtureDir'     => 'ValidStandards/CompleteSingleSniff',
+                'expectedOutput' => "\033[34mChecking sniff completeness:\033[0m",
+                'exitCode'       => 0,
+            ],
             'feature complete - warning message for missing file' => [
                 'fixtureDir'     => 'MissingDocFiles/SingleSniff',
                 'expectedOutput' => "\033[33mWARNING\033[0m:",
@@ -92,6 +99,26 @@ final class ColorTest extends CheckTestCase
                 'expectedOutput' => "Found \033[31m3 errors\033[0m",
                 'exitCode'       => 1,
                 'cliExtra'       => '-q',
+            ],
+            'orphaned files - header' => [
+                'fixtureDir'     => 'ValidStandards/CompleteSingleSniff',
+                'expectedOutput' => "\033[34mChecking for orphaned files:\033[0m",
+                'exitCode'       => 0,
+            ],
+            'orphaned files - warning message for orphaned file' => [
+                'fixtureDir'     => 'HasOrphans/SingleFile',
+                'expectedOutput' => "\033[33mWARNING\033[0m:",
+                'exitCode'       => 1,
+            ],
+            'orphaned files - success' => [
+                'fixtureDir'     => 'ValidStandards/CompleteSingleSniff',
+                'expectedOutput' => "\033[32mNo orphaned documentation or test files found.\033[0m",
+                'exitCode'       => 0,
+            ],
+            'orphaned files - summary: has warnings' => [
+                'fixtureDir'     => 'HasOrphans/MultipleFiles',
+                'expectedOutput' => "Found \033[33m12 orphaned files\033[0m.",
+                'exitCode'       => 1,
             ],
         ];
     }
