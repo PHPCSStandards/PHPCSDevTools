@@ -12,12 +12,13 @@ namespace PHPCSDevTools\Tests\FeatureComplete\Check;
 
 use PHPCSDevTools\Scripts\FeatureComplete\Config;
 use PHPCSDevTools\Scripts\FeatureComplete\Check;
-use PHPUnit\Framework\TestCase;
+use PHPCSDevTools\Tests\TestWriter;
+use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
 
 /**
  * Abstract test case for integration testing the Check class.
  */
-abstract class CheckTestCase extends TestCase
+abstract class CheckTestCase extends XTestCase
 {
 
     /**
@@ -33,12 +34,18 @@ abstract class CheckTestCase extends TestCase
     {
         // Make the regex ignore differences in line endings.
         $expectedOutputRegex = \preg_replace('`[\r\n]+`', '[\r\n]+', $expectedOutputRegex);
-        $this->expectOutputRegex($expectedOutputRegex);
 
         $_SERVER['argv'] = \explode(' ', $command);
-        $config          = new Config();
-        $check           = new Check($config);
+        $writer          = new TestWriter();
+        $config          = new Config($writer);
+        $check           = new Check($config, $writer);
+        $exitCode        = $check->validate();
 
-        $this->assertSame($expectedExitcode, $check->validate(), 'Exit code does not match expectation');
+        $this->assertMatchesRegularExpression(
+            $expectedOutputRegex,
+            $writer->getOutput(),
+            'Output does not match expectation'
+        );
+        $this->assertSame($expectedExitcode, $exitCode, 'Exit code does not match expectation');
     }
 }

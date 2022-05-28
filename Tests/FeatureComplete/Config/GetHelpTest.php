@@ -11,15 +11,16 @@
 namespace PHPCSDevTools\Tests\FeatureComplete\Config;
 
 use PHPCSDevTools\Scripts\FeatureComplete\Config;
-use PHPUnit\Framework\TestCase;
+use PHPCSDevTools\Tests\TestWriter;
 use ReflectionMethod;
+use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
 
 /**
  * Test the "show help" feature.
  *
  * @covers \PHPCSDevTools\Scripts\FeatureComplete\Config::getHelp
  */
-final class GetHelpTest extends TestCase
+final class GetHelpTest extends XTestCase
 {
 
     /**
@@ -27,8 +28,7 @@ final class GetHelpTest extends TestCase
      *
      * @var string
      */
-    private $expectedOutputNoColors = '
-Usage:
+    private $expectedOutputNoColors = 'Usage:
   phpcs-check-feature-completeness
   phpcs-check-feature-completeness [-q] [--exclude=<dir>] [directories]
 
@@ -92,13 +92,14 @@ Options:
      */
     public function testShowHelpNoColors($command)
     {
-        $regex = '`' .  \preg_quote($this->expectedOutputNoColors, '`') . '`';
-        // Make the regex ignore differences in line endings.
-        $regex = \preg_replace('`[\r\n]+`', '[\r\n]+', $regex);
-        $this->expectOutputRegex($regex);
-
         $_SERVER['argv'] = \explode(' ', $command . ' --no-colors');
-        new Config();
+        $writer          = new TestWriter();
+        $config          = new Config($writer);
+
+        $actual = $writer->getStdout();
+        $actual = \str_replace(["\r\n", "\r"], "\n", $actual);
+
+        $this->assertStringContainsString($this->expectedOutputNoColors, $actual);
     }
 
     /**
@@ -126,7 +127,7 @@ Options:
     public function testGetHelpWithColors()
     {
         $_SERVER['argv'] = \explode(' ', 'command --colors');
-        $config          = new Config();
+        $config          = new Config(new TestWriter());
 
         $getHelp = new ReflectionMethod($config, 'getHelp');
         $getHelp->setAccessible(true);

@@ -10,6 +10,7 @@
 
 namespace PHPCSDevTools\Scripts\FeatureComplete;
 
+use PHPCSDevTools\Scripts\Utils\Writer;
 use RuntimeException;
 
 /**
@@ -37,6 +38,13 @@ final class Config
      * @var string
      */
     const LEFT_MARGIN = '  ';
+
+    /**
+     * Writer for sending output.
+     *
+     * @var \PHPCSDevTools\Scripts\Utils\Writer
+     */
+    private $writer;
 
     /**
      * The root directory of the project.
@@ -176,9 +184,13 @@ final class Config
 
     /**
      * Constructor.
+     *
+     * @param \PHPCSDevTools\Scripts\Utils\Writer $writer Writer for sending output.
      */
-    public function __construct()
+    public function __construct(Writer $writer)
     {
+        $this->writer = $writer;
+
         $this->processCliCommand();
 
         if ($this->executeCheck === true && empty($this->targetDirs)) {
@@ -196,7 +208,10 @@ final class Config
      */
     public function __get($name)
     {
-        if (isset($this->$name) && $name !== 'helpTexts') {
+        if (isset($this->$name)
+            && $name !== 'helpTexts'
+            && $name !== 'writer'
+        ) {
             return $this->$name;
         }
 
@@ -212,7 +227,7 @@ final class Config
      */
     public function __isset($name)
     {
-        return isset($this->$name) && $name !== 'helpTexts';
+        return isset($this->$name) && $name !== 'helpTexts' && $name !== 'writer';
     }
 
     /**
@@ -277,8 +292,8 @@ final class Config
         if (isset($argsFlipped['-h'])
             || isset($argsFlipped['--help'])
         ) {
-            echo $this->getVersion();
-            echo $this->getHelp();
+            $this->writer->toStderr($this->getVersion());
+            $this->writer->toStdout($this->getHelp());
             $this->executeCheck = false;
             return;
         }
@@ -286,7 +301,7 @@ final class Config
         if (isset($argsFlipped['-V'])
             || isset($argsFlipped['--version'])
         ) {
-            echo $this->getVersion();
+            $this->writer->toStdout($this->getVersion());
             $this->executeCheck = false;
             return;
         }
