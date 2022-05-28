@@ -87,16 +87,11 @@ pointing to the PHPCSUtils directory.
     die(1);
 }
 
+// Load autoloader for the non-sniff devtools and tests.
+require_once __DIR__ . '/devtools-autoload.php';
+
 // Load test related autoloader.
 require_once __DIR__ . '/vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
-
-// Load the scripts for the Feature Complete tooling.
-require_once __DIR__ . '/Scripts/Utils/FileList.php';
-require_once __DIR__ . '/Scripts/FeatureComplete/Config.php';
-require_once __DIR__ . '/Scripts/FeatureComplete/Check.php';
-
-// Load test related files.
-require_once __DIR__ . '/Tests/FeatureComplete/Check/CheckTestCase.php';
 
 // Clean up.
 unset($ds, $phpcsDir, $phpcsUtilsDir, $vendorDir);

@@ -35,14 +35,21 @@
  * @link      https://github.com/PHPCSStandards/PHPCSDevTools
  */
 
-if (is_file(__DIR__.'/../autoload.php') === true) {
-    // Installed via Composer.
-    require_once __DIR__.'/../autoload.php';
-} else {
-    // Presume git clone.
-    require_once __DIR__ . '/../Scripts/Utils/FileList.php';
-    require_once __DIR__ . '/../Scripts/FeatureComplete/Config.php';
-    require_once __DIR__ . '/../Scripts/FeatureComplete/Check.php';
+$autoloadLocations = [
+    __DIR__ . '/../devtools-autoload.php', // Git clone or direct run from within vendor package directory.
+    __DIR__ . '/../phpcsstandards/phpcsdevtools/devtools-autoload.php', // Composer bin dir install.
+    __DIR__ . '/../autoload.php', // Try Composer autoload from a bin dir install.
+    __DIR__ . '/../../../autoload.php', // Try Composer autoload from within vendor package directory.
+    __DIR__ . '/../vendor/autoload.php', // Try Composer autoload from a git clone install.
+];
+
+// Try and find a usable autoload file.
+foreach ($autoloadLocations as $file) {
+    $file = realpath($file);
+    if ($file !== false && is_file($file) === true) {
+        require_once($file);
+        break;
+    }
 }
 
 $config = new PHPCSDevTools\Scripts\FeatureComplete\Config();
