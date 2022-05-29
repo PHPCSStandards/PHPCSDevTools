@@ -55,7 +55,7 @@ Checking for orphaned files:
 No orphaned documentation or test files found.';
         $regex          = '`' .  \preg_quote($expectedOutput, '`') . '[\r\n]+$`';
 
-        $this->runValidation($command, $regex, 0);
+        $this->assertOutputMatches($command, $regex, 0);
     }
 
     /**
@@ -110,7 +110,7 @@ Checking for orphaned files:
 No orphaned documentation or test files found.';
         $regex          = '`' .  \preg_quote($expectedOutput, '`') . '[\r\n]+$`';
 
-        $this->runValidation($command, $regex, 0);
+        $this->assertOutputMatches($command, $regex, 0);
     }
 
     /**
@@ -134,7 +134,7 @@ Checking for orphaned files:
 No orphaned documentation or test files found.';
         $regex          = '`' .  \preg_quote($expectedOutput, '`') . '[\r\n]+$`';
 
-        $this->runValidation($command, $regex, 0);
+        $this->assertOutputMatches($command, $regex, 0);
     }
 
     /**
@@ -154,7 +154,7 @@ No orphaned documentation or test files found.';
 All 3 sniffs are accompanied by unit tests.';
         $regex          = '`' .  \preg_quote($expectedOutput, '`') . '[\r\n]+$`';
 
-        $this->runValidation($command, $regex, 0);
+        $this->assertOutputMatches($command, $regex, 0);
     }
 
     /**
@@ -173,6 +173,6 @@ All 3 sniffs are accompanied by unit tests and documentation.
 No orphaned documentation or test files found.';
         $regex          = '`' .  \preg_quote($expectedOutput, '`') . '[\r\n]+$`';
 
-        $this->runValidation($command, $regex, 0);
+        $this->assertOutputMatches($command, $regex, 0);
     }
 }

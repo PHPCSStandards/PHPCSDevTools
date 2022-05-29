@@ -49,7 +49,7 @@ Target dir\(s\):
 
 Checking sniff completeness:[\r\n]+`';
 
-        $this->runValidation($command, $regex, 0);
+        $this->assertStderrMatches($command, $regex, 0);
     }
 
     /**
@@ -70,6 +70,6 @@ Target dir\(s\):
 
 Checking sniff completeness:[\r\n]+`';
 
-        $this->runValidation($command, $regex, 0);
+        $this->assertStderrMatches($command, $regex, 0);
     }
 }

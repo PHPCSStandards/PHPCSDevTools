@@ -39,16 +39,25 @@ final class ColorTest extends CheckTestCase
      * @param string $fixtureDir     Relative path within the fixture directory to use for the test.
      * @param string $expectedOutput Colorized snippet of the expected output.
      * @param int    $exitCode       The expected exit code.
+     * @param string $src            Whether the output is expected in "stdout" or "stderr".
      * @param string $cliExtra       Optional. Additional CLI arguments to pass.
      *
      * @return void
      */
-    public function testColors($fixtureDir, $expectedOutput, $exitCode, $cliExtra = '')
+    public function testColors($fixtureDir, $expectedOutput, $exitCode, $src = 'stdout', $cliExtra = '')
     {
         $command = 'phpcs-check-feature-completeness --colors ' . $cliExtra . ' ' . self::FIXTURE_DIR . $fixtureDir;
-        $regex   = '`' .  \preg_quote($expectedOutput, '`') . '`';
+        $result  = $this->runValidation($command);
 
-        $this->runValidation($command, $regex, $exitCode);
+        if ($src === 'stdout') {
+            $actual = $result['writer']->getStdout();
+            $this->assertStringContainsString($expectedOutput, $actual, 'Stdout does not match expectation');
+        } else {
+            $actual = $result['writer']->getStderr();
+            $this->assertStringContainsString($expectedOutput, $actual, 'Stderr does not match expectation');
+        }
+
+        $this->assertSame($exitCode, $result['exitCode'], 'Exit code does not match expectation');
     }
 
     /**
@@ -63,6 +72,7 @@ final class ColorTest extends CheckTestCase
                 'fixtureDir'     => 'ValidStandards/CompleteSingleSniff',
                 'expectedOutput' => "\033[34mChecking sniff completeness:\033[0m",
                 'exitCode'       => 0,
+                'src'            => 'stderr',
             ],
             'feature complete - warning message for missing file' => [
                 'fixtureDir'     => 'MissingDocFiles/SingleSniff',
@@ -96,14 +106,16 @@ final class ColorTest extends CheckTestCase
             ],
             'feature complete - summary: quiet mode - has errors' => [
                 'fixtureDir'     => 'MissingTestsAndDocs/MultipleSniffs',
-                'expectedOutput' => "Found \033[31m3 errors\033[0m",
+                'expectedOutput' => "Found \033[31m3 errors\033[0m.",
                 'exitCode'       => 1,
+                'src'            => 'stdout',
                 'cliExtra'       => '-q',
             ],
             'orphaned files - header' => [
                 'fixtureDir'     => 'ValidStandards/CompleteSingleSniff',
                 'expectedOutput' => "\033[34mChecking for orphaned files:\033[0m",
                 'exitCode'       => 0,
+                'src'            => 'stderr',
             ],
             'orphaned files - warning message for orphaned file' => [
                 'fixtureDir'     => 'HasOrphans/SingleFile',

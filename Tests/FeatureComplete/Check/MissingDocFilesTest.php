@@ -73,7 +73,7 @@ WARNING: Documentation missing for       ' . $sniffDirRegex . 'CategoryB[\\\\/]T
 ---------------------------------------
 Found 0 errors and 2 warnings\.[\r\n]+$`';
 
-        $this->runValidation($command, $regex, 1);
+        $this->assertOutputMatches($command, $regex, 1);
     }
 
     /**
@@ -100,7 +100,7 @@ WARNING: Documentation missing for       ' . $sniffDir2Regex . 'CategoryA[\\\\/]
 ---------------------------------------
 Found 0 errors and 3 warnings\.[\r\n]+$`';
 
-        $this->runValidation($command, $regex, 1);
+        $this->assertOutputMatches($command, $regex, 1);
     }
 
     /**
@@ -122,7 +122,7 @@ WARNING: Documentation missing for       ' . $sniffDirRegex . 'CategoryA[\\\\/]D
 ---------------------------------------
 Found 0 errors and 1 warning\.[\r\n]+$`';
 
-        $this->runValidation($command, $regex, 1);
+        $this->assertOutputMatches($command, $regex, 1);
     }
 
     /**
@@ -139,6 +139,6 @@ Found 0 errors and 1 warning\.[\r\n]+$`';
 
 All 3 sniffs are accompanied by unit tests.[\r\n]+$`';
 
-        $this->runValidation($command, $regex, 0);
+        $this->assertOutputMatches($command, $regex, 0);
     }
 }
