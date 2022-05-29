@@ -63,103 +63,75 @@ final class MarkProgressTest extends CheckTestCase
         $command        = 'phpcs-check-feature-completeness --no-colors --no-progress ' . $fixtureDir;
         $expectedOutput = 'by Juliette Reinders Folmer
 
+
 All 3 sniffs are accompanied by unit tests and documentation.
 
 No orphaned documentation or test files found.';
 
-        $regex = '`' .  \preg_quote($expectedOutput, '`') . '[\r\n]$`';
+        $result = $this->runValidation($command);
+        $actual = \trim($this->stringIgnoreEol($result['writer']->getOutput()));
 
-        $this->runValidation($command, $regex, 0);
+        $this->assertStringEndsWith($expectedOutput, $actual, 'Output does not match expectation');
+        $this->assertSame(0, $result['exitCode'], 'Exit code does not match expectation');
     }
 
     /**
-     * Verify single line progress reporting (<= 60 sniffs) shows the expected output.
+     * Verify progress reporting shows the expected output in stderr.
+     *
+     * @dataProvider dataProgress
+     *
+     * @param int    $nrOfFiles      The number of dummy sniffs to generate.
+     * @param string $expectedOutput The expected progress reporting output.
      *
      * @return void
      */
-    public function testProgressSingleLine()
+    public function testProgress($nrOfFiles, $expectedOutput)
     {
-        $this->createDummySniffs(10);
+        $this->createDummySniffs($nrOfFiles);
 
         $command        = 'phpcs-check-feature-completeness --no-colors --no-orphans .' . self::FIXTURE_DIR;
-        $expectedOutput = '.......... 10 / 10 (100%)';
-        $regex          = '`[\r\n]+' .  \preg_quote($expectedOutput, '`') . '[\r\n]+`';
+        $expectedOutput = "\n{$expectedOutput}\n";
 
-        $this->runValidation($command, $regex, 1);
+        $result = $this->runValidation($command);
+        $actual = $this->stringIgnoreEol($result['writer']->getStderr());
+
+        $this->assertStringContainsString($expectedOutput, $actual, 'Output does not contain expected substring');
+        $this->assertSame(1, $result['exitCode'], 'Exit code does not match expectation');
     }
 
     /**
-     * Verify single line progress reporting (exactly 60 sniffs) shows the expected output.
+     * Data provider.
      *
-     * @return void
+     * @return array
      */
-    public function testProgressSingleLineMax()
+    public function dataProgress()
     {
-        $this->createDummySniffs(60);
-
-        $command        = 'phpcs-check-feature-completeness --no-colors --no-orphans .' . self::FIXTURE_DIR;
-        $expectedOutput = '............................................................ 60 / 60 (100%)';
-        $regex          = '`[\r\n]+' .  \preg_quote($expectedOutput, '`') . '[\r\n]+`';
-
-        $this->runValidation($command, $regex, 1);
-    }
-
-    /**
-     * Verify multi-line progress reporting (> 60 sniffs) shows the expected output.
-     *
-     * @return void
-     */
-    public function testProgressTwoLines()
-    {
-        $this->createDummySniffs(80);
-
-        $command        = 'phpcs-check-feature-completeness --no-colors --no-orphans .' . self::FIXTURE_DIR;
-        $expectedOutput = '
-............................................................ 60 / 80 ( 75%)
-....................                                         80 / 80 (100%)';
-
-        $regex = '`' .  \preg_quote($expectedOutput, '`') . '[\r\n]+`';
-
-        $this->runValidation($command, $regex, 1);
-    }
-
-    /**
-     * Verify single line progress reporting (exactly 120 sniffs) shows the expected output.
-     *
-     * @return void
-     */
-    public function testProgressTwoLinesMax()
-    {
-        $this->createDummySniffs(120);
-
-        $command        = 'phpcs-check-feature-completeness --no-colors --no-orphans .' . self::FIXTURE_DIR;
-        $expectedOutput = '
-............................................................  60 / 120 ( 50%)
-............................................................ 120 / 120 (100%)';
-
-        $regex = '`' .  \preg_quote($expectedOutput, '`') . '[\r\n]+`';
-
-        $this->runValidation($command, $regex, 1);
-    }
-
-    /**
-     * Verify multi-line progress reporting (> 60 sniffs) shows the expected output.
-     *
-     * @return void
-     */
-    public function testProgressThreeLines()
-    {
-        $this->createDummySniffs(145);
-
-        $command        = 'phpcs-check-feature-completeness --no-colors --no-orphans .' . self::FIXTURE_DIR;
-        $expectedOutput = '
-............................................................  60 / 145 ( 41%)
+        return [
+            'single line progress reporting (<= 60 sniffs)'      => [
+                'nrOfFiles'      => 10,
+                'expectedOutput' => '.......... 10 / 10 (100%)',
+            ],
+            'single line progress reporting (exactly 60 sniffs)' => [
+                'nrOfFiles'      => 60,
+                'expectedOutput' => '............................................................ 60 / 60 (100%)',
+            ],
+            'multi-line progress reporting (> 60 sniffs)'        => [
+                'nrOfFiles'      => 80,
+                'expectedOutput' => '............................................................ 60 / 80 ( 75%)
+....................                                         80 / 80 (100%)',
+            ],
+            'multi-line progress reporting (exactly 120 sniffs)' => [
+                'nrOfFiles'      => 120,
+                'expectedOutput' => '............................................................  60 / 120 ( 50%)
+............................................................ 120 / 120 (100%)',
+            ],
+            'multi-line progress reporting (> 2 lines)'          => [
+                'nrOfFiles'      => 145,
+                'expectedOutput' => '............................................................  60 / 145 ( 41%)
 ............................................................ 120 / 145 ( 83%)
-.........................                                    145 / 145 (100%)';
-
-        $regex = '`' .  \preg_quote($expectedOutput, '`') . '[\r\n]+`';
-
-        $this->runValidation($command, $regex, 1);
+.........................                                    145 / 145 (100%)',
+            ],
+        ];
     }
 
     /**

@@ -11,6 +11,7 @@
 namespace PHPCSDevTools\Tests\FeatureComplete\Config;
 
 use PHPCSDevTools\Scripts\FeatureComplete\Config;
+use PHPCSDevTools\Tests\TestWriter;
 use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
 
 /**
@@ -38,7 +39,7 @@ final class MagicMethodsTest extends XTestCase
     protected function setUpClass()
     {
         parent::setUp();
-        $this->config = new Config();
+        $this->config = new Config(new TestWriter());
     }
 
     /**
@@ -112,8 +113,12 @@ final class MagicMethodsTest extends XTestCase
                 'propertyName' => 'verbose',
                 'expected'     => true,
             ],
-            'property which exists on the class and access is not allowed' => [
+            'property which exists on the class and access is not allowed - helpTexts' => [
                 'propertyName' => 'helpTexts',
+                'expected'     => false,
+            ],
+            'property which exists on the class and access is not allowed - writer' => [
+                'propertyName' => 'writer',
                 'expected'     => false,
             ],
         ];

@@ -11,6 +11,7 @@
 namespace PHPCSDevTools\Tests\FeatureComplete\Config;
 
 use PHPCSDevTools\Scripts\FeatureComplete\Config;
+use PHPCSDevTools\Tests\TestWriter;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -59,7 +60,7 @@ final class ProcessCliCommandTest extends TestCase
         $expected['targetDirs']  = [$expected['projectRoot']];
 
         $_SERVER['argv'] = \explode(' ', $command);
-        $config          = new Config();
+        $config          = new Config(new TestWriter());
         $actual          = $this->getCurrentValues($config);
 
         unset($expected['showColored'], $actual['showColored']);
@@ -108,7 +109,7 @@ final class ProcessCliCommandTest extends TestCase
         $expected = \array_merge($this->defaultSettings, $expectedChanged);
 
         $_SERVER['argv'] = \explode(' ', $command);
-        $config          = new Config();
+        $config          = new Config(new TestWriter());
         $actual          = $this->getCurrentValues($config);
 
         if ($checkShowColored === false) {
@@ -379,11 +380,10 @@ final class ProcessCliCommandTest extends TestCase
      */
     public function testProcessCliCommandOutputOnlyArgs($command, $expectedChanged)
     {
-        $this->expectOutputRegex('`.*`s');
         $expected = \array_merge($this->defaultSettings, $expectedChanged);
 
         $_SERVER['argv'] = \explode(' ', $command);
-        $config          = new Config();
+        $config          = new Config(new TestWriter());
         $actual          = $this->getCurrentValues($config);
 
         unset($expected['showColored'], $actual['showColored']);

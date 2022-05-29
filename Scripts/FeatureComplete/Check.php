@@ -12,6 +12,7 @@ namespace PHPCSDevTools\Scripts\FeatureComplete;
 
 use PHPCSDevTools\Scripts\FeatureComplete\Config;
 use PHPCSDevTools\Scripts\Utils\FileList;
+use PHPCSDevTools\Scripts\Utils\Writer;
 
 /**
  * Check that each sniff is feature complete, i.e. has unit tests and documentation.
@@ -52,6 +53,13 @@ final class Check
      * @var \PHPCSDevTools\Scripts\FeatureComplete\Config
      */
     protected $config;
+
+    /**
+     * Writer for sending output.
+     *
+     * @var \PHPCSDevTools\Scripts\Utils\Writer
+     */
+    private $writer;
 
     /**
      * List of all files in the repo.
@@ -124,10 +132,12 @@ final class Check
      *
      * @param \PHPCSDevTools\Scripts\FeatureComplete\Config $config Configuration as passed on the
      *                                                              command line.
+     * @param \PHPCSDevTools\Scripts\Utils\Writer           $writer Writer for sending output.
      */
-    public function __construct(Config $config)
+    public function __construct(Config $config, Writer $writer)
     {
         $this->config = $config;
+        $this->writer = $writer;
 
         $sep = \DIRECTORY_SEPARATOR;
 
@@ -197,12 +207,14 @@ final class Check
      */
     public function validate()
     {
-        echo $this->config->getVersion();
+        $this->writer->toStderr($this->config->getVersion());
 
         if ($this->config->verbose > 0) {
-            echo 'Target dir(s):', \PHP_EOL,
-                '- ' . \implode(\PHP_EOL . '- ', $this->config->targetDirs),
-                \PHP_EOL, \PHP_EOL;
+            $this->writer->toStderr(
+                'Target dir(s):' . \PHP_EOL
+                . '- ' . \implode(\PHP_EOL . '- ', $this->config->targetDirs)
+                . \PHP_EOL . \PHP_EOL
+            );
         }
 
         $exitCode = 0;
@@ -213,7 +225,7 @@ final class Check
             if ($this->config->showColored === true) {
                 $header = "\033[34m{$header}\033[0m";
             }
-            echo $header, \PHP_EOL;
+            $this->writer->toStderr($header . \PHP_EOL);
         }
 
         if ($this->isComplete() !== true) {
@@ -226,7 +238,7 @@ final class Check
                 if ($this->config->showColored === true) {
                     $header = "\033[34m{$header}\033[0m";
                 }
-                echo \PHP_EOL, $header, \PHP_EOL;
+                $this->writer->toStderr(\PHP_EOL . $header . \PHP_EOL);
             }
 
             if ($this->hasOrphans() === true) {
@@ -246,7 +258,7 @@ final class Check
     {
         $sniffCount = \count($this->allSniffs);
         if ($sniffCount === 0) {
-            echo 'No sniffs found.', \PHP_EOL;
+            $this->writer->toStderr('No sniffs found.' . \PHP_EOL);
             return true;
         }
 
@@ -318,11 +330,11 @@ final class Check
                 ($warningCount > 0 && $this->config->showColored === true) ? "\033[0m" : ''
             );
 
-            echo \PHP_EOL,
-                \implode(\PHP_EOL, $notices), \PHP_EOL,
-                \PHP_EOL,
-                \str_repeat('-', 39), \PHP_EOL,
-                $summary, \PHP_EOL;
+            $this->writer->toStdout(
+                \PHP_EOL . \implode(\PHP_EOL, $notices) . \PHP_EOL
+                . \PHP_EOL . \str_repeat('-', 39) . \PHP_EOL
+                . $summary . \PHP_EOL
+            );
 
             return false;
         } else {
@@ -341,7 +353,7 @@ final class Check
                 $feedback = "\033[32m{$feedback}\033[0m";
             }
 
-            echo \PHP_EOL, $feedback, \PHP_EOL;
+            $this->writer->toStdout(\PHP_EOL . $feedback . \PHP_EOL);
 
             return true;
         }
@@ -360,7 +372,7 @@ final class Check
                 $feedback = "\033[32m" . $feedback . "\033[0m";
             }
 
-            echo $feedback, \PHP_EOL;
+            $this->writer->toStdout($feedback . \PHP_EOL);
         };
 
         $filesToCheck = \count($this->allDocs) + \count($this->allTests);
@@ -424,15 +436,15 @@ final class Check
                 ($noticeCount > 0 && $this->config->showColored === true) ? "\033[0m" : ''
             );
 
-            echo \PHP_EOL,
-                \implode(\PHP_EOL, $notices), \PHP_EOL,
-                \PHP_EOL,
-                \str_repeat('-', 41), \PHP_EOL,
-                $summary, \PHP_EOL;
+            $this->writer->toStdout(
+                \PHP_EOL . \implode(\PHP_EOL, $notices) . \PHP_EOL
+                . \PHP_EOL . \str_repeat('-', 41) . \PHP_EOL
+                . $summary . \PHP_EOL
+            );
 
             return true;
         } else {
-            echo \PHP_EOL;
+            $this->writer->toStdout(\PHP_EOL);
             $noOrphansFeedback($this->config->showColored);
             return false;
         }
@@ -452,7 +464,7 @@ final class Check
             return;
         }
 
-        echo '.';
+        $this->writer->toStderr('.');
 
         $current = ($i + 1);
         if (($current % 60) === 0 || $current === $total) {
@@ -466,8 +478,10 @@ final class Check
                 }
             }
 
-            echo $filling, ' ', \str_pad($current, $padding, ' ', \STR_PAD_LEFT), ' / ', $total,
-                ' (', \str_pad(\round(($current / $total) * 100), 3, ' ', \STR_PAD_LEFT), '%)', \PHP_EOL;
+            $this->writer->toStderr(
+                $filling . ' ' . \str_pad($current, $padding, ' ', \STR_PAD_LEFT) . ' / ' . $total
+                . ' (' . \str_pad(\round(($current / $total) * 100), 3, ' ', \STR_PAD_LEFT) . '%)' . \PHP_EOL
+            );
         }
     }
 }

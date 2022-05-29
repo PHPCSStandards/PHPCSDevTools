@@ -85,7 +85,7 @@ WARNING: Orphaned test file found          ' . $fixtureDirRegex . 'Tests[\\\\/]C
 -----------------------------------------
 Found 12 orphaned files\.[\r\n]+$`';
 
-        $this->runValidation($command, $regex, 1);
+        $this->assertOutputMatches($command, $regex, 1);
     }
 
     /**
@@ -121,7 +121,7 @@ WARNING: Orphaned test file found          ' . $fixtureDir2Regex . 'Tests[\\\\/]
 -----------------------------------------
 Found 13 orphaned files\.[\r\n]+$`';
 
-        $this->runValidation($command, $regex, 1);
+        $this->assertOutputMatches($command, $regex, 1);
     }
 
     /**
@@ -142,7 +142,7 @@ WARNING: Orphaned test file found          ' . $fixtureDirRegex . 'Tests[\\\\/]C
 -----------------------------------------
 Found 1 orphaned file\.[\r\n]+$`';
 
-        $this->runValidation($command, $regex, 1);
+        $this->assertOutputMatches($command, $regex, 1);
     }
 
     /**
@@ -159,6 +159,6 @@ Found 1 orphaned file\.[\r\n]+$`';
 
 Found 1 sniff accompanied by unit tests.[\r\n]+$`';
 
-        $this->runValidation($command, $regex, 0);
+        $this->assertOutputMatches($command, $regex, 0);
     }
 }

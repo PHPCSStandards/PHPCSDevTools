@@ -52,11 +52,12 @@ foreach ($autoloadLocations as $file) {
     }
 }
 
-$config = new PHPCSDevTools\Scripts\FeatureComplete\Config();
+$writer = new PHPCSDevTools\Scripts\Utils\CliWriter();
+$config = new PHPCSDevTools\Scripts\FeatureComplete\Config($writer);
 if ($config->executeCheck === false) {
     // This was a help request or version check.
     exit(0);
 }
 
-$validate = new PHPCSDevTools\Scripts\FeatureComplete\Check($config);
+$validate = new PHPCSDevTools\Scripts\FeatureComplete\Check($config, $writer);
 exit($validate->validate());

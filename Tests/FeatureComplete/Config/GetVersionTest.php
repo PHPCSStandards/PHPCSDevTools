@@ -11,14 +11,15 @@
 namespace PHPCSDevTools\Tests\FeatureComplete\Config;
 
 use PHPCSDevTools\Scripts\FeatureComplete\Config;
-use PHPUnit\Framework\TestCase;
+use PHPCSDevTools\Tests\TestWriter;
+use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
 
 /**
  * Test the "show version" feature.
  *
  * @covers \PHPCSDevTools\Scripts\FeatureComplete\Config::getVersion
  */
-final class GetVersionTest extends TestCase
+final class GetVersionTest extends XTestCase
 {
 
     /**
@@ -35,10 +36,12 @@ final class GetVersionTest extends TestCase
         $regex = '`^PHPCSDevTools: Sniff feature completeness checker version'
             . ' [0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}(?:-(?:alpha|beta|RC)\S+)?'
             . '[\r\n]+by Juliette Reinders Folmer[\r\n]*$`';
-        $this->expectOutputRegex($regex);
 
         $_SERVER['argv'] = \explode(' ', $command);
-        new Config();
+        $writer          = new TestWriter();
+        $config          = new Config($writer);
+
+        $this->assertMatchesRegularExpression($regex, $writer->getStdout());
     }
 
     /**

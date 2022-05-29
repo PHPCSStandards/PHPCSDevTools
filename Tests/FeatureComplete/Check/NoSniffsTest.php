@@ -69,7 +69,7 @@ No sniffs found\.
 Checking for orphaned files:
 No orphaned documentation or test files found\.[\r\n]+$`';
 
-        $this->runValidation($command, $regex, 0);
+        $this->assertOutputMatches($command, $regex, 0);
     }
 
     /**

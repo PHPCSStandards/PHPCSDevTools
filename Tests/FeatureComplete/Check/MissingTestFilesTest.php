@@ -74,7 +74,7 @@ ERROR:   Unit tests missing for          ' . $sniffDirRegex . 'CategoryB[\\\\/]T
 ---------------------------------------
 Found 3 errors and 0 warnings\.[\r\n]$`';
 
-        $this->runValidation($command, $regex, 1);
+        $this->assertOutputMatches($command, $regex, 1);
     }
 
     /**
@@ -102,7 +102,7 @@ ERROR:   Unit test case file missing for ' . $sniffDir2Regex . 'CategoryA[\\\\/]
 ---------------------------------------
 Found 4 errors and 0 warnings\.[\r\n]$`';
 
-        $this->runValidation($command, $regex, 1);
+        $this->assertOutputMatches($command, $regex, 1);
     }
 
     /**
@@ -124,7 +124,7 @@ ERROR:   Unit test case file missing for ' . $sniffDirRegex . 'CategoryA[\\\\/]D
 ---------------------------------------
 Found 1 error and 0 warnings\.[\r\n]+$`';
 
-        $this->runValidation($command, $regex, 1);
+        $this->assertOutputMatches($command, $regex, 1);
     }
 
     /**
@@ -149,6 +149,6 @@ ERROR:   Unit tests missing for          ' . $sniffDirRegex . 'CategoryB[\\\\/]T
 ---------------------------------------
 Found 3 errors\.[\r\n]+$`';
 
-        $this->runValidation($command, $regex, 1);
+        $this->assertOutputMatches($command, $regex, 1);
     }
 }
