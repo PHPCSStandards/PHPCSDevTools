@@ -99,6 +99,7 @@ final class TokenListSniff implements Sniff
         foreach ($tokens as $ptr => $token) {
             $token  += $this->tokenDefaults;
             $content = $token['content'];
+            $onlyEol = false;
 
             if (isset($token['orig_content'])) {
                 $content  = $this->visualizeWhitespace($content);
@@ -121,13 +122,16 @@ final class TokenListSniff implements Sniff
                 $parenthesesCount = \count($token['nested_parenthesis']);
             }
 
+            $onlyEol = (\trim($content, "\n\r") === '');
+
             echo \str_pad($ptr, $ptrPadding, ' ', \STR_PAD_LEFT),
                 $sep, 'L', \str_pad($token['line'], $linePadding, '0', \STR_PAD_LEFT),
                 $sep, 'C', \str_pad($token['column'], 3, ' ', \STR_PAD_LEFT),
                 $sep, 'CC', \str_pad($token['level'], 2, ' ', \STR_PAD_LEFT),
                 $sep, '(', \str_pad($parenthesesCount, 2, ' ', \STR_PAD_LEFT), ')',
                 $sep, \str_pad($token['type'], 26), // Longest token type name is 26 chars.
-                $sep, '[', \str_pad($token['length'], 3, ' ', \STR_PAD_LEFT), ']: ', $content, \PHP_EOL;
+                $sep, '[', \str_pad($token['length'], 3, ' ', \STR_PAD_LEFT), ']:',
+                ($onlyEol === false ? ' ' : ''), $content, \PHP_EOL;
         }
 
         // Only do this once per file.
