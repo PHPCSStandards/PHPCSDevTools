@@ -14,7 +14,7 @@
 
     <testsuites>
         <testsuite name="PHPCSDevTools">
-            <directory suffix="UnitTest.php">./PHPCSDebug/Tests/</directory>
+            <directory suffix="Test.php">./PHPCSDebug/Tests/</directory>
         </testsuite>
     </testsuites>
 </phpunit>
