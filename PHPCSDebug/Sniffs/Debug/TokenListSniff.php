@@ -12,6 +12,7 @@ namespace PHPCSDebug\Sniffs\Debug;
 
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Files\File;
+use PHP_CodeSniffer\Util\Tokens;
 
 /**
  * Lists how PHPCS tokenizes code.
@@ -114,6 +115,17 @@ class TokenListSniff implements Sniff
                 if (isset($token['orig_content'])) {
                     $content .= $sep . 'Orig: ' . $this->visualizeWhitespace($token['orig_content']);
                 }
+            }
+
+            if (isset(Tokens::$commentTokens[$token['code']]) === true) {
+                /*
+                 * Comment tokens followed by a new line, will have trailing whitespace
+                 * included in the token, so visualize it.
+                 * For multi-line star comments (like this one), this also applies to leading whitespace.
+                 */
+                $comment    = \trim($content);
+                $whitespace = \str_replace($comment, '###', $content);
+                $content    = \str_replace('###', $comment, $this->visualizeWhitespace($whitespace));
             }
 
             $parenthesesCount = 0;
