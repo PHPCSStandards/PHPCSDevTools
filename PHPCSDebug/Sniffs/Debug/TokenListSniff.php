@@ -106,18 +106,12 @@ class TokenListSniff implements Sniff
                 }
             }
 
-            if ($token['code'] === \T_WHITESPACE
-                || (\defined('T_DOC_COMMENT_WHITESPACE')
-                && $token['code'] === \T_DOC_COMMENT_WHITESPACE)
-            ) {
+            if (isset($token['orig_content'])) {
+                $content  = $this->visualizeWhitespace($content);
+                $content .= $sep . 'Orig: ' . $this->visualizeWhitespace($token['orig_content']);
+            } elseif ($token['code'] === \T_WHITESPACE) {
                 $content = $this->visualizeWhitespace($content);
-
-                if (isset($token['orig_content'])) {
-                    $content .= $sep . 'Orig: ' . $this->visualizeWhitespace($token['orig_content']);
-                }
-            }
-
-            if (isset(Tokens::$commentTokens[$token['code']]) === true) {
+            } elseif (isset(Tokens::$commentTokens[$token['code']]) === true) {
                 /*
                  * Comment tokens followed by a new line, will have trailing whitespace
                  * included in the token, so visualize it.
