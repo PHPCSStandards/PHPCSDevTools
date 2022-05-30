@@ -47,6 +47,7 @@ final class TokenListSniff implements Sniff
         'type'       => '?',
         'code'       => '?',
         'content'    => '',
+        'length'     => '?',
         'line'       => '?',
         'column'     => '?',
         'level'      => 0,
@@ -98,13 +99,6 @@ final class TokenListSniff implements Sniff
         foreach ($tokens as $ptr => $token) {
             $token  += $this->tokenDefaults;
             $content = $token['content'];
-
-            if (isset($token['length']) === false) {
-                $token['length'] = 0;
-                if (isset($token['content'])) {
-                    $token['length'] = \strlen($content);
-                }
-            }
 
             if (isset($token['orig_content'])) {
                 $content  = $this->visualizeWhitespace($content);
