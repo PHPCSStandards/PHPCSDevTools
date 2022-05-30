@@ -109,11 +109,10 @@ final class TokenListSniff implements Sniff
                 || (\defined('T_DOC_COMMENT_WHITESPACE')
                 && $token['code'] === \T_DOC_COMMENT_WHITESPACE)
             ) {
-                if (\strpos($content, "\t") !== false) {
-                    $content = \str_replace("\t", '\t', $content);
-                }
+                $content = $this->visualizeWhitespace($content);
+
                 if (isset($token['orig_content'])) {
-                    $content .= $sep . 'Orig: ' . \str_replace("\t", '\t', $token['orig_content']);
+                    $content .= $sep . 'Orig: ' . $this->visualizeWhitespace($token['orig_content']);
                 }
             }
 
@@ -133,5 +132,22 @@ final class TokenListSniff implements Sniff
 
         // Only do this once per file.
         return ($phpcsFile->numTokens + 1);
+    }
+
+    /**
+     * Visualize tabs and spaces in arbitrary whitespace tokens.
+     *
+     * @param string $text Arbitrary text.
+     *
+     * @return string
+     */
+    protected function visualizeWhitespace($text)
+    {
+        $whitespaceMap = [
+            ' '  => '⸱', // U+2E31. May not be supported in all CLI clients/fonts. Alternatively, switch to U+00B7.
+            "\t" => '→', // U+2192. The better U+21E5 is not widely enough supported.
+        ];
+
+        return \strtr($text, $whitespaceMap);
     }
 }
