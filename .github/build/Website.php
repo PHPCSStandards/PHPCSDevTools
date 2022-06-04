@@ -54,6 +54,7 @@ final class Website
      */
     const FILES_TO_COPY = [
         'README.md' => 'index.md',
+        'DocsXsd/phpcsdocs.xsd' => 'phpcsdocs.xsd',
     ];
 
     /**
