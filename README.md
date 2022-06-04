@@ -29,6 +29,7 @@ This is a set of tools to assist developers of sniffs for [PHP CodeSniffer](http
 * [Features](#features)
     + [Checking whether all sniffs in a PHPCS standard are feature complete](#checking-whether-all-sniffs-in-a-phpcs-standard-are-feature-complete)
     + [Sniff Debugging](#sniff-debugging)
+    + [Documentation XSD Validation](#documentation-xsd-validation)
 * [Contributing](#contributing)
 * [License](#license)
 
@@ -190,6 +191,20 @@ Ptr | Ln | Col  | Cond | ( #) | Token Type                 | [len]: Content
 
 PHPCS itself can also display similar information using the `-vv` or `-vvv` verbosity flags, however, when using those, you will receive a *lot* more information than just the token list and, while useful for debugging PHPCS itself, the additional information is mostly just noise when developing a sniff.
 
+### Documentation XSD Validation
+
+This project contains the XML Schema Definition (XSD) for validation purposes of the PHPCS documentation XML files. The XSD will make sure your documentation will be correctly displayed when using the `--generator` option with PHPCS.
+
+In order to use it, you'll need to add the following line to the `documentation` tag of the sniff documentation file:
+
+```xml
+<documentation
+    title="Name of the sniff"
+    xsi:noNamespaceSchemaLocation="https://phpcsstandards.github.io/PHPCSDevTools/phpcsdocs.xsd"
+>
+```
+
+If your IDE or editor have the automatic validation of XSL files, your XML files will then check if you have correct number of elements, attributes and title length, among other things.
 
 Contributing
 -------
