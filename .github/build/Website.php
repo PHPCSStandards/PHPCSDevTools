@@ -53,7 +53,7 @@ final class Website
      * @var array<string => string target>
      */
     const FILES_TO_COPY = [
-        'README.md' => 'index.md',
+        'README.md'             => 'index.md',
         'DocsXsd/phpcsdocs.xsd' => 'phpcsdocs.xsd',
     ];
 
