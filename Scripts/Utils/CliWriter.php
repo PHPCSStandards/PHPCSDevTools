@@ -35,6 +35,7 @@ final class CliWriter implements Writer
      */
     public function toStdout($text)
     {
+        \fflush(\STDERR); // Prevent output order getting jumbled.
         \fwrite(\STDOUT, $text);
     }
 
@@ -47,6 +48,7 @@ final class CliWriter implements Writer
      */
     public function toStderr($text)
     {
+        \fflush(\STDOUT); // Prevent output order getting jumbled.
         \fwrite(\STDERR, $text);
     }
 }
