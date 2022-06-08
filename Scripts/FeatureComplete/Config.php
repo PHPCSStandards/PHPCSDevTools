@@ -386,6 +386,10 @@ final class Config
             return false;
         }
 
+        if (\getenv('GITHUB_ACTIONS')) {
+            return true;
+        }
+
         // Linux/MacOS.
         if (\function_exists('posix_isatty')) {
             return @\posix_isatty(\STDOUT);
