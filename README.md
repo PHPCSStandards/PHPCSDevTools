@@ -206,6 +206,67 @@ In order to use it, you'll need to add the following line to the `documentation`
 
 If your IDE or editor have the automatic validation of XSL files, your XML files will then check if you have correct number of elements, attributes and title length, among other things.
 
+#### Using XSD on GitHub Actions
+
+You can check for documentation validation by using xmllint and referencing the `phpcsdocs.xsd` file. 
+An example of a workflow for GitHub Actions CI looks like this:
+
+```yaml
+name: XML validation
+
+on:
+  # Run on all pushes and on all pull requests.
+  push:
+  pull_request:
+  # Allow manually triggering the workflow.
+  workflow_dispatch:
+
+# Cancels all previous workflow runs for the same branch that have not yet completed.
+concurrency:
+  # The concurrency group contains the workflow name and the branch name.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validateXML:
+    name: 'Validate XML'
+    runs-on: ubuntu-latest
+
+    env:
+      XMLLINT_INDENT: '    '
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          coverage: none
+
+      # Install dependencies and handle caching in one go.
+      # @link https://github.com/marketplace/actions/install-composer-dependencies
+      - name: Install Composer dependencies
+        uses: "ramsey/composer-install@v2"
+
+      - name: Install xmllint
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y libxml2-utils
+
+      # Show XML violations inline in the file diff.
+      # @link https://github.com/marketplace/actions/xmllint-problem-matcher
+      - uses: korelstar/xmllint-problem-matcher@v1
+
+      # Validate the Docs XML file(s).
+      # @link http://xmlsoft.org/xmllint.html
+      - name: Validate docs against schema
+        run: xmllint --noout --schema vendor/phpcsstandards/phpcsdevtools/DocsXsd/phpcsdocs.xsd ./YourRuleset/Docs/**/*.xml
+```
+
+You'd need to replace the `YourRuleset` with the name of your ruleset of course.
+
 Contributing
 -------
 Contributions to this project are welcome. Clone this repository, branch off from `develop`, make your changes, commit them and send in a pull request.
