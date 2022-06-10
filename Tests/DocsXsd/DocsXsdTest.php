@@ -116,7 +116,7 @@ final class DocsXsdTest extends IOTestCase
                 'expectedStdOut' => '',
                 'expectedStdErr' => "Element 'standard': No matching global declaration available for the validation root",
             ],
-            'Missing title attribute in the documentation root element' => [
+            'Missing title attribute in the <documentation> root element' => [
                 'fixtureFile'    => 'InvalidMissingTitleAttribute.xml',
                 'expectedStdOut' => '',
                 'expectedStdErr' => "Element 'documentation': The attribute 'title' is required but missing.",
