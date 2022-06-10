@@ -46,12 +46,12 @@ final class DocsXsdTest extends IOTestCase
         $command = \sprintf(self::COMMAND, $fixtureFile);
         $result  = $this->executeCliCommand($command);
 
-        $this->assertSame(0, $result['exitcode'], 'Exit code does not match 0');
         $this->assertSame('', $result['stdout'], 'Unexpected output in stdout');
         $this->assertNotFalse(
             \strpos($result['stderr'], "Tests/Fixtures/DocsXsd/{$fixtureFile} validates\n"),
             'Unexpected output in stderr'
         );
+        $this->assertSame(0, $result['exitcode'], 'Exit code does not match 0');
     }
 
     /**
@@ -66,13 +66,16 @@ final class DocsXsdTest extends IOTestCase
                 'fixtureFile' => 'ValidSingleStandard.xml',
             ],
             'Valid docs example with multiple standards in the file' => [
-                'fixtureFile' => 'ValidSingleStandard.xml',
+                'fixtureFile' => 'ValidMultipleStandard.xml',
             ],
             'Valid docs example with multiple arbitrary attributes on the <documentation> element' => [
                 'fixtureFile' => 'ValidDocumentationWithAdditionalAttributes.xml',
             ],
             'Valid docs example with multiple arbitrary attributes on the <standard> element' => [
                 'fixtureFile' => 'ValidStandardWithAdditionalAttributes.xml',
+            ],
+            'Valid docs example with multiple code examples' => [
+                'fixtureFile' => 'ValidMultipleCodeExamples.xml',
             ],
         ];
     }
@@ -150,6 +153,11 @@ final class DocsXsdTest extends IOTestCase
                 'fixtureFile'    => 'InvalidCodeElementMissingTitle.xml',
                 'expectedStdOut' => '',
                 'expectedStdErr' => "Element 'code': The attribute 'title' is required but missing.",
+            ],
+            'Documentation contains non standard element' => [
+                'fixtureFile'    => 'InvalidContainsNonStandardElements.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "Element 'rule': This element is not expected. Expected is ( standard )",
             ],
         ];
     }
