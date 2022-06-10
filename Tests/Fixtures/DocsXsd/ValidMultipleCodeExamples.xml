@@ -1,0 +1,43 @@
+<documentation title="Another sniff docs">
+    <standard>
+    <![CDATA[
+      This is an example of the correct documentation example.
+    ]]>
+    </standard>
+    <code_comparison>
+        <code title="Valid: A valid code example">
+        <![CDATA[
+$number = 3;
+if(3 <em>===</em> $number) {
+    echo 'Number equals three.';
+}
+        ]]>
+        </code>
+        <code title="Invalid: An invalid code example">
+        <![CDATA[
+$number = 3;
+if(3 <em>=</em> $number) {
+    echo 'Number equals three.';
+}
+        ]]>
+        </code>
+    </code_comparison>
+    <code_comparison>
+        <code title="Valid: A new valid code example">
+        <![CDATA[
+$number = 3;
+if(3 <em>===</em> $number) {
+    echo 'Number equals three.';
+}
+        ]]>
+        </code>
+        <code title="Invalid: A new invalid code example">
+        <![CDATA[
+$number = 3;
+if(3 <em>=</em> $number) {
+    echo 'Number equals three.';
+}
+        ]]>
+        </code>
+    </code_comparison>
+</documentation>
