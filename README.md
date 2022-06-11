@@ -193,18 +193,19 @@ PHPCS itself can also display similar information using the `-vv` or `-vvv` verb
 
 ### Documentation XSD Validation
 
-This project contains a XML Schema Definition (XSD) to allow for validation PHPCS documentation XML files. Following the XSD will make sure your documentation can be correctly displayed when using the PHPCS `--generator` option.
+This project contains an [XML Schema Definition (XSD)](https://www.w3.org/standards/xml/schema) to allow for validation PHPCS documentation XML files. Following the XSD will make sure your documentation can be correctly displayed when using the PHPCS `--generator` option.
 
 In order to use it, you'll need to add the following line to the `documentation` tag of the sniff documentation file:
 
 ```xml
 <documentation
     title="Name of the sniff"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="https://phpcsstandards.github.io/PHPCSDevTools/phpcsdocs.xsd"
 >
 ```
 
-If your IDE or editor have the automatic validation of XSL files, your XML files will then check if you have correct number of elements, attributes and title length, among other things.
+If your IDE or editor supports automatic validation of XML files, you will be notified if your documentation XML file has the correct number of elements, correct type and number of certain attributes, and title length among other things.
 
 #### Using XSD on GitHub Actions
 
