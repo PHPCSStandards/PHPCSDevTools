@@ -1,5 +1,5 @@
 <documentation title="Some sniff docs" phpVersion="7.3" ref="PHPCompatibility">
-    <standard version="1.2.5" minimumPhpVersion="7.4">
+    <standard>
     <![CDATA[
       This is an example of the correct documentation example.
     ]]>
