@@ -110,7 +110,7 @@ final class DocsXsdTest extends IOTestCase
     public function dataInvalidXsd()
     {
         return [
-            'Title attribute too long' => [
+            'Title attribute too long on <documentation> element' => [
                 'fixtureFile'    => 'InvalidTitleTooLong.xml',
                 'expectedStdOut' => '',
                 'expectedStdErr' => "this exceeds the allowed maximum length of '58'",
