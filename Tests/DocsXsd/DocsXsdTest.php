@@ -82,7 +82,7 @@ final class DocsXsdTest extends IOTestCase
     }
 
     /**
-     * Verify that the invalid XML will throw the correct validation errors
+     * Verify that an invalid PHPCS docs XML file will throw the correct validation errors
      *
      * @dataProvider dataInvalidXsd
      *
