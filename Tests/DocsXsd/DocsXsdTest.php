@@ -48,7 +48,7 @@ final class DocsXsdTest extends IOTestCase
 
         $this->assertSame('', $result['stdout'], 'Unexpected output in stdout');
         $this->assertStringContainsString(
-            "Tests/Fixtures/DocsXsd/{$fixtureFile} validates\n",
+            "Tests/Fixtures/DocsXsd/{$fixtureFile} validates",
             $result['stderr'],
             'Unexpected output in stderr'
         );
@@ -157,6 +157,61 @@ final class DocsXsdTest extends IOTestCase
                 'fixtureFile'    => 'InvalidContainsNonStandardElements.xml',
                 'expectedStdOut' => '',
                 'expectedStdErr' => "Element 'rule': This element is not expected. Expected is ( standard )",
+            ],
+            '<standard> element contains non CDATA content' => [
+                'fixtureFile'    => 'InvalidStandardContainsElements.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "Element 'standard': Element content is not allowed, because the content type is a simple type definition.",
+            ],
+            'Wrong order of <code_comparison> element (before <standard> element)' => [
+                'fixtureFile'    => 'InvalidWrongOrderOfElements.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "Element 'code_comparison': This element is not expected. Expected is ( standard ).",
+            ],
+            'Empty <code_comparison> element' => [
+                'fixtureFile'    => 'InvalidEmptyCodeComparisonElement.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "Element 'code_comparison': Missing child element(s). Expected is ( code ).",
+            ],
+            '<code_comparison> element contains non <code> elements' => [
+                'fixtureFile'    => 'InvalidCodeComparisonElementContainsNonCodeElements.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "Element 'sniff': This element is not expected. Expected is ( code ).",
+            ],
+            'Empty title attribute in the <documentation> root element' => [
+                'fixtureFile'    => 'InvalidEmptyDocumentationTitleAttribute.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "Element 'documentation', attribute 'title': [facet 'minLength'] The value '' has a length of '0'; this underruns the allowed minimum length of '1'.",
+            ],
+            'Title attribute in the <documentation> root element has wrong type (will throw parser error)' => [
+                'fixtureFile'    => 'InvalidDocumentationTitleAttributeType.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "parser error : AttValue: \" or ' expected",
+            ],
+            'Multiple title attributes in the <documentation> root element (will throw parser error)' => [
+                'fixtureFile'    => 'InvalidDocumentationMultipleTitleAttributes.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "parser error : Attribute title redefined",
+            ],
+            '<code> element empty title attribute' => [
+                'fixtureFile'    => 'InvalidCodeElementEmptyTitle.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "Element 'code', attribute 'title': [facet 'minLength'] The value '' has a length of '0'; this underruns the allowed minimum length of '1'.",
+            ],
+            '<code> element has has wrong type in the title attribute (will throw parser error)' => [
+                'fixtureFile'    => 'InvalidCodeElementTitleWrongType.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "parser error : AttValue: \" or ' expected",
+            ],
+            '<code> element has has multiple title attributes (will throw parser error)' => [
+                'fixtureFile'    => 'InvalidCodeElementMultipleTitleAttributes.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "Attribute title redefined",
+            ],
+            '<code> element contains non string elements' => [
+                'fixtureFile'    => 'InvalidCodeElementContainsNonStringElements.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "Element 'code': Element content is not allowed, because the content type is a simple type definition.",
             ],
         ];
     }
