@@ -150,7 +150,7 @@ final class DocsXsdTest extends IOTestCase
                 'expectedStdOut' => '',
                 'expectedStdErr' => "Element 'code_comparison': Missing child element(s). Expected is ( code ).",
             ],
-            'Code element missing title attribute' => [
+            '<code> element missing title attribute' => [
                 'fixtureFile'    => 'InvalidCodeElementMissingTitle.xml',
                 'expectedStdOut' => '',
                 'expectedStdErr' => "Element 'code': The attribute 'title' is required but missing.",
