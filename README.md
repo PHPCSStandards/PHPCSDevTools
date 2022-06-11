@@ -193,7 +193,7 @@ PHPCS itself can also display similar information using the `-vv` or `-vvv` verb
 
 ### Documentation XSD Validation
 
-This project contains the XML Schema Definition (XSD) for validation purposes of the PHPCS documentation XML files. The XSD will make sure your documentation will be correctly displayed when using the `--generator` option with PHPCS.
+This project contains a XML Schema Definition (XSD) to allow for validation PHPCS documentation XML files. Following the XSD will make sure your documentation can be correctly displayed when using the PHPCS `--generator` option.
 
 In order to use it, you'll need to add the following line to the `documentation` tag of the sniff documentation file:
 
