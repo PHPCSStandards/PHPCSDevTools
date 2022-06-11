@@ -1,4 +1,4 @@
-<documentation>
+<documentation title="Some sniff docs">
     <standard>
     <![CDATA[
       This is an example of the incorrect documentation example.
@@ -6,12 +6,8 @@
     </standard>
     <code_comparison>
         <code title="Valid: A valid code example">
-        <![CDATA[
-$number = 3;
-if(3 <em>===</em> $number) {
-    echo 'Number equals three.';
-}
-        ]]>
+            <sniff>This shouldn't be here</sniff>
+            <rule>This shouldn't be here</rule>
         </code>
         <code title="Invalid: An invalid code example">
         <![CDATA[

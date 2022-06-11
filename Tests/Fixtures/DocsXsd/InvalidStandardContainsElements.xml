@@ -1,11 +1,13 @@
-<documentation>
+<documentation title="The title of this documentation.">
     <standard>
+        <sniff>This shouldn't be here</sniff>
+        <rule>This also shouldn't be here</rule>
     <![CDATA[
-      This is an example of the incorrect documentation example.
+      This is an example of the correct documentation example.
     ]]>
     </standard>
     <code_comparison>
-        <code title="Valid: A valid code example">
+        <code>
         <![CDATA[
 $number = 3;
 if(3 <em>===</em> $number) {
@@ -13,7 +15,7 @@ if(3 <em>===</em> $number) {
 }
         ]]>
         </code>
-        <code title="Invalid: An invalid code example">
+        <code>
         <![CDATA[
 $number = 3;
 if(3 <em>=</em> $number) {

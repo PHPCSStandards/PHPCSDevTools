@@ -1,0 +1,11 @@
+<documentation title="Some sniff docs">
+    <standard>
+    <![CDATA[
+      This is an example of the incorrect documentation example.
+    ]]>
+    </standard>
+    <code_comparison>
+        <sniff>Some element that shouldn't be here</sniff>
+        <rule>Some element that shouldn't be here</rule>
+    </code_comparison>
+</documentation>

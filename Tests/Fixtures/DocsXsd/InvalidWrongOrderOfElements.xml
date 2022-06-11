@@ -1,9 +1,4 @@
-<documentation>
-    <standard>
-    <![CDATA[
-      This is an example of the incorrect documentation example.
-    ]]>
-    </standard>
+<documentation title="Some sniff docs">
     <code_comparison>
         <code title="Valid: A valid code example">
         <![CDATA[
@@ -22,4 +17,9 @@ if(3 <em>=</em> $number) {
         ]]>
         </code>
     </code_comparison>
+    <standard>
+    <![CDATA[
+      This is an example of the correct documentation example.
+    ]]>
+    </standard>
 </documentation>
