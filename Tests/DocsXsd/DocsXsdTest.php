@@ -73,10 +73,13 @@ final class DocsXsdTest extends IOTestCase
                 'fixtureFile' => 'ValidDocumentationWithAdditionalAttributes.xml',
             ],
             'Valid docs example with multiple arbitrary attributes on the <standard> element' => [
-                'fixtureFile' => 'ValidStandardWithAdditionalAttributes.xml',
+                'fixtureFile' => 'ValidDocumentationWithAdditionalAttributesOnStandardElement.xml',
             ],
             'Valid docs example with multiple code examples' => [
                 'fixtureFile' => 'ValidMultipleCodeExamples.xml',
+            ],
+            'Valid docs example without code comparison element in the sequence group' => [
+                'fixtureFile'    => 'ValidEmptyCodeComparisonElement.xml',
             ],
         ];
     }
@@ -129,11 +132,6 @@ final class DocsXsdTest extends IOTestCase
                 'fixtureFile'    => 'InvalidMissingStandardElement.xml',
                 'expectedStdOut' => '',
                 'expectedStdErr' => "Element 'code_comparison': This element is not expected. Expected is ( standard ).",
-            ],
-            'Missing code comparison element in the sequence group' => [
-                'fixtureFile'    => 'InvalidMissingCodeComparisonElement.xml',
-                'expectedStdOut' => '',
-                'expectedStdErr' => "Element 'documentation': Missing child element(s). Expected is ( code_comparison )",
             ],
             'Missing sequence group' => [
                 'fixtureFile'    => 'InvalidMissingRuleGroup.xml',
