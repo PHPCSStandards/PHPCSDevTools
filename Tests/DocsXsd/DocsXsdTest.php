@@ -47,8 +47,9 @@ final class DocsXsdTest extends IOTestCase
         $result  = $this->executeCliCommand($command);
 
         $this->assertSame('', $result['stdout'], 'Unexpected output in stdout');
-        $this->assertNotFalse(
-            \strpos($result['stderr'], "Tests/Fixtures/DocsXsd/{$fixtureFile} validates\n"),
+        $this->assertStringContainsString(
+            "Tests/Fixtures/DocsXsd/{$fixtureFile} validates\n",
+            $result['stderr'],
             'Unexpected output in stderr'
         );
         $this->assertSame(0, $result['exitcode'], 'Exit code does not match 0');
@@ -96,9 +97,9 @@ final class DocsXsdTest extends IOTestCase
         $command = \sprintf(self::COMMAND, $fixtureFile);
         $result  = $this->executeCliCommand($command);
 
-        $this->assertGreaterThan(0, $result['exitcode'], 'Exit code does not match 0');
         $this->assertSame($expectedStdOut, $result['stdout'], 'Unexpected output in stdout');
-        $this->assertNotFalse(\strpos($result['stderr'], $expectedStdErr), 'Unexpected output in stderr');
+        $this->assertStringContainsString($expectedStdErr, $result['stderr'], 'Unexpected output in stderr');
+        $this->assertGreaterThan(0, $result['exitcode'], 'Exit code does not match 0');
     }
 
     /**
