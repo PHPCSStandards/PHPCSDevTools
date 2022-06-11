@@ -41,7 +41,7 @@ final class DocsXsdTest extends IOTestCase
      *
      * @return void
      */
-    public function testValidationPassesForValidXsd($fixtureFile)
+    public function testXsdValidationPassedWithValidXml($fixtureFile)
     {
         $command = \sprintf(self::COMMAND, $fixtureFile);
         $result  = $this->executeCliCommand($command);
@@ -95,7 +95,7 @@ final class DocsXsdTest extends IOTestCase
      *
      * @return void
      */
-    public function testValidationFailsForInvalidXsd($fixtureFile, $expectedStdOut, $expectedStdErr)
+    public function testXsdValidationFailsForInvalidXml($fixtureFile, $expectedStdOut, $expectedStdErr)
     {
         $command = \sprintf(self::COMMAND, $fixtureFile);
         $result  = $this->executeCliCommand($command);
