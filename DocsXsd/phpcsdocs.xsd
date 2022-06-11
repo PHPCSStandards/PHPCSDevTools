@@ -20,6 +20,7 @@
 
     <xs:simpleType name="titleType">
         <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
             <xs:maxLength value="58"/>
         </xs:restriction>
     </xs:simpleType>
@@ -33,7 +34,7 @@
     <xs:complexType name="codeType">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute name="title" use="required" type="xs:string"/>
+                <xs:attribute name="title" use="required" type="codeTitleType"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
@@ -45,4 +46,10 @@
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
+
+    <xs:simpleType name="codeTitleType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>
