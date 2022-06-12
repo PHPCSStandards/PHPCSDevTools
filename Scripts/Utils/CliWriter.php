@@ -27,6 +27,13 @@ final class CliWriter implements Writer
 {
 
     /**
+     * Keep track of what output stream was last flushed.
+     *
+     * @var resource
+     */
+    private $lastFlushed;
+
+    /**
      * Send output to STDOUT.
      *
      * @param string $text Output to send.
@@ -35,7 +42,10 @@ final class CliWriter implements Writer
      */
     public function toStdout($text)
     {
-        \fflush(\STDERR); // Prevent output order getting jumbled.
+        if (isset($this->lastFlushed) && $this->lastFlushed !== STDERR) {
+            $this->flush(\STDERR);
+        }
+
         \fwrite(\STDOUT, $text);
     }
 
@@ -48,7 +58,53 @@ final class CliWriter implements Writer
      */
     public function toStderr($text)
     {
-        \fflush(\STDOUT); // Prevent output order getting jumbled.
+        if (isset($this->lastFlushed) && $this->lastFlushed !== STDOUT) {
+            $this->flush(\STDOUT);
+        }
+
         \fwrite(\STDERR, $text);
+    }
+
+    /**
+     * Flush buffered output to the screen.
+     *
+     * Flushing regularly should prevent the output from stdout and stderr being shown in
+     * a jumbled order.
+     *
+     * @param resource|null $stream Either STDOUT or STDERR. Not passing it will flush both.
+     *
+     * @return void
+     */
+    public function flush($stream = null)
+    {
+        if (isset($stream) === false) {
+            if (isset($this->lastFlushed) === false) {
+                \fflush(\STDERR);
+                \fflush(\STDOUT);
+                $this->lastFlushed = \STDOUT;
+                return;
+            }
+
+            $stream = ($this->lastFlushed === \STDOUT) ? \STDERR : \STDOUT;
+        }
+
+        if (\is_resource($stream)) {
+            \fflush($stream);
+            $this->lastFlushed = $stream;
+        }
+    }
+
+    /**
+     * Flush any remaining buffered output to the screen.
+     *
+     * @return void
+     */
+    public function flushOutput()
+    {
+        $stream = ($this->lastFlushed === \STDOUT) ? \STDERR : \STDOUT;
+        $this->flush($stream);
+
+        $stream = ($this->lastFlushed === \STDOUT) ? \STDERR : \STDOUT;
+        $this->flush($stream);
     }
 }
