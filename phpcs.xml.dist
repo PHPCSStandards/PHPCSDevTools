@@ -54,7 +54,6 @@
     -->
 
     <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
-        <exclude-pattern>/devtools-autoload\.php$</exclude-pattern>
         <exclude-pattern>/phpunit-bootstrap\.php$</exclude-pattern>
     </rule>
 

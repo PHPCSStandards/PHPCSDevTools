@@ -36,20 +36,29 @@
  */
 
 $autoloadLocations = [
-    __DIR__ . '/../devtools-autoload.php', // Git clone or direct run from within vendor package directory.
-    __DIR__ . '/../phpcsstandards/phpcsdevtools/devtools-autoload.php', // Composer bin dir install.
     __DIR__ . '/../autoload.php', // Try Composer autoload from a bin dir install.
     __DIR__ . '/../../../autoload.php', // Try Composer autoload from within vendor package directory.
     __DIR__ . '/../vendor/autoload.php', // Try Composer autoload from a git clone install.
 ];
 
 // Try and find a usable autoload file.
+$autoloadLoaded = false;
 foreach ($autoloadLocations as $file) {
     $file = realpath($file);
     if ($file !== false && is_file($file) === true) {
         require_once($file);
+        $autoloadLoaded = true;
         break;
     }
+}
+
+if ($autoloadLoaded === false) {
+    fwrite(
+        STDERR,
+        'ERROR: The Composer autoload file cannot be found, but is a requirement for the PHPCS Feature Complete check.'
+        . ' Run `composer install` first, then try running the script again.'
+    );
+    exit(1);
 }
 
 $writer = new PHPCSDevTools\Scripts\Utils\CliWriter();

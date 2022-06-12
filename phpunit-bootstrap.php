@@ -87,11 +87,17 @@ pointing to the PHPCSUtils directory.
     die(1);
 }
 
-// Load autoloader for the non-sniff devtools and tests.
-require_once __DIR__ . '/devtools-autoload.php';
+if (isset($vendorDir) === false || \file_exists($vendorDir . $ds . 'autoload.php') === false) {
+    echo 'The Composer autoload file is required for the DevTools tests.
 
-// Load test related autoloader.
-require_once __DIR__ . '/vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
+Please run `composer install`.
+';
+
+    die(1);
+}
+
+// Set up autoloading for the DevTools, including PHPUnit Polyfills and Symfony Finder.
+require_once __DIR__ . '/vendor/autoload.php';
 
 // Clean up.
 unset($ds, $phpcsDir, $phpcsUtilsDir, $vendorDir);
