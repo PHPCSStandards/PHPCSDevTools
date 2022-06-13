@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <documentation title="The title of this documentation is too long and should throw a validation error even though the code is correct.">
     <standard>
     <![CDATA[
