@@ -354,9 +354,11 @@ final class Config
                 // The user must have set a path to search. Let's ensure it is a valid path.
                 $realpath = \realpath($arg);
 
-                if ($realpath !== false) {
-                    $this->targetDirs[] = $realpath;
+                if ($realpath === false) {
+                    throw new RuntimeException(\sprintf('Target path %s does not exist', $arg));
                 }
+
+                $this->targetDirs[] = $realpath;
             }
         }
     }

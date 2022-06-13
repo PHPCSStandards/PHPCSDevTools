@@ -12,7 +12,7 @@ namespace PHPCSDevTools\Tests\FeatureComplete\Config;
 
 use PHPCSDevTools\Scripts\FeatureComplete\Config;
 use PHPCSDevTools\Tests\TestWriter;
-use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
 
 /**
  * Test the parsing of command line arguments.
@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @phpcs:disable Squiz.Arrays.ArrayDeclaration.DoubleArrowNotAligned -- If needed, fix once replaced by better sniff.
  */
-final class ProcessCliCommandTest extends TestCase
+final class ProcessCliCommandTest extends XTestCase
 {
 
     /**
@@ -86,6 +86,20 @@ final class ProcessCliCommandTest extends TestCase
                 'command' => 'aliased-command --ignore=vendor',
             ],
         ];
+    }
+
+    /**
+     * Verify that an exception is thrown when an invalid target path is passed.
+     *
+     * @return void
+     */
+    public function testProcessInvalidTargetThrowException()
+    {
+        $this->expectException('RuntimeException');
+        $this->expectExceptionMessage('Target path ./doesnotexist does not exist');
+
+        $_SERVER['argv'] = ['check-complete', './doesnotexist'];
+        $config          = new Config(new TestWriter());
     }
 
     /**
@@ -172,15 +186,6 @@ final class ProcessCliCommandTest extends TestCase
                         \realpath('./Tests'),
                         \realpath('bin'),
                         \realpath(__DIR__ . '/../../../.github/'),
-                    ],
-                ],
-            ],
-            'No arguments other than multiple paths - verify that invalid paths will be filtered out' => [
-                'command'         => './phpcs-check-feature-completeness ./src /Tests bin ' . __DIR__ . '/../absolute/',
-                'expectedChanged' => [
-                    'projectRoot' => $projectRoot,
-                    'targetDirs'  => [
-                        \realpath('bin'),
                     ],
                 ],
             ],
@@ -338,7 +343,7 @@ final class ProcessCliCommandTest extends TestCase
                 ],
             ],
             'All together now, includes testing for handling of additional whitespace between arguments' => [
-                'command'          => 'phpcs-check-feature-completeness src    --no-docs --exclude=ignoreme,/other,./tests/'
+                'command'          => 'phpcs-check-feature-completeness Scripts    --no-docs --exclude=ignoreme,/other,./tests/'
                     . ' PHPCSDebug   --no-progress    ./Tests   --colors -v  --no-orphans .',
                 'expectedChanged'  => [
                     'projectRoot'  => $projectRoot,
@@ -348,6 +353,7 @@ final class ProcessCliCommandTest extends TestCase
                     'showColored'  => true,
                     'verbose'      => 1,
                     'targetDirs'   => [
+                        \realpath('Scripts'),
                         \realpath('PHPCSDebug'),
                         \realpath('./Tests'),
                         \realpath('.'),
