@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<documentation title="Example docs">
+<documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://phpcsstandards.github.io/PHPCSDevTools/phpcsdocs.xsd" title="Example docs">
     <code_comparison>
         <code title="Valid: A valid code example">
         <![CDATA[

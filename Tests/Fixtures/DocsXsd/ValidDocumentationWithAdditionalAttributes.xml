@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<documentation title="Some sniff docs" phpVersion="7.3" ref="PHPCompatibility">
+<documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://phpcsstandards.github.io/PHPCSDevTools/phpcsdocs.xsd" title="Some sniff docs" phpVersion="7.3" ref="PHPCompatibility">
     <standard>
     <![CDATA[
       This is an example of the correct documentation example.
