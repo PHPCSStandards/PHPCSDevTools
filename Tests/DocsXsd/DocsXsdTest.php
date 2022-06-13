@@ -191,7 +191,7 @@ final class DocsXsdTest extends IOTestCase
             'Multiple title attributes in the <documentation> root element (will throw parser error)' => [
                 'fixtureFile'    => 'InvalidDocumentationMultipleTitleAttributes.xml',
                 'expectedStdOut' => '',
-                'expectedStdErr' => "parser error : Attribute title redefined",
+                'expectedStdErr' => 'parser error : Attribute title redefined',
             ],
             '<code> element empty title attribute' => [
                 'fixtureFile'    => 'InvalidCodeElementEmptyTitle.xml',
@@ -206,7 +206,7 @@ final class DocsXsdTest extends IOTestCase
             '<code> element has has multiple title attributes (will throw parser error)' => [
                 'fixtureFile'    => 'InvalidCodeElementMultipleTitleAttributes.xml',
                 'expectedStdOut' => '',
-                'expectedStdErr' => "Attribute title redefined",
+                'expectedStdErr' => 'Attribute title redefined',
             ],
             '<code> element contains non string elements' => [
                 'fixtureFile'    => 'InvalidCodeElementContainsNonStringElements.xml',
