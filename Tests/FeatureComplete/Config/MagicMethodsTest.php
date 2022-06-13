@@ -39,7 +39,9 @@ final class MagicMethodsTest extends XTestCase
     protected function setUpClass()
     {
         parent::setUp();
-        $this->config = new Config(new TestWriter());
+
+        $_SERVER['argv'] = ['command'];
+        $this->config    = new Config(new TestWriter());
     }
 
     /**
