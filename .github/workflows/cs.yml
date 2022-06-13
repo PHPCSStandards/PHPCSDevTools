@@ -76,7 +76,7 @@ jobs:
       # Validate the Docs XML file(s).
       # @link http://xmlsoft.org/xmllint.html
       - name: Validate docs against schema
-        run: xmllint --noout --schema DocsXsd/phpcsdocs.xsd ./PHPCSDebug/Docs/**/*.xml
+        run: xmllint --noout --schema DocsXsd/phpcsdocs.xsd ./PHPCSDebug/Docs/*/*Standard.xml
 
       # Check the code-style consistency of the PHP files.
       - name: Check PHP code style
