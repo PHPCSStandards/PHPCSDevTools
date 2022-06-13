@@ -207,7 +207,7 @@ In order to use it, you'll need to add the schema related attributes to the `doc
 
 If your IDE or editor supports automatic validation of XML files, you will be notified if your documentation XML file has the correct number of elements, correct type and number of certain attributes, and title length among other things.
 
-#### Using XSD on GitHub Actions
+#### Validating your docs against the XSD
 
 You can validate your PHPCS XML documentation against the XSD file using [xmllint](https://gnome.pages.gitlab.gnome.org/libxml2/xmllint.html). This validation can be run locally if you have xmllint installed, as well as in CI (continuous integration).
 An example of a workflow job for GitHub Actions CI looks like this:
