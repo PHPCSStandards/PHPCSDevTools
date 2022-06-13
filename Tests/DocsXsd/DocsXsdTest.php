@@ -79,7 +79,7 @@ final class DocsXsdTest extends IOTestCase
                 'fixtureFile' => 'ValidMultipleCodeExamples.xml',
             ],
             'Valid docs example without code comparison element in the sequence group' => [
-                'fixtureFile'    => 'ValidEmptyCodeComparisonElement.xml',
+                'fixtureFile' => 'ValidEmptyCodeComparisonElement.xml',
             ],
         ];
     }
