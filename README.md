@@ -209,7 +209,7 @@ If your IDE or editor supports automatic validation of XML files, you will be no
 
 #### Using XSD on GitHub Actions
 
-You can check for documentation validation by using xmllint and referencing the `phpcsdocs.xsd` file. 
+You can validate your PHPCS XML documentation against the XSD file using xmllint. This validation can be run locally if you have xmllint installed, as well as in CI (continuous integration).
 An example of a workflow job for GitHub Actions CI looks like this:
 
 ```yaml
