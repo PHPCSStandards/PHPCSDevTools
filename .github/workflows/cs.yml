@@ -56,13 +56,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y libxml2-utils
 
+      - name: Download the XSD schema
+        run: curl http://www.w3.org/2001/XMLSchema.xsd --output XMLSchema.xsd
+
       # Show XML violations inline in the file diff.
       # @link https://github.com/marketplace/actions/xmllint-problem-matcher
       - uses: korelstar/xmllint-problem-matcher@v1
 
       # Validate the XSD and XML files against schema.
       - name: Validate Docs XSD against schema
-        run: xmllint --noout --schema http://www.w3.org/2001/XMLSchema.xsd DocsXsd/phpcsdocs.xsd
+        run: xmllint --noout --schema XMLSchema.xsd DocsXsd/phpcsdocs.xsd
 
       - name: Validate PHPCSDebug ruleset against schema
         run: xmllint --noout --schema vendor/squizlabs/php_codesniffer/phpcs.xsd PHPCSDebug/ruleset.xml
