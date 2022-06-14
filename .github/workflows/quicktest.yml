@@ -38,6 +38,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Install xmllint
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y libxml2-utils
+
       # On stable PHPCS versions, allow for PHP deprecation notices.
       # Unit tests don't need to fail on those for stable releases where those issues won't get fixed anymore.
       - name: Setup ini config

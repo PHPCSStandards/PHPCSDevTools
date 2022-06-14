@@ -29,6 +29,7 @@ This is a set of tools to assist developers of sniffs for [PHP CodeSniffer](http
 * [Features](#features)
     + [Checking whether all sniffs in a PHPCS standard are feature complete](#checking-whether-all-sniffs-in-a-phpcs-standard-are-feature-complete)
     + [Sniff Debugging](#sniff-debugging)
+    + [Documentation XSD Validation](#documentation-xsd-validation)
 * [Contributing](#contributing)
 * [License](#license)
 
@@ -190,6 +191,48 @@ Ptr | Ln | Col  | Cond | ( #) | Token Type                 | [len]: Content
 
 PHPCS itself can also display similar information using the `-vv` or `-vvv` verbosity flags, however, when using those, you will receive a *lot* more information than just the token list and, while useful for debugging PHPCS itself, the additional information is mostly just noise when developing a sniff.
 
+### Documentation XSD Validation
+
+This project contains an [XML Schema Definition (XSD)](https://www.w3.org/standards/xml/schema) to allow for validation PHPCS documentation XML files. Following the XSD will make sure your documentation can be correctly displayed when using the PHPCS `--generator` option.
+
+In order to use it, you'll need to add the schema related attributes to the `documentation` element of the sniff documentation file, like so:
+
+```xml
+<documentation
+    title="Name of the sniff"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://phpcsstandards.github.io/PHPCSDevTools/phpcsdocs.xsd"
+>
+```
+
+If your IDE or editor supports automatic validation of XML files, you will be notified if your documentation XML file has the correct number of elements, correct type and number of certain attributes, and title length among other things.
+
+#### Validating your docs against the XSD
+
+You can validate your PHPCS XML documentation against the XSD file using [xmllint](https://gnome.pages.gitlab.gnome.org/libxml2/xmllint.html). This validation can be run locally if you have xmllint installed, as well as in CI (continuous integration).
+
+An example of a workflow job for GitHub Actions CI looks like this:
+
+```yaml
+jobs:
+  validate-xml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install xmllint
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y libxml2-utils
+
+      # A Composer install is needed to have a local copy of the XSD available.
+      - run: composer install
+
+      - name: Validate docs against schema
+        run: xmllint --noout --schema vendor/phpcsstandards/phpcsdevtools/DocsXsd/phpcsdocs.xsd ./YourRuleset/Docs/**/*Standard.xml
+```
+
+You'd need to replace the `YourRuleset` with the name of your ruleset of course.
 
 Contributing
 -------
