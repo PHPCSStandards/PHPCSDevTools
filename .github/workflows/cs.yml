@@ -50,6 +50,7 @@ jobs:
       - name: Install Composer dependencies
         uses: "ramsey/composer-install@v2"
 
+      # @link http://xmlsoft.org/xmllint.html
       - name: Install xmllint
         run: |
           sudo apt-get update
@@ -59,24 +60,19 @@ jobs:
       # @link https://github.com/marketplace/actions/xmllint-problem-matcher
       - uses: korelstar/xmllint-problem-matcher@v1
 
-      # Validate the Docs XSD file.
-      # @link http://xmlsoft.org/xmllint.html
+      # Validate the XSD and XML files against schema.
       - name: Validate Docs XSD against schema
         run: xmllint --noout --schema http://www.w3.org/2001/XMLSchema.xsd DocsXsd/phpcsdocs.xsd
 
-      # Validate the XML file.
-      # @link http://xmlsoft.org/xmllint.html
-      - name: Validate ruleset against schema
+      - name: Validate PHPCSDebug ruleset against schema
         run: xmllint --noout --schema vendor/squizlabs/php_codesniffer/phpcs.xsd PHPCSDebug/ruleset.xml
 
-      # Check the code-style consistency of the XML file.
-      - name: Check XML code style
-        run: diff -B ./PHPCSDebug/ruleset.xml <(xmllint --format "./PHPCSDebug/ruleset.xml")
-
-      # Validate the Docs XML file(s).
-      # @link http://xmlsoft.org/xmllint.html
       - name: Validate docs against schema
         run: xmllint --noout --schema DocsXsd/phpcsdocs.xsd ./PHPCSDebug/Docs/*/*Standard.xml
+
+      # Check code-style consistency of the XSD and XML files.
+      - name: Check Ruleset XML code style
+        run: diff -B ./PHPCSDebug/ruleset.xml <(xmllint --format "./PHPCSDebug/ruleset.xml")
 
       # Check the code-style consistency of the PHP files.
       - name: Check PHP code style
