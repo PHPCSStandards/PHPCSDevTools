@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://phpcsstandards.github.io/PHPCSDevTools/phpcsdocs.xsd">
+    <standard>
+    <![CDATA[
+      This is an example of the incorrect documentation example.
+    ]]>
+    </standard>
+    <code_comparison>
+        <code title="Valid: A valid code example">
+        <![CDATA[
+$number = 3;
+if(3 <em>===</em> $number) {
+    echo 'Number equals three.';
+}
+        ]]>
+        </code>
+        <code title="Invalid: An invalid code example">
+        <![CDATA[
+$number = 3;
+if(3 <em>=</em> $number) {
+    echo 'Number equals three.';
+}
+        ]]>
+        </code>
+    </code_comparison>
+</documentation>
