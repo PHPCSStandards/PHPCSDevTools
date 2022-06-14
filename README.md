@@ -210,13 +210,26 @@ If your IDE or editor supports automatic validation of XML files, you will be no
 #### Validating your docs against the XSD
 
 You can validate your PHPCS XML documentation against the XSD file using [xmllint](https://gnome.pages.gitlab.gnome.org/libxml2/xmllint.html). This validation can be run locally if you have xmllint installed, as well as in CI (continuous integration).
+
 An example of a workflow job for GitHub Actions CI looks like this:
 
 ```yaml
-# Validate the Docs XML file(s).
-# @link http://xmlsoft.org/xmllint.html
-- name: Validate docs against schema
-  run: xmllint --noout --schema vendor/phpcsstandards/phpcsdevtools/DocsXsd/phpcsdocs.xsd ./YourRuleset/Docs/**/*Standard.xml
+jobs:
+  validate-xml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install xmllint
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y libxml2-utils
+
+      # A Composer install is needed to have a local copy of the XSD available.
+      - run: composer install
+
+      - name: Validate docs against schema
+        run: xmllint --noout --schema vendor/phpcsstandards/phpcsdevtools/DocsXsd/phpcsdocs.xsd ./YourRuleset/Docs/**/*Standard.xml
 ```
 
 You'd need to replace the `YourRuleset` with the name of your ruleset of course.
