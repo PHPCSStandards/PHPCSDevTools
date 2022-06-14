@@ -184,9 +184,9 @@ In order to use it, you'll need to add the schema related attributes to the `doc
 
 ```xml
 <documentation
-    title="Name of the sniff"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="https://phpcsstandards.github.io/PHPCSDevTools/phpcsdocs.xsd"
+    title="Name of the sniff"
 >
 ```
 
@@ -194,7 +194,7 @@ If your IDE or editor supports automatic validation of XML files, you will be no
 
 #### Validating your docs against the XSD
 
-You can validate your PHPCS XML documentation against the XSD file using [xmllint](https://gnome.pages.gitlab.gnome.org/libxml2/xmllint.html). This validation can be run locally if you have xmllint installed, as well as in CI (continuous integration).
+You can validate your PHPCS XML documentation against the XSD file using [xmllint](http://xmlsoft.org/xmllint.html). This validation can be run locally if you have xmllint installed, as well as in CI (continuous integration).
 
 An example of a workflow job for GitHub Actions CI looks like this:
 
@@ -217,7 +217,7 @@ jobs:
         run: xmllint --noout --schema vendor/phpcsstandards/phpcsdevtools/DocsXsd/phpcsdocs.xsd ./YourRuleset/Docs/**/*Standard.xml
 ```
 
-You'd need to replace the `YourRuleset` with the name of your ruleset of course.
+:point_right: You'll need to replace the `YourRuleset` within the command with the name of your ruleset (of course).
 
 Contributing
 -------
