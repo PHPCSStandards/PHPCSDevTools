@@ -75,3 +75,20 @@ jobs:
 
       - name: Show PHPCS results in PR
         run: cs2pr ./phpcs-report.xml
+
+  validate-xml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install xmllint
+        run: sudo apt-get install --no-install-recommends -y libxml2-utils
+
+      # A Composer install is needed to have a local copy of the XSD available.
+      - run: composer install
+
+      - name: Validate docs against schema
+        run: xmllint --noout --schema DocsXsd/phpcsdocs.xsd ./PHPCSDebug/Docs/*/*Standard.xml
+
+      - name: Validate docs against schema
+        run: xmllint --noout --schema vendor/phpcsstandards/phpcsdevtools/DocsXsd/phpcsdocs.xsd ./PHPCSDebug/Docs/**/*Standard.xml
