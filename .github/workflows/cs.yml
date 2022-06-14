@@ -71,6 +71,9 @@ jobs:
         run: xmllint --noout --schema DocsXsd/phpcsdocs.xsd ./PHPCSDebug/Docs/*/*Standard.xml
 
       # Check code-style consistency of the XSD and XML files.
+      - name: Check XSD code style
+        run: diff -B ./DocsXsd/phpcsdocs.xsd <(xmllint --format "./DocsXsd/phpcsdocs.xsd")
+
       - name: Check Ruleset XML code style
         run: diff -B ./PHPCSDebug/ruleset.xml <(xmllint --format "./PHPCSDebug/ruleset.xml")
 
