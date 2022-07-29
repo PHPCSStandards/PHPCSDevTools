@@ -104,7 +104,10 @@ final class TokenListSniff implements Sniff
             if (isset($token['orig_content'])) {
                 $content  = $this->visualizeWhitespace($content);
                 $content .= $sep . 'Orig: ' . $this->visualizeWhitespace($token['orig_content']);
-            } elseif ($token['code'] === \T_WHITESPACE) {
+            } elseif ($token['code'] === \T_WHITESPACE
+                || $token['code'] === \T_END_HEREDOC
+                || $token['code'] === \T_END_NOWDOC
+            ) {
                 $content = $this->visualizeWhitespace($content);
             } elseif (isset(Tokens::$commentTokens[$token['code']]) === true) {
                 /*
