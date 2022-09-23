@@ -17,6 +17,7 @@
 * [Features](#features)
     + [Checking whether all sniffs in a PHPCS standard are feature complete](#checking-whether-all-sniffs-in-a-phpcs-standard-are-feature-complete)
     + [Sniff Debugging](#sniff-debugging)
+    + [Documentation XSD Validation](#documentation-xsd-validation)
 * [Contributing](#contributing)
 * [License](#license)
 
@@ -140,29 +141,71 @@ Ptr | Ln | Col  | Cond | ( #) | Token Type                 | [len]: Content
   2 | L3 | C  1 | CC 0 | ( 0) | T_COMMENT                  | [ 32]: // Boolean not operator: All OK.
 
   3 | L4 | C  1 | CC 0 | ( 0) | T_IF                       | [  2]: if
-  4 | L4 | C  3 | CC 0 | ( 0) | T_WHITESPACE               | [  1]:
+  4 | L4 | C  3 | CC 0 | ( 0) | T_WHITESPACE               | [  1]: ⸱
   5 | L4 | C  4 | CC 0 | ( 0) | T_OPEN_PARENTHESIS         | [  1]: (
-  6 | L4 | C  5 | CC 0 | ( 1) | T_WHITESPACE               | [  1]:
+  6 | L4 | C  5 | CC 0 | ( 1) | T_WHITESPACE               | [  1]: ⸱
   7 | L4 | C  6 | CC 0 | ( 1) | T_CONSTANT_ENCAPSED_STRING | [  4]: 'bb'
-  8 | L4 | C 10 | CC 0 | ( 1) | T_WHITESPACE               | [  1]:
+  8 | L4 | C 10 | CC 0 | ( 1) | T_WHITESPACE               | [  1]: ⸱
   9 | L4 | C 11 | CC 0 | ( 1) | T_IS_NOT_IDENTICAL         | [  3]: !==
- 10 | L4 | C 14 | CC 0 | ( 1) | T_WHITESPACE               | [  1]:
+ 10 | L4 | C 14 | CC 0 | ( 1) | T_WHITESPACE               | [  1]: ⸱
  11 | L4 | C 15 | CC 0 | ( 1) | T_CONSTANT_ENCAPSED_STRING | [  4]: 'bb'
- 12 | L4 | C 19 | CC 0 | ( 1) | T_WHITESPACE               | [  1]:
+ 12 | L4 | C 19 | CC 0 | ( 1) | T_WHITESPACE               | [  1]: ⸱
  13 | L4 | C 20 | CC 0 | ( 0) | T_CLOSE_PARENTHESIS        | [  1]: )
- 14 | L4 | C 21 | CC 0 | ( 0) | T_WHITESPACE               | [  1]:
+ 14 | L4 | C 21 | CC 0 | ( 0) | T_WHITESPACE               | [  1]: ⸱
  15 | L4 | C 22 | CC 0 | ( 0) | T_OPEN_CURLY_BRACKET       | [  1]: {
  16 | L4 | C 23 | CC 0 | ( 0) | T_WHITESPACE               | [  0]:
 
- 17 | L5 | C  1 | CC 0 | ( 0) | T_WHITESPACE               | [  1]: \t
+ 17 | L5 | C  1 | CC 0 | ( 0) | T_WHITESPACE               | [  1]: →
  18 | L5 | C  2 | CC 0 | ( 0) | T_IF                       | [  2]: if
- 19 | L5 | C  4 | CC 0 | ( 0) | T_WHITESPACE               | [  1]:
+ 19 | L5 | C  4 | CC 0 | ( 0) | T_WHITESPACE               | [  1]: ⸱
  20 | L5 | C  5 | CC 0 | ( 0) | T_OPEN_PARENTHESIS         | [  1]: (
  21 | L5 | C  6 | CC 0 | ( 0) | T_WHITESPACE               | [  0]:
 ```
 
 PHPCS itself can also display similar information using the `-vv` or `-vvv` verbosity flags, however, when using those, you will receive a *lot* more information than just the token list and, while useful for debugging PHPCS itself, the additional information is mostly just noise when developing a sniff.
 
+### Documentation XSD Validation
+
+This project contains an [XML Schema Definition (XSD)](https://www.w3.org/standards/xml/schema) to allow for validation PHPCS documentation XML files. Following the XSD will make sure your documentation can be correctly displayed when using the PHPCS `--generator` option.
+
+In order to use it, you'll need to add the schema related attributes to the `documentation` element of the sniff documentation file, like so:
+
+```xml
+<documentation
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://phpcsstandards.github.io/PHPCSDevTools/phpcsdocs.xsd"
+    title="Name of the sniff"
+>
+```
+
+If your IDE or editor supports automatic validation of XML files, you will be notified if your documentation XML file has the correct number of elements, correct type and number of certain attributes, and title length among other things.
+
+#### Validating your docs against the XSD
+
+You can validate your PHPCS XML documentation against the XSD file using [xmllint](http://xmlsoft.org/xmllint.html). This validation can be run locally if you have xmllint installed, as well as in CI (continuous integration).
+
+An example of a workflow job for GitHub Actions CI looks like this:
+
+```yaml
+jobs:
+  validate-xml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install xmllint
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y libxml2-utils
+
+      # A Composer install is needed to have a local copy of the XSD available.
+      - run: composer install
+
+      - name: Validate docs against schema
+        run: xmllint --noout --schema vendor/phpcsstandards/phpcsdevtools/DocsXsd/phpcsdocs.xsd ./YourRuleset/Docs/**/*Standard.xml
+```
+
+:point_right: You'll need to replace the `YourRuleset` within the command with the name of your ruleset (of course).
 
 Contributing
 -------
