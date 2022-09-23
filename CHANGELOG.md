@@ -10,6 +10,26 @@ This projects adheres to [Keep a CHANGELOG](http://keepachangelog.com/) and uses
 _Nothing yet._
 
 
+## [1.2.0] - 2022-09-23
+
+### Added
+* An XSD schema for PHPCS sniff documentation files. Thanks to [@dingo-d] for this awesome contribution!
+    The XSD schema can be added to PHPCS sniff documentation XML files and can be used to verify these files comply with the requirements set by PHPCS, so the documentation will display correctly when using the PHPCS `--generator=...` feature.
+    Information about how to use this new feature has been added to the README.
+* PHPCSDebug/TokenList sniff: tabs and spacess will now be visualized in whitespace-only tokens. In comment tokens, leading and trailing whitespace will be visualized.
+    Whitespace will also be visualized for any token which has (or should have) undergone a "tabs to spaces" conversion.
+
+### Changed
+* PHPCSDebug/TokenList sniff: the `'orig_content'` will now be shown for all tokens which have undergone a "tabs to spaces" conversion. Previously it was only shown for whitespace tokens which had been converted.
+* The package will now identify itself as a static analysis tool to Composer. Thanks [@GaryJones]!
+* Various other code and documentation improvements.
+* Miscellaneous updates to the development environment and CI scripts.
+
+### Fixed
+* FeatureComplete: wrong error message was displayed for missing test case files in colors enabled mode.
+* PHPCSDebug/TokenList sniff: for rare edge cases when PHPCS has not set the `'length'` information for a token, the length will no longer be calculated, but will show as `?`. This prevents a mismatch/misrepresentation between the output of the sniff and the real token array.
+
+
 ## [1.1.1] - 2022-04-28
 
 ### Changed
@@ -49,8 +69,12 @@ Initial release containing:
 
 
 [Unreleased]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/stable...HEAD
+[1.2.0]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.1.1...1.2.0
 [1.1.1]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.1.0...1.1.1
 [1.1.0]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.0.1...1.1.0
 [1.0.1]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.0.0...1.0.1
 
 [Composer PHPCS plugin]: https://github.com/PHPCSStandards/composer-installer
+
+[@dingo-d]: https://github.com/dingo-d
+[@GaryJones]: https://github.com/GaryJones
