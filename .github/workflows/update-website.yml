@@ -39,9 +39,9 @@ jobs:
           REF: ${{ github.ref }}
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            echo "::set-output name=BRANCH::$REF"
+            echo "BRANCH=$REF" >> $GITHUB_OUTPUT
           else
-            echo '::set-output name=BRANCH::stable'
+            echo 'BRANCH=stable' >> $GITHUB_OUTPUT
           fi
 
       - name: Checkout code
@@ -65,7 +65,7 @@ jobs:
           SHA: ${{ github.sha }}
         run: |
           shortsha=$(echo "$SHA" | cut -b 1-6)
-          echo "::set-output name=SHORTSHA::$shortsha"
+          echo "SHORTSHA=$shortsha" >> $GITHUB_OUTPUT
 
       - name: Prepare commit message
         id: commit_msg
@@ -74,9 +74,9 @@ jobs:
           COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
           if [[ "${{ github.event_name }}" == 'push' && "${{ github.ref_type }}" == 'tag' ]]; then
-            echo "::set-output name=MSG::Update website for release of version $REF_NAME"
+            echo "MSG=Update website for release of version $REF_NAME" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=MSG::Sync website after commit (sha: ${{ steps.set_sha.outputs.SHORTSHA }})"
+            echo "MSG=Sync website after commit (sha: ${{ steps.set_sha.outputs.SHORTSHA }})" >> $GITHUB_OUTPUT
           fi
 
       - name: Check GitHub Pages status
