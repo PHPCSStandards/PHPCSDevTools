@@ -52,7 +52,7 @@ jobs:
       - name: Install PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: 'latest'
           ini-values: error_reporting=-1, display_errors=On, log_errors_max_len=0
           coverage: none
 
