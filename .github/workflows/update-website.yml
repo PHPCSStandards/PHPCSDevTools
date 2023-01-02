@@ -5,11 +5,14 @@ on:
   push:
     branches:
       - 'stable'
+    tags:
+      - '**'
   # And whenever this workflow or one of the associated scripts is updated (for a dry-run).
   pull_request:
     branches-ignore:
       - 'stable'
     paths:
+      - 'README.md'
       - '.github/workflows/update-website.yml'
       - '.github/build/**'
   # Also allow manually triggering the workflow.
