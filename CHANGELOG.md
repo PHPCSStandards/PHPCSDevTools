@@ -9,6 +9,12 @@ This projects adheres to [Keep a CHANGELOG](http://keepachangelog.com/) and uses
 
 _Nothing yet._
 
+## [1.2.1] - 2023-01-05
+
+### Changed
+* Composer: The version requirements for the [Composer PHPCS plugin] have been widened to allow for version 1.0.0.
+    Please ensure you run `composer update phpcsstandards/phpcsdevtools --with-dependencies` to benefit from this.
+
 
 ## [1.2.0] - 2022-09-23
 
@@ -69,6 +75,7 @@ Initial release containing:
 
 
 [Unreleased]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/stable...HEAD
+[1.2.1]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.1.1...1.2.0
 [1.1.1]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.1.0...1.1.1
 [1.1.0]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.0.1...1.1.0
