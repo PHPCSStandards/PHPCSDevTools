@@ -46,7 +46,7 @@ Composer will automatically install dependencies and register the PHPCSDebug sta
 
 ### Stand-alone Installation
 
-* Install [PHP CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer) via [your preferred method](https://github.com/squizlabs/PHP_CodeSniffer#installation).
+* Install [PHP CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer) via [your preferred method](https://github.com/PHPCSStandards/PHP_CodeSniffer#installation).
 * Register the path to PHPCS in your system `$PATH` environment variable to make the `phpcs` command available from anywhere in your file system.
 * Download the [latest PHPCSDevTools release](https://github.com/PHPCSStandards/PHPCSDevTools/releases) and unzip/untar it into an arbitrary directory.
     You can also choose to clone this repository using git.
