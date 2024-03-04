@@ -73,6 +73,11 @@ pointing to the PHPCS directory.
     die(1);
 }
 
+$installedStandards = \PHP_CodeSniffer\Util\Standards::getInstalledStandardDetails();
+foreach ($installedStandards as $details) {
+    \PHP_CodeSniffer\Autoload::addSearchPath($details['path'], $details['namespace']);
+}
+
 // Try and load the PHPCSUtils autoloader.
 if ($phpcsUtilsDir !== false && \file_exists($phpcsUtilsDir . $ds . 'phpcsutils-autoload.php')) {
     require_once $phpcsUtilsDir . $ds . 'phpcsutils-autoload.php';
