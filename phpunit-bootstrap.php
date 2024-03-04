@@ -95,5 +95,8 @@ pointing to the PHPCSUtils directory.
 // Load test related autoloader.
 require_once __DIR__ . '/vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
 
+// Load IO testcase.
+require_once __DIR__ . '/Tests/IOTestCase.php';
+
 // Clean up.
 unset($ds, $phpcsDir, $phpcsUtilsDir, $vendorDir);
