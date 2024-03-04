@@ -10,6 +10,7 @@
 
 namespace PHPCSDevTools\Tests;
 
+use RuntimeException;
 use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
 
 /**
@@ -51,8 +52,12 @@ abstract class IOTestCase extends XTestCase
             2 => ['pipe', 'w'],  // stderr
         ];
 
-        $process = \proc_open($command, $descriptorspec, $pipes, $workingDir);
+        $options = null;
+        if (stripos(PHP_OS, 'WIN') === 0) {
+            $options = ['bypass_shell' => true];
+        }
 
+        $process = \proc_open($command, $descriptorspec, $pipes, $workingDir, null, $options);
         if (\is_resource($process) === false) {
             throw new RuntimeException('Could not obtain a resource with proc_open() to execute the command.');
         }
