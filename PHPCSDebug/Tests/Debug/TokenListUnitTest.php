@@ -10,6 +10,7 @@
 
 namespace PHPCSDebug\Tests\Debug;
 
+use PHP_CodeSniffer\Util\Common;
 use PHPCSUtils\TestUtils\UtilityMethodTestCase;
 
 /**
@@ -107,6 +108,17 @@ EOD;
 
         $this->expectOutputString($expected);
         $this->setOutputCallback([$this, 'normalizeLineEndings']);
+
+        if (empty($this->ruleset->tokenListeners)) {
+            // PHPCSUtils 1.0.9+.
+            $sniffFile      = \dirname(\dirname(__DIR__)) . \DIRECTORY_SEPARATOR . 'Sniffs';
+            $sniffFile     .= \DIRECTORY_SEPARATOR . 'Debug' . \DIRECTORY_SEPARATOR . 'TokenListSniff.php';
+            $sniffClassName = Common::cleanSniffClass('PHPCSDebug\\Sniffs\\Debug\\TokenListSniff');
+
+            $restrictions = [\strtolower($sniffClassName) => true];
+            self::$phpcsFile->ruleset->registerSniffs([$sniffFile], $restrictions, []);
+            self::$phpcsFile->ruleset->populateTokenListeners();
+        }
 
         self::$phpcsFile->process();
     }
