@@ -1,0 +1,87 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Verify the code examples in the documentation of PHPCS sniffs.
+ *
+ * This script verifies that the code examples in the documentation of PHPCS sniffs actually trigger
+ * or don't trigger the sniff depending on whether they are valid or invalid examples.
+ *
+ * :WARNING:
+ *   This file MUST stay cross-version compatible with older PHP versions (min: PHP 5.4) to allow
+ *   for the requirements check to work correctly. PHP 5.4 is the minimum version for the rest of
+ *   this package, while this script (except this file) requires PHP 7.0+.
+ * :WARNING:
+ *
+ * @package   PHPCSDevTools
+ * @copyright 2019 PHPCSDevTools Contributors
+ * @license   https://opensource.org/licenses/LGPL-3.0 LGPL3
+ * @link      https://github.com/PHPCSStandards/PHPCSDevTools
+ */
+
+if (PHP_VERSION_ID < 70000) {
+    $error = 'ERROR: This script requires PHP version 7.0.0 or greater.' . PHP_EOL;
+    \fwrite(STDERR, $error);
+    exit(1);
+}
+
+if (\extension_loaded('libxml') === false) {
+    $error = 'ERROR: This script requires the libxml extension.' . PHP_EOL;
+    \fwrite(STDERR, $error);
+    exit(1);
+}
+
+if (\extension_loaded('dom') === false) {
+    $error = 'ERROR: This script requires the DOM extension.' . PHP_EOL;
+    \fwrite(STDERR, $error);
+    exit(1);
+}
+
+require_once __DIR__ . '/../Scripts/DocCodeExamples/Functions.php';
+
+$devToolsAutoloadLocations = [
+    __DIR__ . '/../devtools-autoload.php', // Git clone or direct run from within vendor package directory.
+    __DIR__ . '/../phpcsstandards/phpcsdevtools/devtools-autoload.php', // Composer bin dir install.
+    __DIR__ . '/../autoload.php', // Try Composer autoload from a bin dir install.
+    __DIR__ . '/../../../autoload.php', // Try Composer autoload from within vendor package directory.
+];
+
+$phpcsAutoloadLocations = [
+    __DIR__ . '/../vendor/squizlabs/php_codesniffer/autoload.php', // Git clone.
+    __DIR__ . '/../squizlabs/php_codesniffer/autoload.php', // Composer bin dir install.
+    __DIR__ . '/../../../squizlabs/php_codesniffer/autoload.php', // Composer dependency install for ext standards.
+    __DIR__ . '/../../../../autoload.php', // Composer dependency install for PHPCS itself.
+];
+
+// Try to find a usable PHPCSDevTools autoload file.
+requireCorrectAutoloadFile($devToolsAutoloadLocations);
+// Try to find a usable PHPCS autoload file.
+requireCorrectAutoloadFile($phpcsAutoloadLocations);
+
+try {
+    $writer = new PHPCSDevTools\Scripts\Utils\CliWriter();
+    $config = new PHPCSDevTools\Scripts\DocCodeExamples\Config($writer);
+
+    if ($config->getProperty('executeCheck') === false) {
+        // This was a help request.
+        exit(0);
+    }
+
+    $extractor = new PHPCSDevTools\Scripts\DocCodeExamples\CodeBlocksExtractor();
+
+    // It is necessary to reset argv to avoid issues with the PHPCS Config,
+    // as it also checks for command line arguments.
+    $_SERVER['argv'] = [];
+    $phpcsConfig     = new PHP_CodeSniffer\Config();
+
+    $check = new PHPCSDevTools\Scripts\DocCodeExamples\Check($config, $extractor, $phpcsConfig, $writer);
+    exit($check->run());
+} catch (RuntimeException $e) {
+    $message = $e->getMessage();
+
+    if ($config->getProperty('showColored') === true) {
+        $message = "\033[31m{$message}\033[0m";
+    }
+
+    echo $message . PHP_EOL;
+    exit(1);
+}

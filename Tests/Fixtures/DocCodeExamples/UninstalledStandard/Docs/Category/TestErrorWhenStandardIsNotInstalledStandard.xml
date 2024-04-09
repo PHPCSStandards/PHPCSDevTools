@@ -1,0 +1,7 @@
+<documentation title="Error when standard is not installed">
+    <standard>
+    <![CDATA[
+    Used to test that the script returns an error when the standard is not installed.
+    ]]>
+    </standard>
+</documentation>

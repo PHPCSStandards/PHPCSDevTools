@@ -73,9 +73,13 @@ jobs:
         if: ${{ matrix.php >= '7.2' }}
         run: composer lint -- --checkstyle | cs2pr
 
-      - name: Lint against parse errors (PHP < 7.2)
-        if: ${{ matrix.php < '7.2' }}
-        run: composer lintlt72 -- --checkstyle | cs2pr
+      - name: Lint against parse errors (PHP < 7.2 && PHP >= 7.0)
+        if: ${{ matrix.php < '7.2' && matrix.php >= '7.0' }}
+        run: composer lintlt72
+
+      - name: Lint against parse errors (PHP < 7.0)
+        if: ${{ matrix.php < '7.0' }}
+        run: composer lintlt70
 
       # Check that any sniffs available are feature complete.
       # This also acts as an integration test for the feature completeness script,
@@ -229,3 +233,192 @@ jobs:
 
       - name: Run the unit tests for the PHPCSDebug sniff
         run: composer test-sniff${{ steps.phpunit_script.outputs.SUFFIX }}
+
+  # Run CI checks/tests for the DocCodeExamples script as it requires PHP >= 7.0.
+  test-doc-code-examples:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'windows-latest']
+        # IMPORTANT: test runs shouldn't fail because of PHPCS being incompatible with a PHP version.
+        # - PHPCS will run without errors on PHP 7.0 - 7.2 on any version.
+        # - PHP 7.3 needs PHPCS 3.3.1+ to run without errors.
+        # - PHP 7.4 needs PHPCS 3.5.0+ to run without errors.
+        # - PHP 8.0 needs PHPCS 3.5.7+ to run without errors.
+        # - PHP 8.1 needs PHPCS 3.6.1+ to run without errors.
+        # - PHP 8.2 needs PHPCS 3.6.1+ to run without errors.
+        # - PHP 8.3 needs PHPCS 3.8.0+ to run without errors (though the errors don't affect this package).
+        # - PHP 8.4 needs PHPCS 3.8.0+ to run without errors (officially 3.11.0, but 3.8.0 will work fine).
+        php: ['7.0', '7.1', '7.2']
+        phpcs_version: ['3.1.0', 'dev-master']
+
+        include:
+          # Complete the matrix, while preventing issues with PHPCS versions incompatible with certain PHP versions.
+          - os: 'ubuntu-latest'
+            php: '7.3'
+            phpcs_version: 'dev-master'
+          - os: 'windows-latest'
+            php: '7.3'
+            phpcs_version: 'dev-master'
+          - os: 'ubuntu-latest'
+            php: '7.3'
+            phpcs_version: '3.3.1'
+          - os: 'windows-latest'
+            php: '7.3'
+            phpcs_version: '3.3.1'
+
+          - os: 'ubuntu-latest'
+            php: '7.4'
+            phpcs_version: 'dev-master'
+          - os: 'windows-latest'
+            php: '7.4'
+            phpcs_version: 'dev-master'
+          - os: 'ubuntu-latest'
+            php: '7.4'
+            phpcs_version: '3.5.0'
+          - os: 'windows-latest'
+            php: '7.4'
+            phpcs_version: '3.5.0'
+
+          - os: 'ubuntu-latest'
+            php: '8.0'
+            phpcs_version: 'dev-master'
+          - os: 'windows-latest'
+            php: '8.0'
+            phpcs_version: 'dev-master'
+          - os: 'ubuntu-latest'
+            php: '8.0'
+            phpcs_version: '3.5.7'
+          - os: 'windows-latest'
+            php: '8.0'
+            phpcs_version: '3.5.7'
+
+          - os: 'ubuntu-latest'
+            php: '8.1'
+            phpcs_version: 'dev-master'
+          - os: 'windows-latest'
+            php: '8.1'
+            phpcs_version: 'dev-master'
+          - os: 'ubuntu-latest'
+            php: '8.1'
+            phpcs_version: '3.6.1'
+          - os: 'windows-latest'
+            php: '8.1'
+            phpcs_version: '3.6.1'
+
+          - os: 'ubuntu-latest'
+            php: '8.2'
+            phpcs_version: 'dev-master'
+          - os: 'windows-latest'
+            php: '8.2'
+            phpcs_version: 'dev-master'
+          - os: 'ubuntu-latest'
+            php: '8.2'
+            phpcs_version: '3.6.1'
+          - os: 'windows-latest'
+            php: '8.2'
+            phpcs_version: '3.6.1'
+
+          - os: 'ubuntu-latest'
+            php: '8.3'
+            phpcs_version: 'dev-master'
+          - os: 'windows-latest'
+            php: '8.3'
+            phpcs_version: 'dev-master'
+          - os: 'ubuntu-latest'
+            php: '8.3'
+            phpcs_version: '3.8.0'
+          - os: 'windows-latest'
+            php: '8.3'
+            phpcs_version: '3.8.0'
+
+          - os: 'ubuntu-latest'
+            php: '8.4'
+            phpcs_version: 'dev-master'
+          - os: 'windows-latest'
+            php: '8.4'
+            phpcs_version: 'dev-master'
+          - os: 'ubuntu-latest'
+            php: '8.4'
+            phpcs_version: '3.8.0'
+          - os: 'windows-latest'
+            php: '8.4'
+            phpcs_version: '3.8.0'
+
+          # Experimental builds. These are allowed to fail.
+          - os: 'ubuntu-latest'
+            php: '7.4'
+            phpcs_version: '4.x-dev'
+
+          - os: 'ubuntu-latest'
+            php: '8.5' # Nightly.
+            phpcs_version: 'dev-master'
+
+    name: "Test: PHP ${{ matrix.php }} - PHPCS ${{ matrix.phpcs_version }} (${{ matrix.os == 'windows-latest' && 'Win' || 'Linux' }})"
+
+    continue-on-error: ${{ matrix.php == '8.5' || matrix.phpcs_version == '4.x-dev' }}
+
+    steps:
+      - name: Prepare git to leave line endings alone
+        run: git config --global core.autocrlf input
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup ini config
+        id: set_ini
+        shell: bash
+        run: |
+          # On stable PHPCS versions, allow for PHP deprecation notices.
+          # Unit tests don't need to fail on those for stable releases where those issues won't get fixed anymore.
+          if [[ "${{ matrix.phpcs_version }}" != "dev-master" && "${{ matrix.phpcs_version }}" != "4.x-dev" ]]; then
+            echo 'PHP_INI=error_reporting=E_ALL & ~E_DEPRECATED, display_errors=On' >> "$GITHUB_OUTPUT"
+          else
+            echo 'PHP_INI=error_reporting=-1, display_errors=On' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          ini-values: ${{ steps.set_ini.outputs.PHP_INI }}
+          coverage: none
+
+      - name: 'Composer: adjust dependencies'
+        run: |
+          # Set the PHPCS version to be used in the tests.
+          composer require --no-update squizlabs/php_codesniffer:"${{ matrix.phpcs_version }}" --no-scripts --no-interaction
+          # Remove the PHPCSDevCS dependency as it has different PHPCS requirements and would block installs.
+          composer remove --no-update --dev phpcsstandards/phpcsdevcs --no-scripts --no-interaction
+
+      # Install dependencies and handle caching in one go.
+      # @link https://github.com/marketplace/actions/install-php-dependencies-with-composer
+      - name: Install Composer dependencies
+        uses: "ramsey/composer-install@v3"
+        with:
+          composer-options: ${{ matrix.php == '8.5' && '--ignore-platform-req=php+' || '' }}
+          # Bust the cache at least once a month - output format: YYYY-MM.
+          custom-cache-suffix: $(date -u "+%Y-%m")
+
+      - name: Grab PHPUnit version
+        id: phpunit_version
+        shell: bash
+        # yamllint disable rule:line-length
+        run: echo "VERSION=$(vendor/bin/phpunit --version | grep --only-matching --max-count=1 --extended-regexp '\b[0-9]+\.[0-9]+')" >> "$GITHUB_OUTPUT"
+        # yamllint enable rule:line-length
+
+      - name: Determine PHPUnit composer script to use
+        id: phpunit_script
+        shell: bash
+        run: |
+          if [ "${{ startsWith( steps.phpunit_version.outputs.VERSION, '11.' ) }}" == "true" ]; then
+            echo 'SUFFIX=' >> "$GITHUB_OUTPUT"
+          elif [ "${{ startsWith( steps.phpunit_version.outputs.VERSION, '10.' ) }}" == "true" ]; then
+            echo 'SUFFIX=' >> "$GITHUB_OUTPUT"
+          else
+            echo 'SUFFIX=-lte9' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run the unit tests for the DocCodeExamples script
+        run: composer test-doc-code-examples${{ steps.phpunit_script.outputs.SUFFIX }}

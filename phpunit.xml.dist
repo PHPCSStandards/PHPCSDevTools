@@ -30,5 +30,8 @@
             <directory suffix="Test.php">./Tests/FeatureComplete/</directory>
             <directory suffix="Test.php">./Tests/Utils/</directory>
         </testsuite>
+        <testsuite name="DocCodeExamples">
+            <directory suffix="Test.php">./Tests/DocCodeExamples/</directory>
+        </testsuite>
     </testsuites>
 </phpunit>
