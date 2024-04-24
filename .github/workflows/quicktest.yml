@@ -38,10 +38,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Updating the lists can fail intermittently, typically after Microsoft has released a new package.
+      # This should not be blocking for this job, so ignore any errors from this step.
+      # Ref: https://github.com/dotnet/core/issues/4167
+      - name: Update the available packages list
+        continue-on-error: true
+        run: sudo apt-get update
+
       - name: Install xmllint
-        run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends -y libxml2-utils
+        run: sudo apt-get install --no-install-recommends -y libxml2-utils
 
       # On stable PHPCS versions, allow for PHP deprecation notices.
       # Unit tests don't need to fail on those for stable releases where those issues won't get fixed anymore.
