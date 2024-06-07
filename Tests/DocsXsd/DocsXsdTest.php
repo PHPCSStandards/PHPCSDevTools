@@ -141,7 +141,7 @@ final class DocsXsdTest extends IOTestCase
             'More than two code blocks in one comparison group' => [
                 'fixtureFile'    => 'InvalidMoreThanTwoCodeBlocksInComparison.xml',
                 'expectedStdOut' => '',
-                'expectedStdErr' => "Schemas validity error : Element 'code': This element is not expected.",
+                'expectedStdErr' => "Element 'code': This element is not expected.",
             ],
             'Less than two code blocks in one comparison group' => [
                 'fixtureFile'    => 'InvalidLessThanTwoCodeBlocksInComparison.xml',
