@@ -64,14 +64,14 @@ final class Check
     /**
      * List of all files in the repo.
      *
-     * @var array
+     * @var array<string, int> Key is a file name, value irrelevant.
      */
     protected $allFiles = [];
 
     /**
      * List of all sniff files in the repo.
      *
-     * @var array
+     * @var array<string>
      */
     protected $allSniffs = [];
 
@@ -94,7 +94,7 @@ final class Check
      *
      * Keys are the strings to search for, values the replacement values.
      *
-     * @var array
+     * @var array<string, string>
      */
     private $sniffToDoc = [
         '/Sniffs/'  => '/Docs/',
@@ -106,7 +106,7 @@ final class Check
      *
      * Keys are the strings to search for, values the replacement values.
      *
-     * @var array
+     * @var array<string, string>
      */
     private $sniffToUnitTest = [
         '/Sniffs/' => '/Tests/',
@@ -116,7 +116,7 @@ final class Check
     /**
      * Possible test case file extensions.
      *
-     * @var array
+     * @var array<string>
      */
     private $testCaseExtensions = [
         '.inc',

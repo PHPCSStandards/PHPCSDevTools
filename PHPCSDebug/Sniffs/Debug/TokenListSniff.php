@@ -28,7 +28,7 @@ final class TokenListSniff implements Sniff
     /**
      * A list of tokenizers this sniff supports.
      *
-     * @var array
+     * @var array<string>
      */
     public $supportedTokenizers = [
         'PHP',
@@ -41,7 +41,7 @@ final class TokenListSniff implements Sniff
      *
      * This prevents issues with "undefined index" notices in case of rare tokenizer issues.
      *
-     * @var array
+     * @var array<string, int|string|array<int, int|string>>
      */
     private $tokenDefaults = [
         'type'       => '?',
@@ -57,7 +57,7 @@ final class TokenListSniff implements Sniff
     /**
      * Returns an array of tokens this test wants to listen for.
      *
-     * @return array
+     * @return array<int|string>
      */
     public function register()
     {
@@ -74,7 +74,8 @@ final class TokenListSniff implements Sniff
      * @param int                         $stackPtr  The position of the current
      *                                               token in the stack.
      *
-     * @return void
+     * @return int|void Integer stack pointer to skip forward or void to continue
+     *                  normal file processing.
      */
     public function process(File $phpcsFile, $stackPtr)
     {

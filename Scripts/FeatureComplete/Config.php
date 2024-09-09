@@ -102,14 +102,14 @@ final class Config
     /**
      * The target directories to examine.
      *
-     * @var array
+     * @var array<string>
      */
     private $targetDirs = [];
 
     /**
      * Directories to exclude from the scan.
      *
-     * @var array
+     * @var array<string>
      */
     private $excludedDirs = [
         'vendor',
