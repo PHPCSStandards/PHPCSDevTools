@@ -82,7 +82,7 @@ class TokenListSniff implements Sniff
         $tokens = $phpcsFile->getTokens();
         $last   = ($phpcsFile->numTokens - 1);
 
-        $ptrPadding  = \max(3, \strlen($last));
+        $ptrPadding  = \max(3, \strlen((string) $last));
         $linePadding = \strlen($tokens[$last]['line']);
         $sep         = ' | ';
 
@@ -132,7 +132,7 @@ class TokenListSniff implements Sniff
                 $sep, 'L', \str_pad($token['line'], $linePadding, '0', \STR_PAD_LEFT),
                 $sep, 'C', \str_pad($token['column'], 3, ' ', \STR_PAD_LEFT),
                 $sep, 'CC', \str_pad($token['level'], 2, ' ', \STR_PAD_LEFT),
-                $sep, '(', \str_pad($parenthesesCount, 2, ' ', \STR_PAD_LEFT), ')',
+                $sep, '(', \str_pad((string) $parenthesesCount, 2, ' ', \STR_PAD_LEFT), ')',
                 $sep, \str_pad($token['type'], 26), // Longest token type name is 26 chars.
                 $sep, '[', \str_pad($token['length'], 3, ' ', \STR_PAD_LEFT), ']:',
                 ($onlyEol === false ? ' ' : ''), $content, \PHP_EOL;
