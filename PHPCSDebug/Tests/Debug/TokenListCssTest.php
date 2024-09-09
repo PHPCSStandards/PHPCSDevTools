@@ -116,7 +116,7 @@ EOD;
         $this->expectOutputString($expected);
         $this->setOutputCallback([$this, 'normalizeLineEndings']);
 
-        if (empty($this->ruleset->tokenListeners)) {
+        if (empty(self::$phpcsFile->ruleset->tokenListeners)) {
             // PHPCSUtils 1.0.9+.
             $sniffFile      = \dirname(\dirname(__DIR__)) . \DIRECTORY_SEPARATOR . 'Sniffs';
             $sniffFile     .= \DIRECTORY_SEPARATOR . 'Debug' . \DIRECTORY_SEPARATOR . 'TokenListSniff.php';
