@@ -26,7 +26,7 @@ final class TokenListUnitTest extends UtilityMethodTestCase
     /**
      * Set the name of a sniff to pass to PHPCS to limit the run (and force it to record errors).
      *
-     * @var array
+     * @var array<string>
      */
     protected static $selectedSniff = ['PHPCSDebug.Debug.TokenList'];
 

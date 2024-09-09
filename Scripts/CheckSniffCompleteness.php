@@ -66,7 +66,7 @@ class CheckSniffCompleteness
     /**
      * The target directories to examine.
      *
-     * @var array
+     * @var array<string>
      */
     protected $targetDirs = [];
 
@@ -80,7 +80,7 @@ class CheckSniffCompleteness
     /**
      * Directories to exclude from the scan.
      *
-     * @var array
+     * @var array<string>
      */
     protected $excludedDirs = [
         'vendor',
@@ -89,14 +89,14 @@ class CheckSniffCompleteness
     /**
      * List of all files in the repo.
      *
-     * @var array
+     * @var array<string, int> Key is a file name, value irrelevant.
      */
     protected $allFiles = [];
 
     /**
      * List of all sniff files in the repo.
      *
-     * @var array
+     * @var array<string>
      */
     protected $allSniffs = [];
 
@@ -105,7 +105,7 @@ class CheckSniffCompleteness
      *
      * Keys are the strings to search for, values the replacement values.
      *
-     * @var array
+     * @var array<string, string>
      */
     private $sniffToDoc = [
         '/Sniffs/'  => '/Docs/',
@@ -117,7 +117,7 @@ class CheckSniffCompleteness
      *
      * Keys are the strings to search for, values the replacement values.
      *
-     * @var array
+     * @var array<string, string>
      */
     private $sniffToUnitTest = [
         '/Sniffs/' => '/Tests/',
@@ -127,7 +127,7 @@ class CheckSniffCompleteness
     /**
      * Possible test case file extensions.
      *
-     * @var array
+     * @var array<string>
      */
     private $testCaseExtensions = [
         '.inc',

@@ -95,7 +95,7 @@ class FileList
     /**
      * Retrieve the filtered file list as an array.
      *
-     * @return array
+     * @return array<string>
      */
     public function getList()
     {

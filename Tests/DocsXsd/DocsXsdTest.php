@@ -58,7 +58,7 @@ final class DocsXsdTest extends IOTestCase
     /**
      * Data provider for valid test cases.
      *
-     * @return array
+     * @return array<string, array<string, string>>
      */
     public function dataValidXsd()
     {
@@ -108,7 +108,7 @@ final class DocsXsdTest extends IOTestCase
     /**
      * Data provider for invalid test cases.
      *
-     * @return array
+     * @return array<string, array<string, string>>
      */
     public function dataInvalidXsd()
     {

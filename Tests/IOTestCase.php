@@ -28,10 +28,10 @@ abstract class IOTestCase extends XTestCase
      *                                Note: if the command itself already contains a "working directory" argument,
      *                                this parameter will normally not need to be passed.
      *
-     * @return array Format:
-     *               'exitcode' int    The exit code from the command.
-     *               'stdout'   string The output send to stdout.
-     *               'stderr'   string The output send to stderr.
+     * @return array<string, int|string> Format:
+     *                                   'exitcode' int    The exit code from the command.
+     *                                   'stdout'   string The output send to stdout.
+     *                                   'stderr'   string The output send to stderr.
      *
      * @throws \RuntimeException When the passed arguments do not comply.
      * @throws \RuntimeException When no resource could be obtained to execute the command.
