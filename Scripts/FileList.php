@@ -57,6 +57,8 @@ class FileList
      * @param string $directory The directory to examine.
      * @param string $rootPath  Path to the project root.
      * @param string $filter    PCRE regular expression to filter the file list with.
+     *
+     * @return void
      */
     public function __construct($directory, $rootPath = '', $filter = '')
     {
@@ -78,8 +80,6 @@ class FileList
         }
 
         $this->fileIterator = new RegexIterator($flattened, $filter);
-
-        return $this;
     }
 
     /**
