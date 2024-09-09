@@ -364,18 +364,19 @@ class CheckSniffCompleteness
 
                 $current = ($i + 1);
                 if (($current % 60) === 0 || $current === $sniffCount) {
-                    $padding = \strlen($sniffCount);
+                    $padding = \strlen((string) $sniffCount);
 
                     $filling = '';
                     if ($current === $sniffCount) {
                         $lines = \ceil($current / 60);
                         if ($lines > 1) {
-                            $filling = \str_repeat(' ', (($lines * 60) - $sniffCount));
+                            $filling = \str_repeat(' ', (int) (($lines * 60) - $sniffCount));
                         }
                     }
 
-                    echo $filling, ' ', \str_pad($current, $padding, ' ', \STR_PAD_LEFT), ' / ', $sniffCount,
-                        ' (', \str_pad(\round(($current / $sniffCount) * 100), 3, ' ', \STR_PAD_LEFT), '%)', \PHP_EOL;
+                    echo $filling, ' ', \str_pad((string) $current, $padding, ' ', \STR_PAD_LEFT), ' / ', $sniffCount,
+                        ' (', \str_pad((string) \round(($current / $sniffCount) * 100), 3, ' ', \STR_PAD_LEFT), '%)',
+                        \PHP_EOL;
                 }
             }
         }
