@@ -468,19 +468,20 @@ final class Check
 
         $current = ($i + 1);
         if (($current % 60) === 0 || $current === $total) {
-            $padding = \strlen($total);
+            $padding = \strlen((string) $total);
 
             $filling = '';
             if ($current === $total) {
                 $lines = \ceil($current / 60);
                 if ($lines > 1) {
-                    $filling = \str_repeat(' ', (($lines * 60) - $total));
+                    $filling = \str_repeat(' ', (int) (($lines * 60) - $total));
                 }
             }
 
             $this->writer->toStderr(
-                $filling . ' ' . \str_pad($current, $padding, ' ', \STR_PAD_LEFT) . ' / ' . $total
-                . ' (' . \str_pad(\round(($current / $total) * 100), 3, ' ', \STR_PAD_LEFT) . '%)' . \PHP_EOL
+                $filling . ' ' . \str_pad((string) $current, $padding, ' ', \STR_PAD_LEFT) . ' / ' . $total
+                . ' (' . \str_pad((string) \round(($current / $total) * 100), 3, ' ', \STR_PAD_LEFT) . '%)'
+                . \PHP_EOL
             );
         }
     }
