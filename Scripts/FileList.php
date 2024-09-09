@@ -45,9 +45,9 @@ class FileList
     protected $rootPath;
 
     /**
-     * Recursive directory iterator.
+     * Regex iterator.
      *
-     * @var \DirectoryIterator
+     * @var \RegexIterator
      */
     protected $fileIterator;
 
@@ -85,7 +85,7 @@ class FileList
     /**
      * Retrieve the filtered file list iterator.
      *
-     * @return array
+     * @return \RegexIterator
      */
     public function getIterator()
     {

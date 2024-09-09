@@ -31,7 +31,7 @@ class CheckSniffCompleteness
      * To disable showing progress, pass `--no-progress` on the command line
      * when calling the script.
      *
-     * @var boolean
+     * @var bool
      */
     protected $showProgress = true;
 
@@ -43,7 +43,7 @@ class CheckSniffCompleteness
      * To enable "quiet" mode, pass `-q` on the command line when calling
      * the script.
      *
-     * @var boolean
+     * @var bool
      */
     protected $quietMode = false;
 
@@ -52,7 +52,7 @@ class CheckSniffCompleteness
      *
      * This will be automatically detected if not set from the command-line.
      *
-     * @var boolean
+     * @var bool
      */
     protected $showColored;
 
