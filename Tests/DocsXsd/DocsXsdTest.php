@@ -60,7 +60,7 @@ final class DocsXsdTest extends IOTestCase
      *
      * @return array<string, array<string, string>>
      */
-    public function dataValidXsd()
+    public static function dataValidXsd()
     {
         return [
             'Valid docs example with single standard in the file' => [
@@ -110,7 +110,7 @@ final class DocsXsdTest extends IOTestCase
      *
      * @return array<string, array<string, string>>
      */
-    public function dataInvalidXsd()
+    public static function dataInvalidXsd()
     {
         return [
             'Title attribute too long on <documentation> element' => [
