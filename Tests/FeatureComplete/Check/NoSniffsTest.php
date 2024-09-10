@@ -40,7 +40,7 @@ final class NoSniffsTest extends CheckTestCase
     {
         parent::setUpBeforeClass();
 
-        $path = \getcwd() . ltrim(self::FIXTURE_DIR, '.') . 'EmptyDir';
+        $path = \getcwd() . \ltrim(self::FIXTURE_DIR, '.') . 'EmptyDir';
         if (\is_dir($path) === false
             && (\mkdir($path, 0766, true) === false || \is_dir($path) === false)
         ) {
