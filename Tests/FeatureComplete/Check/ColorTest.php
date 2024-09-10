@@ -63,7 +63,7 @@ final class ColorTest extends CheckTestCase
     /**
      * Data provider.
      *
-     * @return array
+     * @return array<string, array<string, string|int>>
      */
     public function dataColors()
     {

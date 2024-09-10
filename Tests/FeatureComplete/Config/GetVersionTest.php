@@ -47,7 +47,7 @@ final class GetVersionTest extends XTestCase
     /**
      * Data provider.
      *
-     * @return array
+     * @return array<string, array<string, string>>
      */
     public function dataShowVersion()
     {

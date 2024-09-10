@@ -125,7 +125,7 @@ abstract class CheckTestCase extends XTestCase
      *
      * @param string $command The command including arguments.
      *
-     * @return void
+     * @return array<string, \PHPCSDevTools\Tests\TestWriter|int>
      */
     protected function runValidation($command)
     {

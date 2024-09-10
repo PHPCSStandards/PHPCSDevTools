@@ -10,6 +10,7 @@
 
 namespace PHPCSDevTools\Tests\FeatureComplete\Check;
 
+use RuntimeException;
 use PHPCSDevTools\Tests\FeatureComplete\Check\CheckTestCase;
 
 /**
@@ -39,7 +40,7 @@ final class NoSniffsTest extends CheckTestCase
     {
         parent::setUpBeforeClass();
 
-        $path = \getcwd() . ltrim(self::FIXTURE_DIR, '.') . 'EmptyDir';
+        $path = \getcwd() . \ltrim(self::FIXTURE_DIR, '.') . 'EmptyDir';
         if (\is_dir($path) === false
             && (\mkdir($path, 0766, true) === false || \is_dir($path) === false)
         ) {
@@ -75,7 +76,7 @@ No orphaned documentation or test files found\.[\r\n]+$`';
     /**
      * Data provider.
      *
-     * @return array
+     * @return array<string, array<string>>
      */
     public function dataTargetDoesntContainSniffs()
     {

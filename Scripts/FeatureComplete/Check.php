@@ -78,14 +78,14 @@ final class Check
     /**
      * List of all docs files in the repo.
      *
-     * @var array
+     * @var array<string>
      */
     protected $allDocs = [];
 
     /**
      * List of all test files in the repo.
      *
-     * @var array
+     * @var array<string>
      */
     protected $allTests = [];
 
@@ -405,7 +405,7 @@ final class Check
             $warning = \str_replace('WARNING', "\033[33mWARNING\033[0m", $warning);
         }
 
-        $testToSniffRegex = sprintf(self::TEST_FILTER_REGEX, '', '');
+        $testToSniffRegex = \sprintf(self::TEST_FILTER_REGEX, '', '');
 
         foreach ($this->allTests as $j => $file) {
             /*

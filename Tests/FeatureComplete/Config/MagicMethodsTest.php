@@ -63,7 +63,7 @@ final class MagicMethodsTest extends XTestCase
     /**
      * Data provider.
      *
-     * @return void
+     * @return array<string, array<string, string|int|null>>
      */
     public function dataGet()
     {
@@ -90,7 +90,7 @@ final class MagicMethodsTest extends XTestCase
      * @covers       \PHPCSDevTools\Scripts\FeatureComplete\Config::__isset
      *
      * @param string $propertyName The name of the property to retrieve.
-     * @param mixed  $expected     Whether the property is expected to report as set or not set.
+     * @param bool   $expected     Whether the property is expected to report as set or not set.
      *
      * @return void
      */
@@ -102,7 +102,7 @@ final class MagicMethodsTest extends XTestCase
     /**
      * Data provider.
      *
-     * @return void
+     * @return array<string, array<string, string|bool>>
      */
     public function dataIsset()
     {
@@ -165,7 +165,7 @@ final class MagicMethodsTest extends XTestCase
     /**
      * Data provider.
      *
-     * @return void
+     * @return array<string, array<string>>
      */
     public function dataSetUnset()
     {

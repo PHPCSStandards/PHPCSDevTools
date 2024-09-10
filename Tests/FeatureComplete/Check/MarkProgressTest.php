@@ -10,6 +10,7 @@
 
 namespace PHPCSDevTools\Tests\FeatureComplete\Check;
 
+use RuntimeException;
 use PHPCSDevTools\Tests\FeatureComplete\Check\CheckTestCase;
 
 /**
@@ -102,7 +103,7 @@ No orphaned documentation or test files found.';
     /**
      * Data provider.
      *
-     * @return array
+     * @return array<string, array<string, int|string>>
      */
     public function dataProgress()
     {
