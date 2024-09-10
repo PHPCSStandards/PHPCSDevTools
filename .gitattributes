@@ -11,6 +11,7 @@
 /phpcs.xml.dist        export-ignore
 /phpstan.neon.dist     export-ignore
 /phpunit.xml.dist      export-ignore
+/phpunitlte9.xml.dist  export-ignore
 /phpunit-bootstrap.php export-ignore
 /PHPCSDebug/Tests      export-ignore
 /Tests                 export-ignore

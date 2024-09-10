@@ -133,9 +133,6 @@ Ptr | Ln | Col  | Cond | ( #) | Token Type                 | [len]: Content
 
 EOD;
 
-        $this->expectOutputString($expected);
-        $this->setOutputCallback([$this, 'normalizeLineEndings']);
-
         if (empty(self::$phpcsFile->ruleset->tokenListeners)) {
             // PHPCSUtils 1.0.9+.
             $sniffFile      = \dirname(\dirname(__DIR__)) . \DIRECTORY_SEPARATOR . 'Sniffs';
@@ -147,7 +144,13 @@ EOD;
             self::$phpcsFile->ruleset->populateTokenListeners();
         }
 
+        \ob_start();
         self::$phpcsFile->process();
+
+        $output = \ob_get_contents();
+        \ob_end_clean();
+
+        $this->assertSame($expected, $this->normalizeLineEndings($output));
     }
 
     /**
