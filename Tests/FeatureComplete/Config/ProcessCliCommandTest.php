@@ -73,7 +73,7 @@ final class ProcessCliCommandTest extends XTestCase
      *
      * @return array<string, array<string, string>>
      */
-    public function dataProcessCliCommandUnsupportedArgument()
+    public static function dataProcessCliCommandUnsupportedArgument()
     {
         return [
             'Unsupported short arguments' => [
@@ -141,7 +141,7 @@ final class ProcessCliCommandTest extends XTestCase
      *
      * @return array<string, array<string, string|bool|array<string, string|bool|int|array<string>>>>
      */
-    public function dataProcessCliCommand()
+    public static function dataProcessCliCommand()
     {
         /*
          * For project root, we only really verify that it has been set as the value will depend
@@ -402,7 +402,7 @@ final class ProcessCliCommandTest extends XTestCase
      *
      * @return array<string, array<string, string|array<string, string|bool>>>
      */
-    public function dataProcessCliCommandOutputOnlyArgs()
+    public static function dataProcessCliCommandOutputOnlyArgs()
     {
         /*
          * For project root, we only verify that it has been set as the value will depend on the

@@ -65,7 +65,7 @@ final class ColorTest extends CheckTestCase
      *
      * @return array<string, array<string, string|int>>
      */
-    public function dataColors()
+    public static function dataColors()
     {
         return [
             'feature complete - header' => [

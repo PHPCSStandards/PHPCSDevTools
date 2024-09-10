@@ -63,7 +63,7 @@ No orphaned documentation or test files found.';
      *
      * @return array<string, array<string, string|int>>
      */
-    public function dataFeatureCompleteStandard()
+    public static function dataFeatureCompleteStandard()
     {
         return [
             'feature complete with CSS test files'      => [

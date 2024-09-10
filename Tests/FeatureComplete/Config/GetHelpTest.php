@@ -107,7 +107,7 @@ Options:
      *
      * @return array<string, array<string, string>>
      */
-    public function dataShowHelp()
+    public static function dataShowHelp()
     {
         return [
             '-h'     => [

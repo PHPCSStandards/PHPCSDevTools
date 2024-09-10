@@ -65,7 +65,7 @@ final class MagicMethodsTest extends XTestCase
      *
      * @return array<string, array<string, string|int|null>>
      */
-    public function dataGet()
+    public static function dataGet()
     {
         return [
             'property which doesn\'t exist on the class' => [
@@ -104,7 +104,7 @@ final class MagicMethodsTest extends XTestCase
      *
      * @return array<string, array<string, string|bool>>
      */
-    public function dataIsset()
+    public static function dataIsset()
     {
         return [
             'property which doesn\'t exist on the class' => [
@@ -167,7 +167,7 @@ final class MagicMethodsTest extends XTestCase
      *
      * @return array<string, array<string>>
      */
-    public function dataSetUnset()
+    public static function dataSetUnset()
     {
         return [
             'property which doesn\'t exist on the class' => ['doesnotexist'],
