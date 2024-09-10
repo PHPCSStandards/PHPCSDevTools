@@ -21,6 +21,16 @@ use RuntimeException;
  * ---------------------------------------------------------------------------------------------
  *
  * @since 2.0.0
+ *
+ * @property-read string        $projectRoot  The root directory of the project.
+ * @property-read bool          $checkDocs    Whether or not to check the documentation completeness.
+ * @property-read bool          $checkOrphans Whether or not to check for orphaned files.
+ * @property-read bool          $showProgress Whether or not to show progress.
+ * @property-read bool          $showColored  Whether or not to show colored output.
+ * @property-read int           $verbose      Verbosity level.
+ * @property-read array<string> $targetDirs   The target directories to examine.
+ * @property-read array<string> $excludedDirs Directories to exclude from the scan.
+ * @property-read bool          $executeCheck Whether or not to execute the completeness check.
  */
 final class Config
 {
