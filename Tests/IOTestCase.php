@@ -53,7 +53,7 @@ abstract class IOTestCase extends XTestCase
         ];
 
         $options = null;
-        if (stripos(PHP_OS, 'WIN') === 0) {
+        if (\stripos(\PHP_OS, 'WIN') === 0) {
             $options = ['bypass_shell' => true];
         }
 
