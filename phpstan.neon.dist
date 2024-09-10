@@ -1,0 +1,19 @@
+parameters:
+    #phpVersion: 50400 # Needs to be 70100 or higher... sigh...
+    level: 6
+    paths:
+        - devtools-autoload.php
+        - bin
+        - PHPCSDebug
+        - Scripts
+        - Tests
+    bootstrapFiles:
+        - phpunit-bootstrap.php
+    treatPhpDocTypesAsCertain: false
+
+    ignoreErrors:
+        # Level 5
+        -
+            count: 1
+            message: '`^Parameter #1 \$callback of function spl_autoload_register expects`'
+            path: devtools-autoload.php
