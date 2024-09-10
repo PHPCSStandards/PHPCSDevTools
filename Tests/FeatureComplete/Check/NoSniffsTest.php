@@ -10,6 +10,7 @@
 
 namespace PHPCSDevTools\Tests\FeatureComplete\Check;
 
+use RuntimeException;
 use PHPCSDevTools\Tests\FeatureComplete\Check\CheckTestCase;
 
 /**
