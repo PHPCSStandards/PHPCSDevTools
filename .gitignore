@@ -1,8 +1,10 @@
+build/
 deploy/
 vendor/
 composer.lock
 .phpcs.xml
 phpcs.xml
 phpunit.xml
+phpunitlte9.xml
 .phpunit.result.cache
 phpstan.neon

@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/7.5/phpunit.xsd"
-    backupGlobals="true"
-    bootstrap="./phpunit-bootstrap.php"
-    beStrictAboutTestsThatDoNotTestAnything="false"
-    convertErrorsToExceptions="true"
-    convertWarningsToExceptions="true"
-    convertNoticesToExceptions="true"
-    convertDeprecationsToExceptions="true"
-    colors="true"
-    forceCoversAnnotation="true">
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+        backupGlobals="true"
+        bootstrap="./phpunit-bootstrap.php"
+        beStrictAboutTestsThatDoNotTestAnything="false"
+        cacheDirectory="build/phpunit-cache"
+        colors="true"
+        displayDetailsOnTestsThatTriggerErrors="true"
+        displayDetailsOnTestsThatTriggerWarnings="true"
+        displayDetailsOnTestsThatTriggerNotices="true"
+        displayDetailsOnTestsThatTriggerDeprecations="true"
+        displayDetailsOnIncompleteTests="true"
+        displayDetailsOnSkippedTests="true"
+        displayDetailsOnPhpunitDeprecations="false"
+        failOnWarning="true"
+        failOnNotice="true"
+        failOnDeprecation="true"
+        failOnPhpunitDeprecation="false"
+        requireCoverageMetadata="true"
+    >
 
     <testsuites>
         <testsuite name="DebugSniff">

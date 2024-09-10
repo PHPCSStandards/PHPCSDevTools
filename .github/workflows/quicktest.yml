@@ -96,9 +96,22 @@ jobs:
         if: ${{ matrix.phpcs_version == 'dev-master' }}
         run: composer check-complete
 
+      - name: Grab PHPUnit version
+        id: phpunit_version
+        run: echo "VERSION=$(vendor/bin/phpunit --version | grep --only-matching --max-count=1 --extended-regexp '\b[0-9]+\.[0-9]+')" >> $GITHUB_OUTPUT
+
+      - name: Determine PHPUnit composer script to use
+        id: phpunit_script
+        run: |
+          if [ "${{ startsWith( steps.phpunit_version.outputs.VERSION, '10.' ) || startsWith( steps.phpunit_version.outputs.VERSION, '11.' ) }}" == "true" ]; then
+            echo 'SUFFIX=' >> $GITHUB_OUTPUT
+          else
+            echo 'SUFFIX=-lte9' >> $GITHUB_OUTPUT
+          fi
+
       - name: Run the unit tests for the PHPCSDebug sniff
-        run: composer test-sniff
+        run: composer test-sniff${{ steps.phpunit_script.outputs.SUFFIX }}
 
       - name: Run the unit tests for the DevTools
         if: ${{ matrix.phpcs_version == 'dev-master' }}
-        run: composer test-tools
+        run: composer test-tools${{ steps.phpunit_script.outputs.SUFFIX }}
