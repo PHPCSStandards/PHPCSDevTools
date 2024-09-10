@@ -135,7 +135,7 @@ final class Config
     /**
      * Help texts.
      *
-     * @var array
+     * @var array<string, array<array<string, string>>>
      */
     private $helpTexts = [
         // phpcs:disable Generic.Files.LineLength.TooLong

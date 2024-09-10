@@ -61,7 +61,7 @@ No orphaned documentation or test files found.';
     /**
      * Data provider.
      *
-     * @return array
+     * @return array<string, array<string, string|int>>
      */
     public function dataFeatureCompleteStandard()
     {

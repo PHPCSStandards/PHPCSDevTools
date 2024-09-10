@@ -78,14 +78,14 @@ final class Check
     /**
      * List of all docs files in the repo.
      *
-     * @var array
+     * @var array<string>
      */
     protected $allDocs = [];
 
     /**
      * List of all test files in the repo.
      *
-     * @var array
+     * @var array<string>
      */
     protected $allTests = [];
 

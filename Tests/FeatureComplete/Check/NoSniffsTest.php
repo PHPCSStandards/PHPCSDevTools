@@ -76,7 +76,7 @@ No orphaned documentation or test files found\.[\r\n]+$`';
     /**
      * Data provider.
      *
-     * @return array
+     * @return array<string, array<string>>
      */
     public function dataTargetDoesntContainSniffs()
     {

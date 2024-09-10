@@ -28,7 +28,7 @@ final class ProcessCliCommandTest extends XTestCase
     /**
      * Relevant properties in the Config class and their default value.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     private $defaultSettings = [
         'projectRoot'  => '',
@@ -71,7 +71,7 @@ final class ProcessCliCommandTest extends XTestCase
     /**
      * Data provider.
      *
-     * @return array
+     * @return array<string, array<string, string>>
      */
     public function dataProcessCliCommandUnsupportedArgument()
     {
@@ -107,14 +107,14 @@ final class ProcessCliCommandTest extends XTestCase
      *
      * @dataProvider dataProcessCliCommand
      *
-     * @param string $command          The command as received from the command line.
-     * @param array  $expectedChanged  The Config class properties which are expected to have been
-     *                                 changed (key) with their value.
-     * @param bool   $checkShowColored Whether to check the value of the "showColored" setting.
-     *                                 This setting should only be checked when `--color` or
-     *                                 `--no-color` has been explicitly passed in the $command
-     *                                 as the auto-detection is not testable.
-     *                                 Defaults to `false`.
+     * @param string                                       $command          The command as received from the command line.
+     * @param array<string, string|bool|int|array<string>> $expectedChanged  The Config class properties which are expected to have been
+     *                                                                       changed (key) with their value.
+     * @param bool                                         $checkShowColored Whether to check the value of the "showColored" setting.
+     *                                                                       This setting should only be checked when `--color` or
+     *                                                                       `--no-color` has been explicitly passed in the $command
+     *                                                                       as the auto-detection is not testable.
+     *                                                                       Defaults to `false`.
      *
      * @return void
      */
@@ -139,7 +139,7 @@ final class ProcessCliCommandTest extends XTestCase
     /**
      * Data provider.
      *
-     * @return array
+     * @return array<string, array<string, string|bool|array<string, string|bool|int|array<string>>>>
      */
     public function dataProcessCliCommand()
     {
@@ -378,9 +378,9 @@ final class ProcessCliCommandTest extends XTestCase
      *
      * @dataProvider dataProcessCliCommandOutputOnlyArgs
      *
-     * @param string $command         The command as received from the command line.
-     * @param array  $expectedChanged The Config class properties which are expected to have been
-     *                                changed (key) with their value.
+     * @param string                     $command         The command as received from the command line.
+     * @param array<string, string|bool> $expectedChanged The Config class properties which are expected to have been
+     *                                                    changed (key) with their value.
      *
      * @return void
      */
@@ -400,7 +400,7 @@ final class ProcessCliCommandTest extends XTestCase
     /**
      * Data provider.
      *
-     * @return array
+     * @return array<string, array<string, string|array<string, string|bool>>>
      */
     public function dataProcessCliCommandOutputOnlyArgs()
     {
@@ -447,7 +447,7 @@ final class ProcessCliCommandTest extends XTestCase
      *
      * @param \PHPCSDevTools\Scripts\FeatureComplete\Config $config Config object
      *
-     * @return array
+     * @return array<string, mixed>
      */
     private function getCurrentValues(Config $config)
     {
