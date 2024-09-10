@@ -139,7 +139,7 @@ final class TokenListSniff implements Sniff
         }
 
         // Only do this once per file.
-        return ($phpcsFile->numTokens + 1);
+        return $phpcsFile->numTokens;
     }
 
     /**
