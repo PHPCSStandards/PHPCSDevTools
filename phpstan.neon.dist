@@ -1,0 +1,11 @@
+parameters:
+    #phpVersion: 50400 # Needs to be 70100 or higher... sigh...
+    level: 6
+    paths:
+        - bin
+        - PHPCSDebug
+        - Scripts
+        - Tests
+    bootstrapFiles:
+        - phpunit-bootstrap.php
+    treatPhpDocTypesAsCertain: false
