@@ -19,9 +19,6 @@ jobs:
     name: 'Basic CS and QA checks'
     runs-on: ubuntu-latest
 
-    env:
-      XMLLINT_INDENT: '    '
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -82,13 +79,6 @@ jobs:
       - name: Validate docs against schema
         run: xmllint --noout --schema DocsXsd/phpcsdocs.xsd ./PHPCSDebug/Docs/*/*Standard.xml
 
-      # Check code-style consistency of the XSD and XML files.
-      - name: Check XSD code style
-        run: diff -B ./DocsXsd/phpcsdocs.xsd <(xmllint --format "./DocsXsd/phpcsdocs.xsd")
-
-      - name: Check Ruleset XML code style
-        run: diff -B ./PHPCSDebug/ruleset.xml <(xmllint --format "./PHPCSDebug/ruleset.xml")
-
       # Check the code-style consistency of the PHP files.
       - name: Check PHP code style
         id: phpcs
@@ -97,6 +87,38 @@ jobs:
       - name: Show PHPCS results in PR
         if: ${{ always() && steps.phpcs.outcome == 'failure' }}
         run: cs2pr ./phpcs-report.xml
+
+  xml-cs:
+    name: 'XML Code style'
+    runs-on: ubuntu-latest
+
+    env:
+      XMLLINT_INDENT: '    '
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Updating the lists can fail intermittently, typically after Microsoft has released a new package.
+      # This should not be blocking for this job, so ignore any errors from this step.
+      # Ref: https://github.com/dotnet/core/issues/4167
+      - name: Update the available packages list
+        continue-on-error: true
+        run: sudo apt-get update
+
+      - name: Install xmllint
+        run: sudo apt-get install --no-install-recommends -y libxml2-utils
+
+      # Show XML violations inline in the file diff.
+      - name: Enable showing XML issues inline
+        uses: korelstar/xmllint-problem-matcher@v1
+
+      # Check code-style consistency of the XSD and XML files.
+      - name: Check XSD code style
+        run: diff -B ./DocsXsd/phpcsdocs.xsd <(xmllint --format "./DocsXsd/phpcsdocs.xsd")
+
+      - name: Check Ruleset XML code style
+        run: diff -B ./PHPCSDebug/ruleset.xml <(xmllint --format "./PHPCSDebug/ruleset.xml")
 
   phpstan:
     uses: PHPCSStandards/.github/.github/workflows/reusable-phpstan.yml@main
