@@ -69,6 +69,36 @@ jobs:
           pattern: "PHPCSDebug/Docs/*/*Standard.xml"
           xsd-file: "DocsXsd/phpcsdocs.xsd"
 
+      - name: Validate Project PHPCS ruleset against schema
+        uses: phpcsstandards/xmllint-validate@v1
+        with:
+          pattern: "phpcs.xml.dist"
+          xsd-file: "vendor/squizlabs/php_codesniffer/phpcs.xsd"
+
+      - name: "Validate PHPUnit < 10 config for use with PHPUnit 8"
+        uses: phpcsstandards/xmllint-validate@v1
+        with:
+          pattern: "phpunitlte9.xml.dist"
+          xsd-file: "vendor/phpunit/phpunit/schema/8.5.xsd"
+
+      - name: "Validate PHPUnit < 10 config for use with PHPUnit 9"
+        uses: phpcsstandards/xmllint-validate@v1
+        with:
+          pattern: "phpunitlte9.xml.dist"
+          xsd-file: "vendor/phpunit/phpunit/schema/9.5.xsd"
+
+      - name: "Validate PHPUnit 10+ config for use with PHPUnit 10"
+        uses: phpcsstandards/xmllint-validate@v1
+        with:
+          pattern: "phpunit.xml.dist"
+          xsd-file: "vendor/phpunit/phpunit/schema/10.5.xsd"
+
+      - name: "Validate PHPUnit 10+ config for use with PHPUnit 11"
+        uses: phpcsstandards/xmllint-validate@v1
+        with:
+          pattern: "phpunit.xml.dist"
+          xsd-file: "vendor/phpunit/phpunit/phpunit.xsd"
+
       # Check the code-style consistency of the PHP files.
       - name: Check PHP code style
         id: phpcs
