@@ -50,34 +50,24 @@ jobs:
           # Bust the cache at least once a month - output format: YYYY-MM.
           custom-cache-suffix: $(date -u "+%Y-%m")
 
-      # Updating the lists can fail intermittently, typically after Microsoft has released a new package.
-      # This should not be blocking for this job, so ignore any errors from this step.
-      # Ref: https://github.com/dotnet/core/issues/4167
-      - name: Update the available packages list
-        continue-on-error: true
-        run: sudo apt-get update
-
-      # @link http://xmlsoft.org/xmllint.html
-      - name: Install xmllint
-        run: sudo apt-get install --no-install-recommends -y libxml2-utils
-
-      - name: Download the XSD schema
-        run: curl http://www.w3.org/2001/XMLSchema.xsd --output XMLSchema.xsd
-
-      # Show XML violations inline in the file diff.
-      # @link https://github.com/marketplace/actions/xmllint-problem-matcher
-      - name: Enable showing XML issues inline
-        uses: korelstar/xmllint-problem-matcher@v1
-
       # Validate the XSD and XML files against schema.
       - name: Validate Docs XSD against schema
-        run: xmllint --noout --schema XMLSchema.xsd DocsXsd/phpcsdocs.xsd
+        uses: phpcsstandards/xmllint-validate@v1
+        with:
+          pattern: "DocsXsd/phpcsdocs.xsd"
+          xsd-url: "https://www.w3.org/2012/04/XMLSchema.xsd"
 
       - name: Validate PHPCSDebug ruleset against schema
-        run: xmllint --noout --schema vendor/squizlabs/php_codesniffer/phpcs.xsd PHPCSDebug/ruleset.xml
+        uses: phpcsstandards/xmllint-validate@v1
+        with:
+          pattern: "PHPCSDebug/ruleset.xml"
+          xsd-file: "vendor/squizlabs/php_codesniffer/phpcs.xsd"
 
       - name: Validate docs against schema
-        run: xmllint --noout --schema DocsXsd/phpcsdocs.xsd ./PHPCSDebug/Docs/*/*Standard.xml
+        uses: phpcsstandards/xmllint-validate@v1
+        with:
+          pattern: "PHPCSDebug/Docs/*/*Standard.xml"
+          xsd-file: "DocsXsd/phpcsdocs.xsd"
 
       # Check the code-style consistency of the PHP files.
       - name: Check PHP code style
