@@ -104,7 +104,7 @@ No orphaned documentation or test files found.';
      *
      * @return array
      */
-    public function dataProgress()
+    public static function dataProgress()
     {
         return [
             'single line progress reporting (<= 60 sniffs)'      => [

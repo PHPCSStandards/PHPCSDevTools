@@ -77,7 +77,7 @@ No orphaned documentation or test files found\.[\r\n]+$`';
      *
      * @return array
      */
-    public function dataTargetDoesntContainSniffs()
+    public static function dataTargetDoesntContainSniffs()
     {
         return [
             'empty directory'                            => ['EmptyDir'],

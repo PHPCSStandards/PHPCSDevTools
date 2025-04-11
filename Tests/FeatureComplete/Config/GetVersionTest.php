@@ -49,7 +49,7 @@ final class GetVersionTest extends XTestCase
      *
      * @return array
      */
-    public function dataShowVersion()
+    public static function dataShowVersion()
     {
         return [
             '-V'        => [
