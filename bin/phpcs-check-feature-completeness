@@ -31,9 +31,9 @@
  * @link      https://github.com/PHPCSStandards/PHPCSDevTools
  */
 
-if (is_file(__DIR__.'/../autoload.php') === true) {
+if (is_file(__DIR__ . '/../autoload.php') === true) {
     // Installed via Composer.
-    require_once __DIR__.'/../autoload.php';
+    require_once __DIR__ . '/../autoload.php';
 } else {
     // Presume git clone.
     require_once __DIR__ . '/../Scripts/FileList.php';

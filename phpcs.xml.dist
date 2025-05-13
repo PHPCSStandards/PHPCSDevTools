@@ -10,6 +10,7 @@
     -->
 
     <file>.</file>
+    <file>./bin/phpcs-check-feature-completeness</file>
 
     <!-- Exclude Composer vendor directory. -->
     <exclude-pattern>*/vendor/*</exclude-pattern>
@@ -33,12 +34,11 @@
     -->
 
     <rule ref="PHPCSDev">
-        <!-- Allow for the file docblock on the line directly following the PHP open tag.
-             As the sniff in PHPCS does not use modular error codes (yet - see PR #2729),
-             the complete error code needs to be disabled, not just the bit involving
-             the file docblocks.
-        -->
+        <!-- Only needed for PHPCS 3.x. This exclusion can be removed when PHPCSDevCS drops support for PHPCS 3.x. -->
         <exclude name="PSR12.Files.FileHeader.SpacingAfterBlock"/>
+
+        <!-- Temporary exclude. Changing pre-existing classes to final can only be done in a major release. -->
+        <exclude name="Universal.Classes.RequireFinalClass"/>
     </rule>
 
     <!-- Set minimum PHP version supported to PHP 5.4. -->
