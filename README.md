@@ -2,8 +2,8 @@
 
 <div aria-hidden="true">
 
-[![Latest Stable Version](https://img.shields.io/packagist/v/phpcsstandards/phpcsdevtools?label=stable)][phpcsdevtools-packagist]
-[![Release Date of the Latest Version](https://img.shields.io/github/release-date/PHPCSStandards/PHPCSDevTools.svg?maxAge=1800)][phpcsdevtools-releases]
+[![Latest Stable Version](https://img.shields.io/packagist/v/phpcsstandards/phpcsdevtools?label=stable)](https://packagist.org/packages/phpcsstandards/phpcsdevtools)
+[![Release Date of the Latest Version](https://img.shields.io/github/release-date/PHPCSStandards/PHPCSDevTools.svg?maxAge=1800)](https://github.com/PHPCSStandards/PHPCSDevTools/releases)
 [![Changelog](https://img.shields.io/github/v/release/PHPCSStandards/PHPCSDevTools?label=Changelog&sort=semver)](https://github.com/PHPCSStandards/PHPCSDevTools/blob/stable/CHANGELOG.md)
 :construction:
 [![Latest Unstable Version](https://img.shields.io/badge/unstable-dev--develop-e68718.svg?maxAge=2419200)](https://packagist.org/packages/phpcsstandards/phpcsdevtools#dev-develop)
@@ -14,7 +14,7 @@
 [![Build Status Test](https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/test.yml/badge.svg)][gha-test-results]
 [![Tested on PHP 5.4 to nightly](https://img.shields.io/badge/tested%20on-PHP%205.4%20|%205.5%20|%205.6%20|%207.0%20|%207.1%20|%207.2%20|%207.3%20|%207.4%20|%208.0%20|%208.1%20|%208.2%20|%208.3%20|%208.4%20|%20nightly-brightgreen.svg?maxAge=2419200)](https://github.com/PHPCSStandards/PHPCSDevTools/actions?query=workflow%3ATest)
 
-[![License: LGPLv3](https://img.shields.io/github/license/PHPCSStandards/PHPCSDevTools)](https://github.com/PHPCSStandards/PHPCSDevTools/blob/stable/LICENSE)
+[![License: LGPLv3](https://img.shields.io/github/license/PHPCSStandards/PHPCSDevTools)][phpcsdevtools-license]
 ![Awesome](https://img.shields.io/badge/awesome%3F-yes!-brightgreen.svg)
 
 </div>
@@ -234,11 +234,12 @@ If unsure whether the changes you are proposing would be welcome, open an issue 
 
 ## License
 
-This code is released under the [GNU Lesser General Public License (LGPLv3)](LICENSE).
+This code is released under the [GNU Lesser General Public License (LGPLv3)][phpcsdevtools-license].
 
 
 [phpcsdevtools-packagist]: https://packagist.org/packages/phpcsstandards/phpcsdevtools
 [phpcsdevtools-releases]:  https://github.com/PHPCSStandards/PHPCSDevTools/releases
+[phpcsdevtools-license]:   https://github.com/PHPCSStandards/PHPCSDevTools/blob/stable/LICENSE
 [gha-qa-results]:          https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/cs.yml
 [gha-test-results]:        https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/test.yml
 
