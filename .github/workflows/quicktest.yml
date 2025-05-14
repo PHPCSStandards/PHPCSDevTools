@@ -15,24 +15,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  #### QUICK TEST STAGE ####
-  # This is a much quicker test which only runs the unit tests and linting against the low/high
-  # supported PHP/PHPCS combinations.
-  quicktest:
+  # Run CI checks/tests which have no dependency on the PHPCS version used.
+  quicktest-php:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         php: ['5.4', 'latest']
-        phpcs_version: ['dev-master']
 
-        include:
-          - php: '7.2'
-            phpcs_version: '3.1.0'
-          - php: '5.4'
-            phpcs_version: '3.1.0'
-
-    name: "QTest${{ matrix.phpcs_version == 'dev-master' && ' + Lint' || '' }}: PHP ${{ matrix.php }} - PHPCS ${{ matrix.phpcs_version }}"
+    name: "QTest + Lint: PHP ${{ matrix.php }}"
 
     steps:
       - name: Checkout code
@@ -47,6 +38,76 @@ jobs:
 
       - name: Install xmllint
         run: sudo apt-get install --no-install-recommends -y libxml2-utils
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          ini-values: error_reporting=-1, display_errors=On
+          coverage: none
+
+      # Install dependencies and handle caching in one go.
+      # @link https://github.com/marketplace/actions/install-php-dependencies-with-composer
+      - name: Install Composer dependencies
+        uses: "ramsey/composer-install@v3"
+        with:
+          # Bust the cache at least once a month - output format: YYYY-MM.
+          custom-cache-suffix: $(date -u "+%Y-%m")
+
+      - name: Lint against parse errors (PHP 7.2+)
+        if: ${{ matrix.php >= '7.2' }}
+        run: composer lint
+
+      - name: Lint against parse errors (PHP < 7.2)
+        if: ${{ matrix.php < '7.2' }}
+        run: composer lintlt72
+
+      # Check that any sniffs available are feature complete.
+      # This acts as an integration test for the feature completeness script,
+      # which is why it is run against various PHP versions.
+      - name: Check for feature completeness
+        run: composer check-complete
+
+      - name: Grab PHPUnit version
+        id: phpunit_version
+        # yamllint disable rule:line-length
+        run: echo "VERSION=$(vendor/bin/phpunit --version | grep --only-matching --max-count=1 --extended-regexp '\b[0-9]+\.[0-9]+')" >> "$GITHUB_OUTPUT"
+        # yamllint enable rule:line-length
+
+      - name: Determine PHPUnit composer script to use
+        id: phpunit_script
+        run: |
+          if [ "${{ startsWith( steps.phpunit_version.outputs.VERSION, '11.' ) }}" == "true" ]; then
+            echo 'SUFFIX=' >> "$GITHUB_OUTPUT"
+          elif [ "${{ startsWith( steps.phpunit_version.outputs.VERSION, '10.' ) }}" == "true" ]; then
+            echo 'SUFFIX=' >> "$GITHUB_OUTPUT"
+          else
+            echo 'SUFFIX=-lte9' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run the unit tests for the DevTools
+        run: composer test-tools${{ steps.phpunit_script.outputs.SUFFIX }}
+
+  # Run CI checks/tests which have a dependency on the PHPCS version used.
+  quicktest-phpcs:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: ['5.4', 'latest']
+        phpcs_version: ['dev-master']
+
+        include:
+          - php: '7.2'
+            phpcs_version: '3.1.0'
+          - php: '5.4'
+            phpcs_version: '3.1.0'
+
+    name: "QTest: PHP ${{ matrix.php }} - PHPCS ${{ matrix.phpcs_version }}"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       # On stable PHPCS versions, allow for PHP deprecation notices.
       # Unit tests don't need to fail on those for stable releases where those issues won't get fixed anymore.
@@ -81,21 +142,6 @@ jobs:
           # Bust the cache at least once a month - output format: YYYY-MM.
           custom-cache-suffix: $(date -u "+%Y-%m")
 
-      - name: Lint against parse errors (PHP 7.2+)
-        if: ${{ matrix.phpcs_version == 'dev-master' && matrix.php >= '7.2' }}
-        run: composer lint
-
-      - name: Lint against parse errors (PHP < 7.2)
-        if: ${{ matrix.phpcs_version == 'dev-master' && matrix.php < '7.2' }}
-        run: composer lintlt72
-
-      # Check that any sniffs available are feature complete.
-      # This also acts as an integration test for the feature completeness script,
-      # which is why it is run against various PHP versions and not in the "Sniff" stage.
-      - name: Check for feature completeness
-        if: ${{ matrix.phpcs_version == 'dev-master' }}
-        run: composer check-complete
-
       - name: Grab PHPUnit version
         id: phpunit_version
         # yamllint disable rule:line-length
@@ -115,7 +161,3 @@ jobs:
 
       - name: Run the unit tests for the PHPCSDebug sniff
         run: composer test-sniff${{ steps.phpunit_script.outputs.SUFFIX }}
-
-      - name: Run the unit tests for the DevTools
-        if: ${{ matrix.phpcs_version == 'dev-master' }}
-        run: composer test-tools${{ steps.phpunit_script.outputs.SUFFIX }}
