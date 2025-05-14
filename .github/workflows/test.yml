@@ -16,8 +16,85 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  #### TEST STAGE ####
-  test:
+  # Run CI checks/tests which have no dependency on the PHPCS version used.
+  test-php:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: ['5.4', '5.5', '5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
+
+    name: "Test + Lint: PHP ${{ matrix.php }}"
+
+    continue-on-error: ${{ matrix.php == '8.5' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Updating the lists can fail intermittently, typically after Microsoft has released a new package.
+      # This should not be blocking for this job, so ignore any errors from this step.
+      # Ref: https://github.com/dotnet/core/issues/4167
+      - name: Update the available packages list
+        continue-on-error: true
+        run: sudo apt-get update
+
+      - name: Install xmllint
+        run: sudo apt-get install --no-install-recommends -y libxml2-utils
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          ini-values: error_reporting=-1, display_errors=On
+          coverage: none
+          tools: cs2pr
+
+      # Install dependencies and handle caching in one go.
+      # @link https://github.com/marketplace/actions/install-php-dependencies-with-composer
+      - name: Install Composer dependencies
+        uses: "ramsey/composer-install@v3"
+        with:
+          composer-options: ${{ matrix.php == '8.5' && '--ignore-platform-req=php+' || '' }}
+          # Bust the cache at least once a month - output format: YYYY-MM.
+          custom-cache-suffix: $(date -u "+%Y-%m")
+
+      - name: Lint against parse errors (PHP 7.2+)
+        if: ${{ matrix.php >= '7.2' }}
+        run: composer lint -- --checkstyle | cs2pr
+
+      - name: Lint against parse errors (PHP < 7.2)
+        if: ${{ matrix.php < '7.2' }}
+        run: composer lintlt72 -- --checkstyle | cs2pr
+
+      # Check that any sniffs available are feature complete.
+      # This also acts as an integration test for the feature completeness script,
+      # which is why it is run against various PHP versions and not in the "Sniff" stage.
+      - name: Check for feature completeness
+        run: composer check-complete
+
+      - name: Grab PHPUnit version
+        id: phpunit_version
+        # yamllint disable rule:line-length
+        run: echo "VERSION=$(vendor/bin/phpunit --version | grep --only-matching --max-count=1 --extended-regexp '\b[0-9]+\.[0-9]+')" >> "$GITHUB_OUTPUT"
+        # yamllint enable rule:line-length
+
+      - name: Determine PHPUnit composer script to use
+        id: phpunit_script
+        run: |
+          if [ "${{ startsWith( steps.phpunit_version.outputs.VERSION, '11.' ) }}" == "true" ]; then
+            echo 'SUFFIX=' >> "$GITHUB_OUTPUT"
+          elif [ "${{ startsWith( steps.phpunit_version.outputs.VERSION, '10.' ) }}" == "true" ]; then
+            echo 'SUFFIX=' >> "$GITHUB_OUTPUT"
+          else
+            echo 'SUFFIX=-lte9' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run the unit tests for the DevTools
+        run: composer test-tools${{ steps.phpunit_script.outputs.SUFFIX }}
+
+  # Run CI checks/tests which have a dependency on the PHPCS version used.
+  test-phpcs:
     runs-on: ubuntu-latest
 
     strategy:
@@ -38,40 +115,40 @@ jobs:
 
         include:
           # Complete the matrix, while preventing issues with PHPCS versions incompatible with certain PHP versions.
-          - php: '8.4'
+          - php: '7.3'
             phpcs_version: 'dev-master'
-          - php: '8.4'
-            phpcs_version: '3.8.0'
-
-          - php: '8.3'
-            phpcs_version: 'dev-master'
-          - php: '8.3'
-            phpcs_version: '3.8.0'
-
-          - php: '8.2'
-            phpcs_version: 'dev-master'
-          - php: '8.2'
-            phpcs_version: '3.6.1'
-
-          - php: '8.1'
-            phpcs_version: 'dev-master'
-          - php: '8.1'
-            phpcs_version: '3.6.1'
-
-          - php: '8.0'
-            phpcs_version: 'dev-master'
-          - php: '8.0'
-            phpcs_version: '3.5.7'
+          - php: '7.3'
+            phpcs_version: '3.3.1'
 
           - php: '7.4'
             phpcs_version: 'dev-master'
           - php: '7.4'
             phpcs_version: '3.5.0'
 
-          - php: '7.3'
+          - php: '8.0'
             phpcs_version: 'dev-master'
-          - php: '7.3'
-            phpcs_version: '3.3.1'
+          - php: '8.0'
+            phpcs_version: '3.5.7'
+
+          - php: '8.1'
+            phpcs_version: 'dev-master'
+          - php: '8.1'
+            phpcs_version: '3.6.1'
+
+          - php: '8.2'
+            phpcs_version: 'dev-master'
+          - php: '8.2'
+            phpcs_version: '3.6.1'
+
+          - php: '8.3'
+            phpcs_version: 'dev-master'
+          - php: '8.3'
+            phpcs_version: '3.8.0'
+
+          - php: '8.4'
+            phpcs_version: 'dev-master'
+          - php: '8.4'
+            phpcs_version: '3.8.0'
 
           # Experimental builds. These are allowed to fail.
           - php: '7.4'
@@ -80,23 +157,13 @@ jobs:
           - php: '8.5' # Nightly.
             phpcs_version: 'dev-master'
 
-    name: "Test${{ matrix.phpcs_version == 'dev-master' && ' + Lint' || '' }}: PHP ${{ matrix.php }} - PHPCS ${{ matrix.phpcs_version }}"
+    name: "Test: PHP ${{ matrix.php }} - PHPCS ${{ matrix.phpcs_version }}"
 
     continue-on-error: ${{ matrix.php == '8.5' || matrix.phpcs_version == '4.0.x-dev' }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      # Updating the lists can fail intermittently, typically after Microsoft has released a new package.
-      # This should not be blocking for this job, so ignore any errors from this step.
-      # Ref: https://github.com/dotnet/core/issues/4167
-      - name: Update the available packages list
-        continue-on-error: true
-        run: sudo apt-get update
-
-      - name: Install xmllint
-        run: sudo apt-get install --no-install-recommends -y libxml2-utils
 
       - name: Setup ini config
         id: set_ini
@@ -115,7 +182,6 @@ jobs:
           php-version: ${{ matrix.php }}
           ini-values: ${{ steps.set_ini.outputs.PHP_INI }}
           coverage: none
-          tools: cs2pr
 
       - name: 'Composer: adjust dependencies'
         run: |
@@ -126,35 +192,12 @@ jobs:
 
       # Install dependencies and handle caching in one go.
       # @link https://github.com/marketplace/actions/install-php-dependencies-with-composer
-      - name: Install Composer dependencies - normal
-        if: ${{ matrix.php < 8.5 }}
+      - name: Install Composer dependencies
         uses: "ramsey/composer-install@v3"
         with:
+          composer-options: ${{ matrix.php == '8.5' && '--ignore-platform-req=php+' || '' }}
           # Bust the cache at least once a month - output format: YYYY-MM.
           custom-cache-suffix: $(date -u "+%Y-%m")
-
-      # For PHP "nightly", we need to install with ignore platform reqs as not all dependencies allow installation.
-      - name: Install Composer dependencies - with ignore platform
-        if: ${{ matrix.php >= 8.5 }}
-        uses: "ramsey/composer-install@v3"
-        with:
-          composer-options: --ignore-platform-reqs
-          custom-cache-suffix: $(date -u "+%Y-%m")
-
-      - name: Lint against parse errors (PHP 7.2+)
-        if: ${{ matrix.phpcs_version == 'dev-master' && matrix.php >= '7.2' }}
-        run: composer lint -- --checkstyle | cs2pr
-
-      - name: Lint against parse errors (PHP < 7.2)
-        if: ${{ matrix.phpcs_version == 'dev-master' && matrix.php < '7.2' }}
-        run: composer lintlt72 -- --checkstyle | cs2pr
-
-      # Check that any sniffs available are feature complete.
-      # This also acts as an integration test for the feature completeness script,
-      # which is why it is run against various PHP versions and not in the "Sniff" stage.
-      - name: Check for feature completeness
-        if: matrix.phpcs_version == 'dev-master'
-        run: composer check-complete
 
       - name: Grab PHPUnit version
         id: phpunit_version
@@ -175,7 +218,3 @@ jobs:
 
       - name: Run the unit tests for the PHPCSDebug sniff
         run: composer test-sniff${{ steps.phpunit_script.outputs.SUFFIX }}
-
-      - name: Run the unit tests for the DevTools
-        if: ${{ matrix.phpcs_version == 'dev-master' }}
-        run: composer test-tools${{ steps.phpunit_script.outputs.SUFFIX }}
