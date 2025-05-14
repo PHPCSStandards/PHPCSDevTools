@@ -220,16 +220,26 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install xmllint
-        run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends -y libxml2-utils
+      - name: Validate docs against schema
+        uses: phpcsstandards/xmllint-validate@v1
+        with:
+          pattern: "YourRuleset/Docs/**/*Standard.xml"
+          xsd-url: "https://phpcsstandards.github.io/PHPCSDevTools/phpcsdocs.xsd"
+```
 
-      # A Composer install is needed to have a local copy of the XSD available.
-      - run: composer install
+Or if you use this in a job which runs a `composer install`, you can reference the file in the vendor directory.
+```yaml
+jobs:
+  validate-xml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
 
       - name: Validate docs against schema
-        run: xmllint --noout --schema vendor/phpcsstandards/phpcsdevtools/DocsXsd/phpcsdocs.xsd ./YourRuleset/Docs/**/*Standard.xml
+        uses: phpcsstandards/xmllint-validate@v1
+        with:
+          pattern: "YourRuleset/Docs/**/*Standard.xml"
+          xsd-file: "vendor/phpcsstandards/phpcsdevtools/DocsXsd/phpcsdocs.xsd"
 ```
 
 :point_right: You'll need to replace the `YourRuleset` within the command with the name of your ruleset (of course).
