@@ -150,3 +150,9 @@ jobs:
   remark:
     name: 'QA Markdown'
     uses: PHPCSStandards/.github/.github/workflows/reusable-remark.yml@main
+
+  yamllint:
+    name: 'Lint Yaml'
+    uses: PHPCSStandards/.github/.github/workflows/reusable-yamllint.yml@main
+    with:
+      strict: true
