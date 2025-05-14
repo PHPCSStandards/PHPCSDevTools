@@ -158,12 +158,16 @@ jobs:
 
       - name: Grab PHPUnit version
         id: phpunit_version
+        # yamllint disable rule:line-length
         run: echo "VERSION=$(vendor/bin/phpunit --version | grep --only-matching --max-count=1 --extended-regexp '\b[0-9]+\.[0-9]+')" >> "$GITHUB_OUTPUT"
+        # yamllint enable rule:line-length
 
       - name: Determine PHPUnit composer script to use
         id: phpunit_script
         run: |
-          if [ "${{ startsWith( steps.phpunit_version.outputs.VERSION, '10.' ) || startsWith( steps.phpunit_version.outputs.VERSION, '11.' ) }}" == "true" ]; then
+          if [ "${{ startsWith( steps.phpunit_version.outputs.VERSION, '11.' ) }}" == "true" ]; then
+            echo 'SUFFIX=' >> "$GITHUB_OUTPUT"
+          elif [ "${{ startsWith( steps.phpunit_version.outputs.VERSION, '10.' ) }}" == "true" ]; then
             echo 'SUFFIX=' >> "$GITHUB_OUTPUT"
           else
             echo 'SUFFIX=-lte9' >> "$GITHUB_OUTPUT"

@@ -1,8 +1,8 @@
-# Change Log for the PHPCSDevTools standard for PHP Codesniffer
+# Change Log for the PHPCSDevTools standard for PHP_CodeSniffer
 
 All notable changes to this project will be documented in this file.
 
-This projects adheres to [Keep a CHANGELOG](http://keepachangelog.com/) and uses [Semantic Versioning](http://semver.org/).
+This projects adheres to [Keep a CHANGELOG](https://keepachangelog.com/) and uses [Semantic Versioning](https://semver.org/).
 
 
 ## [Unreleased]

@@ -142,3 +142,17 @@ jobs:
 
   phpstan:
     uses: PHPCSStandards/.github/.github/workflows/reusable-phpstan.yml@main
+
+  markdownlint:
+    name: 'Lint Markdown'
+    uses: PHPCSStandards/.github/.github/workflows/reusable-markdownlint.yml@main
+
+  remark:
+    name: 'QA Markdown'
+    uses: PHPCSStandards/.github/.github/workflows/reusable-remark.yml@main
+
+  yamllint:
+    name: 'Lint Yaml'
+    uses: PHPCSStandards/.github/.github/workflows/reusable-yamllint.yml@main
+    with:
+      strict: true
