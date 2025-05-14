@@ -2,24 +2,24 @@
 
 <div aria-hidden="true">
 
-[![Latest Stable Version](https://poser.pugx.org/phpcsstandards/phpcsdevtools/v/stable)](https://packagist.org/packages/phpcsstandards/phpcsdevtools)
-[![Release Date of the Latest Version](https://img.shields.io/github/release-date/PHPCSStandards/PHPCSDevTools.svg?maxAge=1800)](https://github.com/PHPCSStandards/PHPCSDevTools/releases)
+[![Latest Stable Version](https://img.shields.io/packagist/v/phpcsstandards/phpcsdevtools?label=stable)][phpcsdevtools-packagist]
+[![Release Date of the Latest Version](https://img.shields.io/github/release-date/PHPCSStandards/PHPCSDevTools.svg?maxAge=1800)][phpcsdevtools-releases]
 [![Changelog](https://img.shields.io/github/v/release/PHPCSStandards/PHPCSDevTools?label=Changelog&sort=semver)](https://github.com/PHPCSStandards/PHPCSDevTools/blob/stable/CHANGELOG.md)
 :construction:
 [![Latest Unstable Version](https://img.shields.io/badge/unstable-dev--develop-e68718.svg?maxAge=2419200)](https://packagist.org/packages/phpcsstandards/phpcsdevtools#dev-develop)
 [![Last Commit to Unstable](https://img.shields.io/github/last-commit/PHPCSStandards/PHPCSDevTools/develop.svg)](https://github.com/PHPCSStandards/PHPCSDevTools/commits/develop)
 
-[![Minimum PHP Version](https://img.shields.io/packagist/php-v/phpcsstandards/phpcsdevtools.svg?maxAge=3600)](https://packagist.org/packages/phpcsstandards/phpcsdevtools)
-[![Build Status CS](https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/cs.yml/badge.svg)](https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/cs.yml)
-[![Build Status Test](https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/test.yml/badge.svg)](https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/test.yml)
+[![Minimum PHP Version](https://img.shields.io/packagist/dependency-v/phpcsstandards/phpcsdevtools/php.svg)][phpcsdevtools-packagist]
+[![Build Status CS](https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/cs.yml/badge.svg)][gha-qa-results]
+[![Build Status Test](https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/test.yml/badge.svg)][gha-test-results]
 [![Tested on PHP 5.4 to nightly](https://img.shields.io/badge/tested%20on-PHP%205.4%20|%205.5%20|%205.6%20|%207.0%20|%207.1%20|%207.2%20|%207.3%20|%207.4%20|%208.0%20|%208.1%20|%208.2%20|%208.3%20|%208.4%20|%20nightly-brightgreen.svg?maxAge=2419200)](https://github.com/PHPCSStandards/PHPCSDevTools/actions?query=workflow%3ATest)
 
-[![License: LGPLv3](https://poser.pugx.org/phpcsstandards/phpcsdevtools/license)](https://github.com/PHPCSStandards/PHPCSDevTools/blob/stable/LICENSE)
+[![License: LGPLv3](https://img.shields.io/github/license/PHPCSStandards/PHPCSDevTools)](https://github.com/PHPCSStandards/PHPCSDevTools/blob/stable/LICENSE)
 ![Awesome](https://img.shields.io/badge/awesome%3F-yes!-brightgreen.svg)
 
 </div>
 
-This is a set of tools to assist developers of sniffs for [PHP CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer).
+This is a set of tools to assist developers of sniffs for [PHP CodeSniffer][phpcs-gh].
 
 * [Installation](#installation)
     + [Composer Project-based Installation](#composer-project-based-installation)
@@ -56,9 +56,9 @@ Composer will automatically install dependencies and register the PHPCSDebug sta
 
 ### Stand-alone Installation
 
-* Install [PHP CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer) via [your preferred method](https://github.com/PHPCSStandards/PHP_CodeSniffer#installation).
+* Install [PHP CodeSniffer][phpcs-gh] via [your preferred method][phpcs-gh-install].
 * Register the path to PHPCS in your system `$PATH` environment variable to make the `phpcs` command available from anywhere in your file system.
-* Download the [latest PHPCSDevTools release](https://github.com/PHPCSStandards/PHPCSDevTools/releases) and unzip/untar it into an arbitrary directory.
+* Download the [latest PHPCSDevTools release][phpcsdevtools-releases] and unzip/untar it into an arbitrary directory.
     You can also choose to clone this repository using git.
 * Add the path to the directory in which you placed your copy of the PHPCSDevTools repo to the PHP CodeSniffer configuration using the below command:
    ```bash
@@ -175,7 +175,7 @@ PHPCS itself can also display similar information using the `-vv` or `-vvv` verb
 
 ### Documentation XSD Validation
 
-This project contains an [XML Schema Definition (XSD)](https://www.w3.org/standards/xml/schema) to allow for validation PHPCS documentation XML files. Following the XSD will make sure your documentation can be correctly displayed when using the PHPCS `--generator` option.
+This project contains an [XML Schema Definition (XSD)](https://www.w3.org/TR/xmlschema11-1/) to allow for validation PHPCS documentation XML files. Following the XSD will make sure your documentation can be correctly displayed when using the PHPCS `--generator` option.
 
 In order to use it, you'll need to add the schema related attributes to the `documentation` element of the sniff documentation file, like so:
 
@@ -234,4 +234,13 @@ If unsure whether the changes you are proposing would be welcome, open an issue 
 
 ## License
 
-This code is released under the [GNU Lesser General Public License (LGPLv3)](http://www.gnu.org/copyleft/lesser.html).
+This code is released under the [GNU Lesser General Public License (LGPLv3)](LICENSE).
+
+
+[phpcsdevtools-packagist]: https://packagist.org/packages/phpcsstandards/phpcsdevtools
+[phpcsdevtools-releases]:  https://github.com/PHPCSStandards/PHPCSDevTools/releases
+[gha-qa-results]:          https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/cs.yml
+[gha-test-results]:        https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/test.yml
+
+[phpcs-gh]:                https://github.com/PHPCSStandards/PHP_CodeSniffer
+[phpcs-gh-install]:        https://github.com/PHPCSStandards/PHP_CodeSniffer#installation
