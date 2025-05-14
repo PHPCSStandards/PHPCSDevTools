@@ -4,6 +4,8 @@
 
 <div id="badges" aria-hidden="true">
 
+    <a href="https://packagist.org/packages/phpcsstandards/phpcsdevtools"><img src="https://img.shields.io/packagist/v/phpcsstandards/phpcsdevtools?label=stable" alt="Latest Stable Version" class="badge"></a>
+    <a href="https://github.com/PHPCSStandards/PHPCSDevTools/releases"><img src="https://img.shields.io/github/release-date/PHPCSStandards/PHPCSDevTools.svg?maxAge=1800" alt="Release Date of the Latest Version" class="badge"></a>
     <a href="https://github.com/PHPCSStandards/PHPCSDevTools/blob/stable/CHANGELOG.md"><img src="https://img.shields.io/github/v/release/PHPCSStandards/PHPCSDevTools?label=Changelog&sort=semver" alt="Changelog" class="badge"></a>
 
 </div>
@@ -221,11 +223,12 @@ If unsure whether the changes you are proposing would be welcome, open an issue 
 
 ## License
 
-This code is released under the [GNU Lesser General Public License (LGPLv3)](LICENSE).
+This code is released under the [GNU Lesser General Public License (LGPLv3)][phpcsdevtools-license].
 
 
 [phpcsdevtools-packagist]: https://packagist.org/packages/phpcsstandards/phpcsdevtools
 [phpcsdevtools-releases]:  https://github.com/PHPCSStandards/PHPCSDevTools/releases
+[phpcsdevtools-license]:   https://github.com/PHPCSStandards/PHPCSDevTools/blob/stable/LICENSE
 [gha-qa-results]:          https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/cs.yml
 [gha-test-results]:        https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/test.yml
 
