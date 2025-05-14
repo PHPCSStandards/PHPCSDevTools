@@ -94,10 +94,10 @@ jobs:
           build_dir: 'deploy'
           target_branch: 'gh-pages'
           keep_history: true
-          #allow_empty_commit: false # Turn on after verification that it all works as expected.
+          allow_empty_commit: false
           jekyll: true
           commit_message: ${{ steps.commit_msg.outputs.MSG }}
           dry_run: ${{ steps.base_branch.outputs.BRANCH != 'stable' }}
-          verbose: ${{ matrix.verbose }}
+          verbose: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
