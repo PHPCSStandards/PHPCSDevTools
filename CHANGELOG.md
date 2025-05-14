@@ -1,4 +1,4 @@
-# Change Log for the PHPCSDevTools standard for PHP Codesniffer
+# Change Log for the PHPCSDevTools standard for PHP_CodeSniffer
 
 All notable changes to this project will be documented in this file.
 
