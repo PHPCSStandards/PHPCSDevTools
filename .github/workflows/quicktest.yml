@@ -24,7 +24,7 @@ jobs:
         os: ['ubuntu-latest', 'windows-latest']
         php: ['5.4', 'latest']
 
-    name: "QTest + Lint: PHP ${{ matrix.php }} - OS ${{ matrix.os }}"
+    name: "QTest + Lint: PHP ${{ matrix.php }} (${{ matrix.os == 'windows-latest' && 'Win' || 'Linux' }})"
 
     steps:
       - name: Prepare git to leave line endings alone
