@@ -17,27 +17,37 @@ concurrency:
 jobs:
   # Run CI checks/tests which have no dependency on the PHPCS version used.
   quicktest-php:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
+        os: ['ubuntu-latest', 'windows-latest']
         php: ['5.4', 'latest']
 
-    name: "QTest + Lint: PHP ${{ matrix.php }}"
+    name: "QTest + Lint: PHP ${{ matrix.php }} (${{ matrix.os == 'windows-latest' && 'Win' || 'Linux' }})"
 
     steps:
+      - name: Prepare git to leave line endings alone
+        run: git config --global core.autocrlf input
+
       - name: Checkout code
         uses: actions/checkout@v4
 
       # Updating the lists can fail intermittently, typically after Microsoft has released a new package.
       # This should not be blocking for this job, so ignore any errors from this step.
       # Ref: https://github.com/dotnet/core/issues/4167
-      - name: Update the available packages list
+      - name: Update the available packages list (Linux)
+        if: runner.os == 'Linux'
         continue-on-error: true
         run: sudo apt-get update
 
-      - name: Install xmllint
+      - name: Install xmllint (Linux)
+        if: runner.os == 'Linux'
         run: sudo apt-get install --no-install-recommends -y libxml2-utils
+
+      - name: Install xmllint (Windows)
+        if: runner.os == 'Windows'
+        run: choco install xsltproc
 
       - name: Install PHP
         uses: shivammathur/setup-php@v2
@@ -70,12 +80,14 @@ jobs:
 
       - name: Grab PHPUnit version
         id: phpunit_version
+        shell: bash
         # yamllint disable rule:line-length
         run: echo "VERSION=$(vendor/bin/phpunit --version | grep --only-matching --max-count=1 --extended-regexp '\b[0-9]+\.[0-9]+')" >> "$GITHUB_OUTPUT"
         # yamllint enable rule:line-length
 
       - name: Determine PHPUnit composer script to use
         id: phpunit_script
+        shell: bash
         run: |
           if [ "${{ startsWith( steps.phpunit_version.outputs.VERSION, '11.' ) }}" == "true" ]; then
             echo 'SUFFIX=' >> "$GITHUB_OUTPUT"
