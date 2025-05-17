@@ -232,6 +232,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      ... # (install PHP, run composer)
+
       - name: Validate docs against schema
         uses: phpcsstandards/xmllint-validate@v1
         with:
