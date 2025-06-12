@@ -9,6 +9,13 @@ This projects adheres to [Keep a CHANGELOG](https://keepachangelog.com/) and use
 
 _Nothing yet._
 
+## [1.2.3] - 2025-06-12
+
+### Changed
+* Allow for installation in combination with PHP_CodeSniffer 4.0.
+* General housekeeping.
+
+
 ## [1.2.2] - 2024-09-10
 
 This is a maintenance release.
@@ -85,6 +92,7 @@ Initial release containing:
 
 
 [Unreleased]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/stable...HEAD
+[1.2.3]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.2.2...1.2.3
 [1.2.2]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.2.1...1.2.2
 [1.2.1]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.1.1...1.2.0
