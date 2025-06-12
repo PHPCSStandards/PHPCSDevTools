@@ -9,6 +9,16 @@ This projects adheres to [Keep a CHANGELOG](https://keepachangelog.com/) and use
 
 _Nothing yet._
 
+## [1.2.4] - 2026-10-11
+
+This is a maintenance release.
+
+### Changed
+* All functionality is now also tested against PHP 8.5 and 8.6.
+* Miscellaneous updates to the development environment and CI scripts, including a contribution by [@ghostwriter].
+* General housekeeping.
+
+
 ## [1.2.3] - 2025-06-12
 
 ### Changed
@@ -92,6 +102,7 @@ Initial release containing:
 
 
 [Unreleased]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/stable...HEAD
+[1.2.4]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.2.3...1.2.4
 [1.2.3]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.2.2...1.2.3
 [1.2.2]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.2.1...1.2.2
 [1.2.1]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.2.0...1.2.1
@@ -102,6 +113,7 @@ Initial release containing:
 
 [Composer PHPCS plugin]: https://github.com/PHPCSStandards/composer-installer
 
-[@dingo_d]:   https://github.com/dingo-d
-[@fredden]:   https://github.com/fredden
-[@GaryJones]: https://github.com/GaryJones
+[@dingo_d]:     https://github.com/dingo-d
+[@fredden]:     https://github.com/fredden
+[@GaryJones]:   https://github.com/GaryJones
+[@ghostwriter]: https://github.com/ghostwriter
