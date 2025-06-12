@@ -122,56 +122,55 @@ jobs:
         # - PHP 8.2 needs PHPCS 3.6.1+ to run without errors.
         # - PHP 8.3 needs PHPCS 3.8.0+ to run without errors (though the errors don't affect this package).
         # - PHP 8.4 needs PHPCS 3.8.0+ to run without errors (officially 3.11.0, but 3.8.0 will work fine).
-        php: ['5.4', '5.5', '5.6', '7.0', '7.1', '7.2']
-        phpcs_version: ['3.1.0', 'dev-master']
+        #
+        # Additionally, PHPCS 4.x has a minimum version requirement of PHP 7.2.
+        php: ['5.4', '5.5', '5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
+        phpcs_version: ['dev-master', '4.x-dev']
+
+        exclude:
+          - php: '5.4'
+            phpcs_version: '4.x-dev'
+          - php: '5.5'
+            phpcs_version: '4.x-dev'
+          - php: '5.6'
+            phpcs_version: '4.x-dev'
+          - php: '7.0'
+            phpcs_version: '4.x-dev'
+          - php: '7.1'
+            phpcs_version: '4.x-dev'
 
         include:
           # Complete the matrix, while preventing issues with PHPCS versions incompatible with certain PHP versions.
-          - php: '7.3'
-            phpcs_version: 'dev-master'
+          - php: '5.4'
+            phpcs_version: '3.1.0'
+          - php: '5.5'
+            phpcs_version: '3.1.0'
+          - php: '5.6'
+            phpcs_version: '3.1.0'
+          - php: '7.0'
+            phpcs_version: '3.1.0'
+          - php: '7.1'
+            phpcs_version: '3.1.0'
+          - php: '7.2'
+            phpcs_version: '3.1.0'
           - php: '7.3'
             phpcs_version: '3.3.1'
-
-          - php: '7.4'
-            phpcs_version: 'dev-master'
           - php: '7.4'
             phpcs_version: '3.5.0'
-
-          - php: '8.0'
-            phpcs_version: 'dev-master'
           - php: '8.0'
             phpcs_version: '3.5.7'
-
-          - php: '8.1'
-            phpcs_version: 'dev-master'
           - php: '8.1'
             phpcs_version: '3.6.1'
-
-          - php: '8.2'
-            phpcs_version: 'dev-master'
           - php: '8.2'
             phpcs_version: '3.6.1'
-
-          - php: '8.3'
-            phpcs_version: 'dev-master'
           - php: '8.3'
             phpcs_version: '3.8.0'
-
-          - php: '8.4'
-            phpcs_version: 'dev-master'
           - php: '8.4'
             phpcs_version: '3.8.0'
-
-          # Experimental builds. These are allowed to fail.
-          - php: '7.4'
-            phpcs_version: '4.0.x-dev'
-
-          - php: '8.5' # Nightly.
-            phpcs_version: 'dev-master'
 
     name: "Test: PHP ${{ matrix.php }} - PHPCS ${{ matrix.phpcs_version }}"
 
-    continue-on-error: ${{ matrix.php == '8.5' || matrix.phpcs_version == '4.0.x-dev' }}
+    continue-on-error: ${{ matrix.php == '8.5' }}
 
     steps:
       - name: Checkout code
@@ -182,7 +181,7 @@ jobs:
         run: |
           # On stable PHPCS versions, allow for PHP deprecation notices.
           # Unit tests don't need to fail on those for stable releases where those issues won't get fixed anymore.
-          if [[ "${{ matrix.phpcs_version }}" != "dev-master" && "${{ matrix.phpcs_version }}" != "4.0.x-dev" ]]; then
+          if [ "${{ contains( matrix.phpcs_version, 'dev' ) }}" != "true" ]; then
             echo 'PHP_INI=error_reporting=E_ALL & ~E_DEPRECATED, display_errors=On' >> "$GITHUB_OUTPUT"
           else
             echo 'PHP_INI=error_reporting=-1, display_errors=On' >> "$GITHUB_OUTPUT"
@@ -197,10 +196,10 @@ jobs:
 
       - name: 'Composer: adjust dependencies'
         run: |
-          # Set the PHPCS version to be used in the tests.
-          composer require --no-update squizlabs/php_codesniffer:"${{ matrix.phpcs_version }}" --no-scripts --no-interaction
           # Remove the PHPCSDevCS dependency as it has different PHPCS requirements and would block installs.
           composer remove --no-update --dev phpcsstandards/phpcsdevcs --no-scripts --no-interaction
+          # Set the PHPCS version to be used in the tests.
+          composer require --no-update squizlabs/php_codesniffer:"${{ matrix.phpcs_version }}" --no-scripts --no-interaction
 
       # Install dependencies and handle caching in one go.
       # @link https://github.com/marketplace/actions/install-php-dependencies-with-composer

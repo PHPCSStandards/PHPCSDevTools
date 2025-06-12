@@ -107,13 +107,22 @@ jobs:
     strategy:
       matrix:
         php: ['5.4', 'latest']
-        phpcs_version: ['dev-master']
+        phpcs_version: ['3.1.0', 'dev-master']
+
+        exclude:
+          # PHP 3.1.0 is incompatible with PHP >= 8.0.
+          - php: 'latest'
+            phpcs_version: '3.1.0'
 
         include:
+          # Replacement build for "low" PHPCS 3.x on PHP latest.
+          - php: 'latest'
+            phpcs_version: '3.8.0'
+
           - php: '7.2'
-            phpcs_version: '3.1.0'
-          - php: '5.4'
-            phpcs_version: '3.1.0'
+            phpcs_version: '4.x-dev'
+          - php: 'latest'
+            phpcs_version: '4.x-dev'
 
     name: "QTest: PHP ${{ matrix.php }} - PHPCS ${{ matrix.phpcs_version }}"
 
@@ -126,7 +135,7 @@ jobs:
       - name: Setup ini config
         id: set_ini
         run: |
-          if [ "${{ matrix.phpcs_version }}" != "dev-master" ]; then
+          if [ "${{ contains( matrix.phpcs_version, 'dev' ) }}" != "true" ]; then
             echo 'PHP_INI=error_reporting=E_ALL & ~E_DEPRECATED, display_errors=On' >> "$GITHUB_OUTPUT"
           else
             echo 'PHP_INI=error_reporting=-1, display_errors=On' >> "$GITHUB_OUTPUT"
@@ -141,10 +150,10 @@ jobs:
 
       - name: 'Composer: adjust dependencies'
         run: |
-          # Set the PHPCS version to be used in the tests.
-          composer require --no-update squizlabs/php_codesniffer:"${{ matrix.phpcs_version }}" --no-scripts --no-interaction
           # Remove the PHPCSDevCS dependency as it has different PHPCS requirements and would block installs.
           composer remove --no-update --dev phpcsstandards/phpcsdevcs --no-scripts --no-interaction
+          # Set the PHPCS version to be used in the tests.
+          composer require --no-update squizlabs/php_codesniffer:"${{ matrix.phpcs_version }}" --no-scripts --no-interaction
 
       # Install dependencies and handle caching in one go.
       # @link https://github.com/marketplace/actions/install-php-dependencies-with-composer
