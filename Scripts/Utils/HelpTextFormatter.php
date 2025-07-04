@@ -11,7 +11,7 @@
 namespace PHPCSDevTools\Scripts\Utils;
 
 /**
- * Helper class for formatting help text and detecting color support.
+ * Helper class for formatting help text.
  *
  * ---------------------------------------------------------------------------------------------
  * This class is not part of the public API. Backward compatibility is not guaranteed.
@@ -98,40 +98,5 @@ class HelpTextFormatter
         }
 
         return $output;
-    }
-
-    /**
-     * Detect whether or not the CLI supports colored output.
-     *
-     * @codeCoverageIgnore
-     *
-     * @return bool
-     */
-    public static function isColorSupported()
-    {
-        // Windows.
-        if (\DIRECTORY_SEPARATOR === '\\') {
-            if (\getenv('ANSICON') !== false || \getenv('ConEmuANSI') === 'ON') {
-                return true;
-            }
-
-            if (\function_exists('sapi_windows_vt100_support')) {
-                // phpcs:ignore PHPCompatibility.FunctionUse.NewFunctions.sapi_windows_vt100_supportFound
-                return @\sapi_windows_vt100_support(\STDOUT);
-            }
-
-            return false;
-        }
-
-        if (\getenv('GITHUB_ACTIONS')) {
-            return true;
-        }
-
-        // Linux/MacOS.
-        if (\function_exists('posix_isatty')) {
-            return @\posix_isatty(\STDOUT);
-        }
-
-        return false;
     }
 }

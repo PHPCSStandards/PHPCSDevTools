@@ -271,7 +271,7 @@ final class Config
 
         if (empty($args)) {
             // No options set.
-            $this->showColored = HelpTextFormatter::isColorSupported();
+            $this->showColored = $this->isColorSupported();
 
             return;
         }
@@ -283,7 +283,7 @@ final class Config
         } elseif (isset($argsFlipped['--colors'])) {
             $this->showColored = true;
         } else {
-            $this->showColored = HelpTextFormatter::isColorSupported();
+            $this->showColored = $this->isColorSupported();
         }
 
         if (isset($argsFlipped['-h'])
@@ -358,6 +358,41 @@ final class Config
                 $this->targetDirs[] = $realpath;
             }
         }
+    }
+
+    /**
+     * Detect whether or not the CLI supports colored output.
+     *
+     * @codeCoverageIgnore
+     *
+     * @return bool
+     */
+    protected function isColorSupported()
+    {
+        // Windows.
+        if (\DIRECTORY_SEPARATOR === '\\') {
+            if (\getenv('ANSICON') !== false || \getenv('ConEmuANSI') === 'ON') {
+                return true;
+            }
+
+            if (\function_exists('sapi_windows_vt100_support')) {
+                // phpcs:ignore PHPCompatibility.FunctionUse.NewFunctions.sapi_windows_vt100_supportFound
+                return @\sapi_windows_vt100_support(\STDOUT);
+            }
+
+            return false;
+        }
+
+        if (\getenv('GITHUB_ACTIONS')) {
+            return true;
+        }
+
+        // Linux/MacOS.
+        if (\function_exists('posix_isatty')) {
+            return @\posix_isatty(\STDOUT);
+        }
+
+        return false;
     }
 
     /**
