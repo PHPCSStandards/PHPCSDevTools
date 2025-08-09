@@ -47,7 +47,7 @@ class FileList
     /**
      * Regex iterator.
      *
-     * @var \RegexIterator<mixed, mixed, \Traversable<mixed, mixed>>
+     * @var \RegexIterator<mixed, mixed, \Traversable<TKey, TValue>>
      */
     protected $fileIterator;
 
