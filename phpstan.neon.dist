@@ -9,3 +9,15 @@ parameters:
     bootstrapFiles:
         - phpunit-bootstrap.php
     treatPhpDocTypesAsCertain: false
+
+    ignoreErrors:
+        # yamllint disable rule:line-length
+
+        # Level 3
+        # Bug upstream. See: https://github.com/phpstan/phpstan/issues/13325
+        -
+            message: '`^Property PHPCSDevTools\\Scripts\\FileList::\$fileIterator \(RegexIterator<[^)]+>>\) does not accept RegexIterator<[^>]+>>\.$`'
+            path: Scripts/FileList.php
+            count: 1
+
+            # yamllint enable rule:line-length
