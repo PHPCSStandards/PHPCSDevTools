@@ -56,7 +56,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: 'latest'
-          ini-values: error_reporting=-1, display_errors=On, log_errors_max_len=0
+          ini-values: error_reporting=-1, display_errors=On, display_startup_errors=On, log_errors_max_len=0
           coverage: none
 
       - name: Prepare the files which will be deployed to the GH Pages website
