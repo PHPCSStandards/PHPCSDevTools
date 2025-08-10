@@ -130,13 +130,13 @@ Options:
         $config          = new Config(new TestWriter());
 
         $getHelp = new ReflectionMethod($config, 'getHelp');
-        $getHelp->setAccessible(true);
+        (\PHP_VERSION_ID < 80100) && $getHelp->setAccessible(true);
 
         $actual = $getHelp->invoke($config);
         $actual = \str_replace(["\r\n", "\r"], "\n", $actual);
 
         // Reset to prevent influencing other tests, even if this test would fail.
-        $getHelp->setAccessible(false);
+        (\PHP_VERSION_ID < 80100) && $getHelp->setAccessible(false);
 
         $this->assertSame($this->expectedOutputColorized, $actual);
     }
