@@ -53,7 +53,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          ini-values: error_reporting=-1, display_errors=On
+          ini-values: error_reporting=-1, display_errors=On, display_startup_errors=On
           coverage: none
 
       # Install dependencies and handle caching in one go.
@@ -136,9 +136,9 @@ jobs:
         id: set_ini
         run: |
           if [ "${{ contains( matrix.phpcs_version, 'dev' ) }}" != "true" ]; then
-            echo 'PHP_INI=error_reporting=E_ALL & ~E_DEPRECATED, display_errors=On' >> "$GITHUB_OUTPUT"
+            echo 'PHP_INI=error_reporting=E_ALL & ~E_DEPRECATED, display_errors=On, display_startup_errors=On' >> "$GITHUB_OUTPUT"
           else
-            echo 'PHP_INI=error_reporting=-1, display_errors=On' >> "$GITHUB_OUTPUT"
+            echo 'PHP_INI=error_reporting=-1, display_errors=On, display_startup_errors=On' >> "$GITHUB_OUTPUT"
           fi
 
       - name: Install PHP
