@@ -12,6 +12,17 @@ parameters:
     treatPhpDocTypesAsCertain: false
 
     ignoreErrors:
+        # yamllint disable rule:line-length
+
+        # Level 3
+        # Bug upstream. See: https://github.com/phpstan/phpstan/issues/13325
+        -
+            message: '`^Property PHPCSDevTools\\Scripts\\Utils\\FileList::\$fileIterator \(RegexIterator<[^)]+>>\) does not accept RegexIterator<[^>]+>>\.$`'
+            path: Scripts/Utils/FileList.php
+            count: 1
+
+            # yamllint enable rule:line-length
+
         # Level 5
         -
             count: 1
