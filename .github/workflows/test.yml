@@ -167,6 +167,8 @@ jobs:
             phpcs_version: '3.8.0'
           - php: '8.4'
             phpcs_version: '3.8.0'
+          - php: '8.5'
+            phpcs_version: '3.13.4'
 
     name: "Test: PHP ${{ matrix.php }} - PHPCS ${{ matrix.phpcs_version }}"
 
