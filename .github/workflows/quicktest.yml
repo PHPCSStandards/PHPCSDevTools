@@ -107,7 +107,7 @@ jobs:
     strategy:
       matrix:
         php: ['5.4', 'latest']
-        phpcs_version: ['3.1.0', 'dev-master']
+        phpcs_version: ['3.1.0', '3.x-dev']
 
         exclude:
           # PHP 3.1.0 is incompatible with PHP >= 8.0.
@@ -120,7 +120,11 @@ jobs:
             phpcs_version: '3.8.0'
 
           - php: '7.2'
+            phpcs_version: '4.0.0'
+          - php: '7.2'
             phpcs_version: '4.x-dev'
+          - php: 'latest'
+            phpcs_version: '4.0.0'
           - php: 'latest'
             phpcs_version: '4.x-dev'
 
