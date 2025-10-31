@@ -38,12 +38,12 @@ final class TokenListUnitTest extends UtilityMethodTestCase
      */
     public function testOutput()
     {
-        if (version_compare(Config::VERSION, '3.99.99', '>') === true) {
+        if (\version_compare(Config::VERSION, '3.99.99', '>') === true) {
             // As of PHPCS 4.0, whitespace after the long PHP open tag is tokenized separately,
             // hence the difference in test expectations.
-            $expected = file_get_contents(__DIR__ . '/TokenListExpectationPhpcs4.txt');
+            $expected = \file_get_contents(__DIR__ . '/TokenListExpectationPhpcs4.txt');
         } else {
-            $expected = file_get_contents(__DIR__ . '/TokenListExpectationPhpcs3.txt');
+            $expected = \file_get_contents(__DIR__ . '/TokenListExpectationPhpcs3.txt');
         }
 
         if (empty(self::$phpcsFile->ruleset->tokenListeners)) {
