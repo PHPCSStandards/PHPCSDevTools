@@ -1,0 +1,7 @@
+<documentation title="Invalid Path To Doc">
+    <standard>
+    <![CDATA[
+    Valid file but invalid directory structure in the path and thus unable to determine the standard.
+    ]]>
+    </standard>
+</documentation>

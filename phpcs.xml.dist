@@ -62,4 +62,90 @@
         <exclude-pattern>/Tests/*\.php$</exclude-pattern>
     </rule>
 
+    <!-- Exclusions for the DocCodeExamples script as the minimum PHP version for this script is 7.0 -->
+	<rule ref="PHPCompatibility.Constants.NewMagicClassConstant">
+		<exclude-pattern>/Scripts/DocCodeExamples/*\.php$</exclude-pattern>
+		<exclude-pattern>/Tests/DocCodeExamples/*\.php$</exclude-pattern>
+	</rule>
+
+	<rule ref="PHPCompatibility.FunctionDeclarations.NewParamTypeDeclarations.arrayFound">
+		<exclude-pattern>/Scripts/DocCodeExamples/*\.php$</exclude-pattern>
+		<exclude-pattern>/Tests/DocCodeExamples/*\.php$</exclude-pattern>
+	</rule>
+
+	<rule ref="PHPCompatibility.FunctionDeclarations.NewParamTypeDeclarations.boolFound">
+		<exclude-pattern>/Scripts/DocCodeExamples/*\.php$</exclude-pattern>
+		<exclude-pattern>/Tests/DocCodeExamples/*\.php$</exclude-pattern>
+	</rule>
+
+	<rule ref="PHPCompatibility.FunctionDeclarations.NewParamTypeDeclarations.class_nameFound">
+		<exclude-pattern>/Scripts/DocCodeExamples/*\.php$</exclude-pattern>
+		<exclude-pattern>/Tests/DocCodeExamples/*\.php$</exclude-pattern>
+	</rule>
+
+	<rule ref="PHPCompatibility.FunctionDeclarations.NewParamTypeDeclarations.intFound">
+		<exclude-pattern>/Scripts/DocCodeExamples/*\.php$</exclude-pattern>
+		<exclude-pattern>/Tests/DocCodeExamples/*\.php$</exclude-pattern>
+	</rule>
+
+	<rule ref="PHPCompatibility.FunctionDeclarations.NewParamTypeDeclarations.stringFound">
+		<exclude-pattern>/Scripts/DocCodeExamples/*\.php$</exclude-pattern>
+		<exclude-pattern>/Tests/DocCodeExamples/*\.php$</exclude-pattern>
+	</rule>
+
+	<rule ref="PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.arrayFound">
+		<exclude-pattern>/Scripts/DocCodeExamples/*\.php$</exclude-pattern>
+		<exclude-pattern>/Tests/DocCodeExamples/*\.php$</exclude-pattern>
+	</rule>
+
+	<rule ref="PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.boolFound">
+		<exclude-pattern>/Scripts/DocCodeExamples/*\.php$</exclude-pattern>
+		<exclude-pattern>/Tests/DocCodeExamples/*\.php$</exclude-pattern>
+	</rule>
+
+	<rule ref="PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.class_nameFound">
+		<exclude-pattern>/Scripts/DocCodeExamples/*\.php$</exclude-pattern>
+		<exclude-pattern>/Tests/DocCodeExamples/*\.php$</exclude-pattern>
+	</rule>
+
+	<rule ref="PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.intFound">
+		<exclude-pattern>/Scripts/DocCodeExamples/*\.php$</exclude-pattern>
+		<exclude-pattern>/Tests/DocCodeExamples/*\.php$</exclude-pattern>
+	</rule>
+
+	<rule ref="PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.stringFound">
+		<exclude-pattern>/Scripts/DocCodeExamples/*\.php$</exclude-pattern>
+		<exclude-pattern>/Tests/DocCodeExamples/*\.php$</exclude-pattern>
+	</rule>
+
+	<rule ref="PHPCompatibility.FunctionUse.NewFunctionParameters.token_get_all_flagsFound">
+		<exclude-pattern>/Scripts/DocCodeExamples/*\.php$</exclude-pattern>
+		<exclude-pattern>/Tests/DocCodeExamples/*\.php$</exclude-pattern>
+	</rule>
+
+	<rule ref="PHPCompatibility.Constants.NewConstants.token_parseFound">
+		<exclude-pattern>/Scripts/DocCodeExamples/*\.php$</exclude-pattern>
+		<exclude-pattern>/Tests/DocCodeExamples/*\.php$</exclude-pattern>
+	</rule>
+
+	<rule ref="PHPCompatibility.InitialValue.NewConstantArraysUsingConst">
+		<exclude-pattern>/Scripts/DocCodeExamples/*\.php$</exclude-pattern>
+		<exclude-pattern>/Tests/DocCodeExamples/*\.php$</exclude-pattern>
+	</rule>
+
+	<rule ref="PHPCompatibility.LanguageConstructs.NewEmptyNonVariable">
+		<exclude-pattern>/Scripts/DocCodeExamples/*\.php$</exclude-pattern>
+		<exclude-pattern>/Tests/DocCodeExamples/*\.php$</exclude-pattern>
+	</rule>
+
+	<rule ref="PHPCompatibility.LanguageConstructs.NewLanguageConstructs.t_ellipsisFound">
+		<exclude-pattern>/Scripts/DocCodeExamples/*\.php$</exclude-pattern>
+		<exclude-pattern>/Tests/DocCodeExamples/*\.php$</exclude-pattern>
+	</rule>
+
+	<rule ref="PHPCompatibility.InitialValue.NewConstantScalarExpressions.constFound">
+		<exclude-pattern>/Scripts/DocCodeExamples/*\.php$</exclude-pattern>
+		<exclude-pattern>/Tests/DocCodeExamples/*\.php$</exclude-pattern>
+	</rule>
+
 </ruleset>

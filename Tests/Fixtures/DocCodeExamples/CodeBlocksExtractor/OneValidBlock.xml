@@ -1,0 +1,14 @@
+<documentation title="One Valid Block">
+    <standard>
+    <![CDATA[
+    This is a test file with one valid code block.
+    ]]>
+    </standard>
+    <code_comparison>
+        <code title="Valid: Example of a valid code block.">
+        <![CDATA[
+// Some PHP code.
+        ]]>
+        </code>
+    </code_comparison>
+</documentation>

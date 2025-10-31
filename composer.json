@@ -52,7 +52,8 @@
         }
     },
     "bin": [
-        "bin/phpcs-check-feature-completeness"
+        "bin/phpcs-check-feature-completeness",
+        "bin/phpcs-check-doc-examples"
     ],
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -62,6 +63,9 @@
         ],
         "lintlt72": [
             "@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --show-deprecated --exclude vendor --exclude .git --exclude .github/build"
+        ],
+        "lintlt70": [
+            "@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --show-deprecated --exclude vendor --exclude .git --exclude .github/build --exclude Scripts/DocCodeExamples --exclude Tests/DocCodeExamples"
         ],
         "checkcs": [
             "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs"
@@ -78,6 +82,9 @@
         "test-tools": [
             "@php ./vendor/phpunit/phpunit/phpunit --testsuite DevTools"
         ],
+        "test-doc-code-examples": [
+            "@php ./vendor/phpunit/phpunit/phpunit --testsuite DocCodeExamples"
+        ],
         "test-lte9": [
             "@php ./vendor/phpunit/phpunit/phpunit -c phpunitlte9.xml.dist"
         ],
@@ -86,6 +93,9 @@
         ],
         "test-tools-lte9": [
             "@php ./vendor/phpunit/phpunit/phpunit -c phpunitlte9.xml.dist --testsuite DevTools"
+        ],
+        "test-doc-code-examples-lte9": [
+            "@php ./vendor/phpunit/phpunit/phpunit -c phpunitlte9.xml.dist --testsuite DocCodeExamples"
         ],
         "check-complete": [
             "@php ./bin/phpcs-check-feature-completeness ./PHPCSDebug"

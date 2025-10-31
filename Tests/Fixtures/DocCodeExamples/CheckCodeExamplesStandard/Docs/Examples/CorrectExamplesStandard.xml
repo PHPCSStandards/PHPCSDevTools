@@ -1,0 +1,38 @@
+<documentation title="Correct Examples">
+    <standard>
+    <![CDATA[
+    Documentation containing valid and invalid code examples that are correct. The valid examples
+    don't violate the sniff, and the invalid examples do.
+    ]]>
+    </standard>
+    <code_comparison>
+        <code title="Valid: valid code example.">
+        <![CDATA[
+function sniffValidationWillPass() {}
+        ]]>
+        </code>
+        <code title="Invalid: invalid code example.">
+        <![CDATA[
+function sniffValidationWillFail() {}
+        ]]>
+        </code>
+    </code_comparison>
+    <standard>
+    <![CDATA[
+    Another <standard> block containing valid and invalid code examples that are correct. The valid
+    examples don't violate the sniff, and the invalid examples do.
+    ]]>
+    </standard>
+    <code_comparison>
+        <code title="Valid: valid code example.">
+            <![CDATA[
+function sniffValidationWillPass() {}
+        ]]>
+        </code>
+        <code title="Invalid: invalid code example.">
+            <![CDATA[
+function sniffValidationWillFail() {}
+        ]]>
+        </code>
+    </code_comparison>
+</documentation>

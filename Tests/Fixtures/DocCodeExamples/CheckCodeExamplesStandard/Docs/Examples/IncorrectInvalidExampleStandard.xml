@@ -1,0 +1,20 @@
+<documentation title="Incorrect Invalid Example">
+    <standard>
+    <![CDATA[
+    Documentation containing an invalid code example that is incorrect as it does not violate the
+    sniff. The valid example is correct (it also does not violate the sniff as expected).
+    ]]>
+    </standard>
+    <code_comparison>
+        <code title="Valid: valid code example.">
+        <![CDATA[
+function sniffValidationWillPass() {}
+        ]]>
+        </code>
+        <code title="Invalid: invalid code examples.">
+        <![CDATA[
+function sniffValidationWillPass() {}
+        ]]>
+        </code>
+    </code_comparison>
+</documentation>

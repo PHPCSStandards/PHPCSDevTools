@@ -1,0 +1,1 @@
+XML documentation files should end with the "Standard.xml" suffix

@@ -68,9 +68,13 @@ jobs:
         if: ${{ matrix.php >= '7.2' }}
         run: composer lint
 
-      - name: Lint against parse errors (PHP < 7.2)
-        if: ${{ matrix.php < '7.2' }}
+      - name: Lint against parse errors (PHP < 7.2 && PHP >= 7.0)
+        if: ${{ matrix.php < '7.2' && matrix.php >= '7.0' }}
         run: composer lintlt72
+
+      - name: Lint against parse errors (PHP < 7.0)
+        if: ${{ matrix.php < '7.0' }}
+        run: composer lintlt70
 
       # Check that any sniffs available are feature complete.
       # This acts as an integration test for the feature completeness script,
@@ -186,3 +190,86 @@ jobs:
 
       - name: Run the unit tests for the PHPCSDebug sniff
         run: composer test-sniff${{ steps.phpunit_script.outputs.SUFFIX }}
+
+  # Run CI checks/tests for the DocCodeExamples script as it requires PHP >= 7.0.
+  quicktest-doc-code-examples:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'windows-latest']
+        php: ['7.0', 'latest']
+        phpcs_version: ['dev-master']
+
+        include:
+          - os: 'ubuntu-latest'
+            php: '7.0'
+            phpcs_version: '3.1.0'
+          - os: 'windows-latest'
+            php: '7.0'
+            phpcs_version: '3.1.0'
+
+    name: "QTest: PHP ${{ matrix.php }} - PHPCS ${{ matrix.phpcs_version }} (${{ matrix.os == 'windows-latest' && 'Win' || 'Linux' }})"
+
+    steps:
+      - name: Prepare git to leave line endings alone
+        run: git config --global core.autocrlf input
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # On stable PHPCS versions, allow for PHP deprecation notices.
+      # Unit tests don't need to fail on those for stable releases where those issues won't get fixed anymore.
+      - name: Setup ini config
+        id: set_ini
+        shell: bash
+        run: |
+          if [ "${{ matrix.phpcs_version }}" != "dev-master" ]; then
+            echo 'PHP_INI=error_reporting=E_ALL & ~E_DEPRECATED, display_errors=On' >> "$GITHUB_OUTPUT"
+          else
+            echo 'PHP_INI=error_reporting=-1, display_errors=On' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          ini-values: ${{ steps.set_ini.outputs.PHP_INI }}
+          coverage: none
+
+      - name: 'Composer: adjust dependencies'
+        run: |
+          # Set the PHPCS version to be used in the tests.
+          composer require --no-update squizlabs/php_codesniffer:"${{ matrix.phpcs_version }}" --no-scripts --no-interaction
+          # Remove the PHPCSDevCS dependency as it has different PHPCS requirements and would block installs.
+          composer remove --no-update --dev phpcsstandards/phpcsdevcs --no-scripts --no-interaction
+
+      # Install dependencies and handle caching in one go.
+      # @link https://github.com/marketplace/actions/install-php-dependencies-with-composer
+      - name: Install Composer dependencies
+        uses: "ramsey/composer-install@v3"
+        with:
+          # Bust the cache at least once a month - output format: YYYY-MM.
+          custom-cache-suffix: $(date -u "+%Y-%m")
+
+      - name: Grab PHPUnit version
+        id: phpunit_version
+        shell: bash
+        # yamllint disable rule:line-length
+        run: echo "VERSION=$(vendor/bin/phpunit --version | grep --only-matching --max-count=1 --extended-regexp '\b[0-9]+\.[0-9]+')" >> "$GITHUB_OUTPUT"
+        # yamllint enable rule:line-length
+
+      - name: Determine PHPUnit composer script to use
+        id: phpunit_script
+        shell: bash
+        run: |
+          if [ "${{ startsWith( steps.phpunit_version.outputs.VERSION, '11.' ) }}" == "true" ]; then
+            echo 'SUFFIX=' >> "$GITHUB_OUTPUT"
+          elif [ "${{ startsWith( steps.phpunit_version.outputs.VERSION, '10.' ) }}" == "true" ]; then
+            echo 'SUFFIX=' >> "$GITHUB_OUTPUT"
+          else
+            echo 'SUFFIX=-lte9' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run the unit tests for the DocCodeExamples script
+        run: composer test-doc-code-examples${{ steps.phpunit_script.outputs.SUFFIX }}

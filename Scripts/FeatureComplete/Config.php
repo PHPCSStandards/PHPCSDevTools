@@ -10,6 +10,7 @@
 
 namespace PHPCSDevTools\Scripts\FeatureComplete;
 
+use PHPCSDevTools\Scripts\Utils\HelpTextFormatter;
 use PHPCSDevTools\Scripts\Utils\Writer;
 use RuntimeException;
 
@@ -34,20 +35,6 @@ use RuntimeException;
  */
 final class Config
 {
-
-    /**
-     * Max width for help text.
-     *
-     * @var int
-     */
-    const MAX_WIDTH = 80;
-
-    /**
-     * Margin for help options.
-     *
-     * @var string
-     */
-    const LEFT_MARGIN = '  ';
 
     /**
      * Writer for sending output.
@@ -284,7 +271,7 @@ final class Config
 
         if (empty($args)) {
             // No options set.
-            $this->showColored = $this->isColorSupported();
+            $this->showColored = HelpTextFormatter::isColorSupported();
 
             return;
         }
@@ -296,7 +283,7 @@ final class Config
         } elseif (isset($argsFlipped['--colors'])) {
             $this->showColored = true;
         } else {
-            $this->showColored = $this->isColorSupported();
+            $this->showColored = HelpTextFormatter::isColorSupported();
         }
 
         if (isset($argsFlipped['-h'])
@@ -374,41 +361,6 @@ final class Config
     }
 
     /**
-     * Detect whether or not the CLI supports colored output.
-     *
-     * @codeCoverageIgnore
-     *
-     * @return bool
-     */
-    protected function isColorSupported()
-    {
-        // Windows.
-        if (\DIRECTORY_SEPARATOR === '\\') {
-            if (\getenv('ANSICON') !== false || \getenv('ConEmuANSI') === 'ON') {
-                return true;
-            }
-
-            if (\function_exists('sapi_windows_vt100_support')) {
-                // phpcs:ignore PHPCompatibility.FunctionUse.NewFunctions.sapi_windows_vt100_supportFound
-                return @\sapi_windows_vt100_support(\STDOUT);
-            }
-
-            return false;
-        }
-
-        if (\getenv('GITHUB_ACTIONS')) {
-            return true;
-        }
-
-        // Linux/MacOS.
-        if (\function_exists('posix_isatty')) {
-            return @\posix_isatty(\STDOUT);
-        }
-
-        return false;
-    }
-
-    /**
      * Retrieve the version number of this script.
      *
      * @return string
@@ -429,58 +381,6 @@ final class Config
      */
     private function getHelp()
     {
-        $output = '';
-        foreach ($this->helpTexts as $section => $options) {
-            $longestOptionLength = 0;
-            foreach ($options as $option) {
-                if (isset($option['arg'])) {
-                    $longestOptionLength = \max($longestOptionLength, \strlen($option['arg']));
-                }
-            }
-
-            if ($this->showColored === true) {
-                $output .= "\033[33m{$section}:\033[0m" . \PHP_EOL;
-            } else {
-                $output .= "{$section}:" . \PHP_EOL;
-            }
-
-            $descWidth = (self::MAX_WIDTH - ($longestOptionLength + 1 + \strlen(self::LEFT_MARGIN)));
-            $descBreak = \PHP_EOL . self::LEFT_MARGIN . \str_pad(' ', ($longestOptionLength + 1));
-
-            foreach ($options as $option) {
-                if (isset($option['text'])) {
-                    $text = $option['text'];
-                    if ($this->showColored === true) {
-                        $text = \preg_replace('`(\[[^\]]+\])`', "\033[36m" . '$1' . "\033[0m", $text);
-                    }
-                    $output .= self::LEFT_MARGIN . $text . \PHP_EOL;
-                }
-
-                if (isset($option['arg'])) {
-                    $arg = \str_pad($option['arg'], $longestOptionLength);
-                    if ($this->showColored === true) {
-                        $arg = \preg_replace('`(<[^>]+>)`', "\033[0m\033[36m" . '$1', $arg);
-                        $arg = "\033[32m{$arg}\033[0m";
-                    }
-
-                    $descText = \wordwrap($option['desc'], $descWidth, $descBreak);
-                    $desc     = \explode('. ', $option['desc']);
-                    if (\count($desc) > 1) {
-                        $descText = '';
-                        foreach ($desc as $key => $sentence) {
-                            $descText .= ($key === 0) ? '' : $descBreak;
-                            $descText .= \wordwrap($sentence, $descWidth, $descBreak);
-                            $descText  = \rtrim($descText, '.') . '.';
-                        }
-                    }
-
-                    $output .= self::LEFT_MARGIN . $arg . ' ' . $descText . \PHP_EOL;
-                }
-            }
-
-            $output .= \PHP_EOL;
-        }
-
-        return $output;
+        return HelpTextFormatter::format($this->helpTexts, $this->showColored);
     }
 }

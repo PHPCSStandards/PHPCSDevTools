@@ -1,0 +1,26 @@
+<documentation title="PHPCSUtils Cache Sniff">
+    <standard>
+    <![CDATA[
+    Documentation containing valid and invalid code examples that are correct. Uses a sniff that
+    relies on PHPCSUtils caching. Ensures that the script correctly calls PHPCS programatically by
+    using different filenames for each instance of DummyFile, so that the cache is not shared
+    between different code examples causing incorrect results.
+
+    If DummyFile is not called with different filenames, PHPCSUtils cache will be shared for the two
+    code examples below, causing the second code example to be incorrectly marked as valid and
+    causing the test to fail.
+    ]]>
+    </standard>
+    <code_comparison>
+        <code title="Valid: valid code example.">
+        <![CDATA[
+function sniffValidationWill($pass) {}
+        ]]>
+        </code>
+        <code title="Invalid: invalid code example.">
+        <![CDATA[
+function sniffValidationWill($fail) {}
+        ]]>
+        </code>
+    </code_comparison>
+</documentation>

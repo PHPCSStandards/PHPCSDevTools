@@ -27,6 +27,7 @@ This is a set of tools to assist developers of sniffs for [PHP CodeSniffer][phpc
     + [Stand-alone Installation](#stand-alone-installation)
 * [Features](#features)
     + [Checking whether all sniffs in a PHPCS standard are feature complete](#checking-whether-all-sniffs-in-a-phpcs-standard-are-feature-complete)
+    + [Checking code examples in sniff documentation are correct](#checking-code-examples-in-sniff-documentation-are-correct)
     + [Sniff Debugging](#sniff-debugging)
     + [Documentation XSD Validation](#documentation-xsd-validation)
 * [Contributing](#contributing)
@@ -133,6 +134,49 @@ directories <dir>     One or more specific directories to examine.
 -V, --version         Display the current version of this script.
 ```
 
+### Checking code examples in sniff documentation are correct
+
+You can verify that the code examples in your sniff documentation XML files correctly demonstrate the behavior of the sniffs. In other words, check that "Valid" examples don't trigger the sniff and "Invalid" examples do trigger the sniff.
+
+Note that while this repository requires PHP >= 5.4, this script requires PHP >= 7.0.
+
+Be aware that this script is unable to differentiate between multiple code examples in the same `<code>` block. This means that for invalid examples, the script might miss ones that don't trigger the sniff if, in the same `<code>` block, there is at least one example that does trigger the sniff.  
+
+To use the tool, run it from the root of your standards repo like so:
+```bash
+# When installed as a project dependency:
+vendor/bin/phpcs-check-doc-examples
+
+# When installed globally with Composer:
+phpcs-check-doc-examples
+
+# When installed as a git clone or otherwise:
+php path/to/PHPCSDevTools/bin/phpcs-check-doc-examples
+```
+
+If all is good, the script will exit with code 0 and a summary of what was checked.
+
+If there are issues with the code examples, you will see error messages for each problematic example, like so:
+```text
+Errors found while processing path/to/project/StandardName/Docs/Category/SniffNameStandard.xml:
+
+ERROR: Code block is valid and PHPCS should have returned nothing, but instead it returned an error.
+Code block title: "Valid: invalid valid code example."
+Code block content: "function sniffValidationWillFail() {}"
+```
+
+#### Options
+```text
+directories|files               One or more specific directories or files to examine.
+                                Defaults to the directory from which the script is run.
+--exclude=<dir1,dir2>           Comma-delimited list of relative paths of directories to
+                                exclude from the scan.
+--ignore-sniffs=<sniff1,sniff2> Comma-delimited list of sniffs to ignore.
+--colors                        Enable colors in console output. (disables auto detection of color support)
+--no-colors                     Disable colors in console output.
+--help                          Print the script help page.
+-V, --version                   Display the current version of this script.
+```
 
 ### Sniff Debugging
 

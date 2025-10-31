@@ -1,0 +1,19 @@
+<documentation title="Syntax Error Example">
+    <standard>
+    <![CDATA[
+    Documentation containing valid and an invalid code example with a syntax error.
+    ]]>
+    </standard>
+    <code_comparison>
+        <code title="Valid: syntax error example.">
+        <![CDATA[
+sniffValidationWillPass() // Syntax error: missing semicolon.
+        ]]>
+        </code>
+        <code title="Invalid: syntax error example.">
+        <![CDATA[
+sniffValidationWillFail() // Syntax error: missing semicolon.
+        ]]>
+        </code>
+    </code_comparison>
+</documentation>

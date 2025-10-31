@@ -1,0 +1,36 @@
+<documentation title="Valid And Invalid Blocks">
+    <standard>
+    <![CDATA[
+    This is a test file with valid and invalid code blocks.
+    ]]>
+    </standard>
+    <code_comparison>
+        <code title="Valid: Example of a valid code block.">
+        <![CDATA[
+// Some PHP code that does not trigger the sniff.
+        ]]>
+        </code>
+        <code title="Invalid: Example of an invalid code block.">
+        <![CDATA[
+// Some PHP code that does trigger the sniff.
+        ]]>
+        </code>
+    </code_comparison>
+    <standard>
+    <![CDATA[
+    Another <standard> block in this test file with valid and invalid code blocks.
+    ]]>
+    </standard>
+    <code_comparison>
+        <code title="Valid: Another example of a valid code block.">
+        <![CDATA[
+// Another PHP code that does not trigger the sniff.
+        ]]>
+        </code>
+        <code title="Invalid: Another example of an invalid code block.">
+        <![CDATA[
+// Another PHP code that does trigger the sniff.
+        ]]>
+        </code>
+    </code_comparison>
+</documentation>

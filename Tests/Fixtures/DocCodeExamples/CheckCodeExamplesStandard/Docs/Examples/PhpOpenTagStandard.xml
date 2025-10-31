@@ -1,0 +1,55 @@
+<documentation title="PHP Open Tag">
+    <standard>
+    <![CDATA[
+    Documentation containing valid and invalid code examples that are correct. Contains a variation
+    of code examples with and without the PHP open tag and PHP short open tag to test that the
+    script correctly adds one when needed.
+    ]]>
+    </standard>
+    <code_comparison>
+        <code title="Valid: valid code example without PHP open tag.">
+        <![CDATA[
+function sniffValidationWillPass() {}
+        ]]>
+        </code>
+        <code title="Invalid: invalid code example with PHP open tag.">
+        <![CDATA[
+<?php
+function sniffValidationWillFail() {}
+        ]]>
+        </code>
+    </code_comparison>
+    <code_comparison>
+        <code title="Valid: valid code example with uppercase PHP open tag.">
+        <![CDATA[
+<?PHP
+function sniffValidationWillPass() {}
+        ]]>
+        </code>
+        <code title="Invalid: invalid code example with varying case PHP open tag.">
+        <![CDATA[
+<?pHp
+function sniffValidationWillFail() {}
+        ]]>
+        </code>
+    </code_comparison>
+    <code_comparison>
+        <code title="Valid: PHP short open echo tag.">
+            <![CDATA[
+<?= $test ?>
+        ]]>
+        </code>
+        <code title="Invalid: HTML and PHP open tag.">
+        <![CDATA[
+<div><p><?php function sniffValidationWillFail() {} ?></p></div>
+        ]]>
+        </code>
+    </code_comparison>
+    <code_comparison>
+        <code title="Valid: HTML and PHP short open echo tag.">
+        <![CDATA[
+<div><p><?= $text ?></p></div>
+        ]]>
+        </code>
+    </code_comparison>
+</documentation>
