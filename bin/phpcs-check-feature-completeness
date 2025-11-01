@@ -47,7 +47,7 @@ $autoloadLocations = [
 foreach ($autoloadLocations as $file) {
     $file = realpath($file);
     if ($file !== false && is_file($file) === true) {
-        require_once($file);
+        require_once $file;
         break;
     }
 }
