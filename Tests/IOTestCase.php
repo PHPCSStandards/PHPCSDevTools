@@ -47,9 +47,9 @@ abstract class IOTestCase extends XTestCase
         }
 
         $descriptorspec = [
-            0 => ['pipe', 'r'],  // stdin
-            1 => ['pipe', 'w'],  // stdout
-            2 => ['pipe', 'w'],  // stderr
+            0 => ['pipe', 'r'], // stdin
+            1 => ['pipe', 'w'], // stdout
+            2 => ['pipe', 'w'], // stderr
         ];
 
         $options = null;
