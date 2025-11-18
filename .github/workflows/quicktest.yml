@@ -65,11 +65,11 @@ jobs:
           custom-cache-suffix: $(date -u "+%Y-%m")
 
       - name: Lint against parse errors (PHP 7.2+)
-        if: ${{ matrix.php >= '7.2' }}
+        if: ${{ matrix.php >= '7.2' || matrix.php == 'latest' }}
         run: composer lint
 
       - name: Lint against parse errors (PHP < 7.2)
-        if: ${{ matrix.php < '7.2' }}
+        if: ${{ matrix.php < '7.2' && matrix.php != 'latest' }}
         run: composer lintlt72
 
       # Check that any sniffs available are feature complete.
