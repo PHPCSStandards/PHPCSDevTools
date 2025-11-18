@@ -22,11 +22,11 @@ jobs:
 
     strategy:
       matrix:
-        php: ['5.4', '5.5', '5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
+        php: ['5.4', '5.5', '5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5', '8.6']
 
     name: "Test + Lint: PHP ${{ matrix.php }}"
 
-    continue-on-error: ${{ matrix.php == '8.5' }}
+    continue-on-error: ${{ matrix.php == '8.6' }}
 
     steps:
       - name: Checkout code
@@ -55,7 +55,7 @@ jobs:
       - name: Install Composer dependencies
         uses: "ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520" # 3.1.1
         with:
-          composer-options: ${{ matrix.php == '8.5' && '--ignore-platform-req=php+' || '' }}
+          composer-options: ${{ matrix.php == '8.6' && '--ignore-platform-req=php+' || '' }}
           # Bust the cache at least once a month - output format: YYYY-MM.
           custom-cache-suffix: $(date -u "+%Y-%m")
 
@@ -110,9 +110,10 @@ jobs:
         # - PHP 8.2 needs PHPCS 3.6.1+ to run without errors.
         # - PHP 8.3 needs PHPCS 3.8.0+ to run without errors (though the errors don't affect this package).
         # - PHP 8.4 needs PHPCS 3.8.0+ to run without errors (officially 3.11.0, but 3.8.0 will work fine).
+        # - PHP 8.5 needs PHPCS 3.13.4+ to run without errors.
         #
         # Additionally, PHPCS 4.x has a minimum version requirement of PHP 7.2.
-        php: ['5.4', '5.5', '5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
+        php: ['5.4', '5.5', '5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5', '8.6']
         phpcs_version: ['3.x-dev', '4.0.0', '4.x-dev']
 
         exclude:
@@ -170,7 +171,7 @@ jobs:
 
     name: "Test: PHP ${{ matrix.php }} - PHPCS ${{ matrix.phpcs_version }}"
 
-    continue-on-error: ${{ matrix.php == '8.5' }}
+    continue-on-error: ${{ matrix.php == '8.6' }}
 
     steps:
       - name: Checkout code
@@ -206,7 +207,7 @@ jobs:
       - name: Install Composer dependencies
         uses: "ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520" # 3.1.1
         with:
-          composer-options: ${{ matrix.php == '8.5' && '--ignore-platform-req=php+' || '' }}
+          composer-options: ${{ matrix.php == '8.6' && '--ignore-platform-req=php+' || '' }}
           # Bust the cache at least once a month - output format: YYYY-MM.
           custom-cache-suffix: $(date -u "+%Y-%m")
 

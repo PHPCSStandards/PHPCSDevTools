@@ -12,7 +12,7 @@
 [![Minimum PHP Version](https://img.shields.io/packagist/dependency-v/phpcsstandards/phpcsdevtools/php.svg)][phpcsdevtools-packagist]
 [![Build Status CS](https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/cs.yml/badge.svg)][gha-qa-results]
 [![Build Status Test](https://github.com/PHPCSStandards/PHPCSDevTools/actions/workflows/test.yml/badge.svg)][gha-test-results]
-[![Tested on PHP 5.4 to nightly](https://img.shields.io/badge/tested%20on-PHP%205.4%20|%205.5%20|%205.6%20|%207.0%20|%207.1%20|%207.2%20|%207.3%20|%207.4%20|%208.0%20|%208.1%20|%208.2%20|%208.3%20|%208.4%20|%20nightly-brightgreen.svg?maxAge=2419200)](https://github.com/PHPCSStandards/PHPCSDevTools/actions?query=workflow%3ATest)
+[![Tested on PHP 5.4 to nightly](https://img.shields.io/badge/tested%20on-PHP%205.4%20|%205.5%20|%205.6%20|%207.0%20|%207.1%20|%207.2%20|%207.3%20|%207.4%20|%208.0%20|%208.1%20|%208.2%20|%208.3%20|%208.4%20|%208.5%20|%20nightly-brightgreen.svg?maxAge=2419200)](https://github.com/PHPCSStandards/PHPCSDevTools/actions?query=workflow%3ATest)
 
 [![License: LGPLv3](https://img.shields.io/github/license/PHPCSStandards/PHPCSDevTools)][phpcsdevtools-license]
 ![Awesome](https://img.shields.io/badge/awesome%3F-yes!-brightgreen.svg)
