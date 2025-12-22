@@ -141,18 +141,18 @@ jobs:
         run: diff -B ./PHPCSDebug/ruleset.xml <(xmllint --format "./PHPCSDebug/ruleset.xml")
 
   phpstan:
-    uses: PHPCSStandards/.github/.github/workflows/reusable-phpstan.yml@main
+    uses: PHPCSStandards/.github/.github/workflows/reusable-phpstan.yml@9d51cbe2ff0bde5f7f5b2cf7608e9e13d593c6f2 # v1.0.0
 
   markdownlint:
     name: 'Lint Markdown'
-    uses: PHPCSStandards/.github/.github/workflows/reusable-markdownlint.yml@main
+    uses: PHPCSStandards/.github/.github/workflows/reusable-markdownlint.yml@9d51cbe2ff0bde5f7f5b2cf7608e9e13d593c6f2 # v1.0.0
 
   remark:
     name: 'QA Markdown'
-    uses: PHPCSStandards/.github/.github/workflows/reusable-remark.yml@main
+    uses: PHPCSStandards/.github/.github/workflows/reusable-remark.yml@9d51cbe2ff0bde5f7f5b2cf7608e9e13d593c6f2 # v1.0.0
 
   yamllint:
     name: 'Lint Yaml'
-    uses: PHPCSStandards/.github/.github/workflows/reusable-yamllint.yml@main
+    uses: PHPCSStandards/.github/.github/workflows/reusable-yamllint.yml@9d51cbe2ff0bde5f7f5b2cf7608e9e13d593c6f2 # v1.0.0
     with:
       strict: true
