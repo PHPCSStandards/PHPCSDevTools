@@ -1,0 +1,72 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Scaffold a new PHPCS sniff class, along with its unit test, fixtures and documentation files.
+ *
+ * This script should be run from the root of a PHPCS standards repo and can
+ * be used both on PHPCS itself and by external standards.
+ *
+ * Usage:
+ *   phpcs-scaffold Namespace.Standard.Category.Sniff
+ *
+ * Options:
+ *   -h, --help            Print this help.
+ *
+ * @package   PHPCSDevTools
+ * @copyright 2019 PHPCSDevTools Contributors
+ * @license   https://opensource.org/licenses/LGPL-3.0 LGPL3
+ * @link      https://github.com/PHPCSStandards/PHPCSDevTools
+ */
+
+
+$autoloadLocations = [
+    __DIR__ . '/../devtools-autoload.php', // Git clone or direct run from within vendor package directory.
+    __DIR__ . '/../phpcsstandards/phpcsdevtools/devtools-autoload.php', // Composer bin dir install.
+    __DIR__ . '/../autoload.php', // Try Composer autoload from a bin dir install.
+    __DIR__ . '/../../../autoload.php', // Try Composer autoload from within vendor package directory.
+    __DIR__ . '/../vendor/autoload.php', // Try Composer autoload from a git clone install.
+];
+
+// Try and find a usable autoload file.
+foreach ($autoloadLocations as $file) {
+    $file = realpath($file);
+    if ($file !== false && is_file($file) === true) {
+        require_once $file;
+        break;
+    }
+}
+
+$fileReader = new PHPCSDevTools\Scripts\Scaffold\FileReader();
+$fileCreator = new PHPCSDevTools\Scripts\Scaffold\FileCreator();
+$writer = new PHPCSDevTools\Scripts\Utils\CliWriter();
+
+$classResolver = new PHPCSDevTools\Scripts\Scaffold\Resolver\ClassResolver();
+$namespaceResolver = new PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver();
+$pathResolver = new PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver();
+
+$templateRenderer = new PHPCSDevTools\Scripts\Scaffold\TemplateRenderer($fileReader);
+
+$documentationGenerator = new PHPCSDevTools\Scripts\Scaffold\Generator\DocumentationGenerator($templateRenderer);
+$fixedFixtureGenerator = new PHPCSDevTools\Scripts\Scaffold\Generator\FixedFixtureGenerator($templateRenderer);
+$fixtureGenerator = new PHPCSDevTools\Scripts\Scaffold\Generator\FixtureGenerator($templateRenderer);
+$sniffGenerator = new PHPCSDevTools\Scripts\Scaffold\Generator\SniffGenerator($classResolver, $namespaceResolver, $templateRenderer);
+$unitTestGenerator = new PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestGenerator($classResolver, $namespaceResolver, $templateRenderer);
+
+$scaffolder = new PHPCSDevTools\Scripts\Scaffold\Scaffolder(
+    $documentationGenerator,
+    $fileCreator,
+    $fixedFixtureGenerator,
+    $fixtureGenerator,
+    $namespaceResolver,
+    $pathResolver,
+    $sniffGenerator,
+    $unitTestGenerator,
+    $writer
+);
+
+if (count($argv) !== 2 || in_array($argv[1], ['-h', '--help'], true) === true) {
+    $scaffolder->printHelp();
+    exit(0);
+}
+
+$scaffolder->scaffold(getcwd(), $argv[1]);
