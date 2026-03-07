@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHPCSDevTools, tools for PHP_CodeSniffer sniff developers.
  *
@@ -11,33 +12,45 @@
 namespace PHPCSDevTools\Scripts\Scaffold;
 
 use PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException;
-use PHPCSDevTools\Scripts\Utils\Writer;
 
-final class FileCreator
+final class FileCreator implements FileCreatorInterface
 {
+
     public function create($path, $contents)
     {
-        if (! is_string($path)) {
+        if (\is_string($path) === false) {
             throw new ScaffolderException('Invalid path provided. Path must be a non-empty string.');
         }
 
-        if (! is_string($contents)) {
+        if (\is_string($contents) === false) {
             throw new ScaffolderException('Invalid contents provided. Contents must be a non-empty string.');
         }
 
-        $directory = dirname($path);
+        $directory = \dirname($path);
 
-        if (! is_dir($directory)) {
-            mkdir($directory, 0755, true);
+        if (\is_dir($directory) === false) {
+            \mkdir($directory, 0755, true);
 
-            if (! is_dir($directory)) {
+            if (\is_dir($directory) === false) {
                 throw new ScaffolderException('Failed to create directory: ' . $directory);
             }
         }
 
-        $written = file_put_contents($path, $contents);
+        $written = \file_put_contents($path, $contents);
         if ($written === false) {
             throw new ScaffolderException('Failed to write file: ' . $path);
         }
+    }
+
+    /**
+     * Check if a file exists at the given path.
+     *
+     * @param string $path the path to the file
+     *
+     * @return bool true if the file exists, false otherwise
+     */
+    public function exists($path)
+    {
+        return \file_exists($path);
     }
 }

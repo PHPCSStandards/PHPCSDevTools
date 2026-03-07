@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHPCSDevTools, tools for PHP_CodeSniffer sniff developers.
  *
@@ -8,25 +9,19 @@
  * @link      https://github.com/PHPCSStandards/PHPCSDevTools
  */
 
-namespace PHPCSDevTools\Tests\Scaffold\Resolver;
+namespace PHPCSDevTools\Tests\Scaffold\Generator;
 
-use PHPCSDevTools\Scripts\Scaffold\Resolver\ClassResolver;
+use PHPCSDevTools\Scripts\Scaffold\Generator\DocsGenerator;
 use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
 
 /**
- * Test the ClassResolver class.
+ * Test the DocsGenerator class.
  *
- * @covers \PHPCSDevTools\Scripts\Scaffold\Resolver\ClassResolver
+ * @covers \PHPCSDevTools\Scripts\Scaffold\Generator\DocsGenerator
  */
-final class ClassResolverTest extends XTestCase
+final class DocsGeneratorTest extends XTestCase
 {
 
-    /**
-     * Example test method.
-     *
-     * @Throws \Throwable
-     * @return void
-     */
     public function testExample()
     {
         self::assertTrue(true);

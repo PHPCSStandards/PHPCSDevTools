@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHPCSDevTools, tools for PHP_CodeSniffer sniff developers.
  *
@@ -8,25 +9,19 @@
  * @link      https://github.com/PHPCSStandards/PHPCSDevTools
  */
 
-namespace PHPCSDevTools\Tests\Scaffold\Generator;
+namespace PHPCSDevTools\Tests\Scaffold\Resolver\NamespaceResolver;
 
-use PHPCSDevTools\Scripts\Scaffold\Generator\DocumentationGenerator;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver\SniffNamespaceResolver;
 use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
 
 /**
- * Test the DocumentationGenerator class.
+ * Test the SniffNamespaceResolver class.
  *
- * @covers \PHPCSDevTools\Scripts\Scaffold\Generator\DocumentationGenerator
+ * @covers \PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver\SniffNamespaceResolver
  */
-final class DocumentationGeneratorTest extends XTestCase
+final class SniffNamespaceResolverTest extends XTestCase
 {
 
-    /**
-     * Example test method.
-     *
-     * @Throws \Throwable
-     * @return void
-     */
     public function testExample()
     {
         self::assertTrue(true);

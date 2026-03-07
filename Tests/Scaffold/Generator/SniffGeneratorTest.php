@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHPCSDevTools, tools for PHP_CodeSniffer sniff developers.
  *
@@ -25,6 +26,7 @@ final class SniffGeneratorTest extends XTestCase
      * Example test method.
      *
      * @Throws \Throwable
+     *
      * @return void
      */
     public function testExample()

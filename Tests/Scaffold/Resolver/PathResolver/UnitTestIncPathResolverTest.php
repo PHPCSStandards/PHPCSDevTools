@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHPCSDevTools, tools for PHP_CodeSniffer sniff developers.
  *
@@ -8,25 +9,19 @@
  * @link      https://github.com/PHPCSStandards/PHPCSDevTools
  */
 
-namespace PHPCSDevTools\Tests\Scaffold\Resolver;
+namespace PHPCSDevTools\Tests\Scaffold\Resolver\PathResolver;
 
-use PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\UnitTestIncPathResolver;
 use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
 
 /**
- * Test the NamespaceResolver class.
+ * Test the UnitTestIncPathResolver class.
  *
- * @covers \PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver
+ * @covers \PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\UnitTestIncPathResolver
  */
-final class NamespaceResolverTest extends XTestCase
+final class UnitTestIncPathResolverTest extends XTestCase
 {
 
-    /**
-     * Example test method.
-     *
-     * @Throws \Throwable
-     * @return void
-     */
     public function testExample()
     {
         self::assertTrue(true);

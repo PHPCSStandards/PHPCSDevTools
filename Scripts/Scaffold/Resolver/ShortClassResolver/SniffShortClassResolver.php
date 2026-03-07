@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHPCSDevTools, tools for PHP_CodeSniffer sniff developers.
  *
@@ -8,18 +9,17 @@
  * @link      https://github.com/PHPCSStandards/PHPCSDevTools
  */
 
-namespace PHPCSDevTools\Scripts\Scaffold\Resolver;
+namespace PHPCSDevTools\Scripts\Scaffold\Resolver\ShortClassResolver;
 
-use PHPCSDevTools\Scripts\Scaffold\SniffName;
+use PHPCSDevTools\Scripts\Scaffold\SniffNameInterface;
 
-final class ClassResolver
+final class SniffShortClassResolver implements SniffShortClassResolverInterface
 {
-    public function resolveUnitTestClass(SniffName $sniffName)
-    {
-        return $sniffName->getSniff() . 'UnitTest';
-    }
 
-    public function resolveSniffClass(SniffName $sniffName)
+    /**
+     * @return non-empty-string
+     */
+    public function resolve(SniffNameInterface $sniffName)
     {
         return $sniffName->getSniff() . 'Sniff';
     }

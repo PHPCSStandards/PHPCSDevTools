@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHPCSDevTools, tools for PHP_CodeSniffer sniff developers.
  *
@@ -10,242 +11,89 @@
 
 namespace PHPCSDevTools\Scripts\Scaffold;
 
-use PHPCSDevTools\Scripts\Scaffold\Generator\DocumentationGenerator;
-use PHPCSDevTools\Scripts\Scaffold\Generator\FixedFixtureGenerator;
-use PHPCSDevTools\Scripts\Scaffold\Generator\FixtureGenerator;
-use PHPCSDevTools\Scripts\Scaffold\Generator\SniffGenerator;
-use PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestGenerator;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver;
+use PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException;
+use PHPCSDevTools\Scripts\Scaffold\Generator\DocsGeneratorInterface;
+use PHPCSDevTools\Scripts\Scaffold\Generator\SniffGeneratorInterface;
+use PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestGeneratorInterface;
+use PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestIncFixedGeneratorInterface;
+use PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestIncGeneratorInterface;
 use PHPCSDevTools\Scripts\Utils\Writer;
 
-final class Scaffolder
+final class Scaffolder implements ScaffolderInterface
 {
-    /**
-     * Search & replace values to convert a sniff file path into a docs file path.
-     *
-     * Keys are the strings to search for, values the replacement values.
-     *
-     * @var array<string, string>
-     */
-    private $sniffToDoc = [
-        '/Sniffs/'  => '/Docs/',
-        'Sniff.php' => 'Standard.xml',
-    ];
 
     /**
-     * Search & replace values to convert a sniff file path into a unit test file path.
-     *
-     * Keys are the strings to search for, values the replacement values.
-     *
-     * @var array<string, string>
+     * @var DocsGeneratorInterface
      */
-    private $sniffToUnitTest = [
-        '/Sniffs/' => '/Tests/',
-        'Sniff.'   => 'UnitTest.',
-    ];
+    private $docsGenerator;
 
     /**
-     * Possible test case file extensions.
-     *
-     * @var array<string>
+     * @var SniffGeneratorInterface
      */
-    private $testCaseExtensions = [
-        '.inc',
-        '.css',
-        '.js',
-        '.1.inc',
-        '.1.css',
-        '.1.js',
-    ];
-
-    /* @var DocumentationGenerator */
-    private $documentationGenerator;
-    /** @var FileCreator */
-    private $fileCreator;
-    /** @var FixtureGenerator */
-    private $fixtureGenerator;
-    /** @var FixedFixtureGenerator */
-    private $fixedFixtureGenerator;
-    /** @var NamespaceResolver */
-    private $namespaceResolver;
-    /* @var PathResolver */
-    private $pathResolver;
-    /* @var SniffGenerator */
     private $sniffGenerator;
-    /* @var UnitTestGenerator */
+
+    /**
+     * @var TemplateRendererInterface
+     */
+    private $templateRenderer;
+
+    /**
+     * @var UnitTestGeneratorInterface
+     */
     private $unitTestGenerator;
-    /** @var Writer */
+
+    /**
+     * @var UnitTestIncFixedGeneratorInterface
+     */
+    private $unitTestIncFixedGenerator;
+
+    /**
+     * @var UnitTestIncGeneratorInterface
+     */
+    private $unitTestIncGenerator;
+
+    /**
+     * @var Writer
+     */
     private $writer;
 
     /**
-     * Scaffolder constructor.
-     *
-     * @param DocumentationGenerator $documentationGenerator
-     * @param FileCreator $fileCreator
-     * @param FixedFixtureGenerator $fixedFixtureGenerator
-     * @param FixtureGenerator $fixtureGenerator
-     * @param NamespaceResolver $namespaceResolver
-     * @param PathResolver $pathResolver
-     * @param SniffGenerator $sniffGenerator
-     * @param UnitTestGenerator $unitTestGenerator
-     * @param Writer $writer
+     * @param DocsGeneratorInterface             $docsGenerator
+     * @param SniffGeneratorInterface            $sniffGenerator
+     * @param TemplateRendererInterface          $templateRenderer
+     * @param UnitTestGeneratorInterface         $unitTestGenerator
+     * @param UnitTestIncFixedGeneratorInterface $unitTestIncFixedGenerator
+     * @param UnitTestIncGeneratorInterface      $unitTestIncGenerator
+     * @param Writer                             $writer
      */
     public function __construct(
-        DocumentationGenerator $documentationGenerator,
-        FileCreator $fileCreator,
-        FixedFixtureGenerator $fixedFixtureGenerator,
-        FixtureGenerator $fixtureGenerator,
-        NamespaceResolver $namespaceResolver,
-        PathResolver $pathResolver,
-        SniffGenerator $sniffGenerator,
-        UnitTestGenerator $unitTestGenerator,
+        DocsGeneratorInterface $docsGenerator,
+        SniffGeneratorInterface $sniffGenerator,
+        TemplateRendererInterface $templateRenderer,
+        UnitTestGeneratorInterface $unitTestGenerator,
+        UnitTestIncFixedGeneratorInterface $unitTestIncFixedGenerator,
+        UnitTestIncGeneratorInterface $unitTestIncGenerator,
         Writer $writer
-    )    {
-        $this->documentationGenerator = $documentationGenerator;
-        $this->fileCreator = $fileCreator;
-        $this->fixedFixtureGenerator = $fixedFixtureGenerator;
-        $this->fixtureGenerator = $fixtureGenerator;
-        $this->namespaceResolver = $namespaceResolver;
-        $this->pathResolver = $pathResolver;
-        $this->sniffGenerator = $sniffGenerator;
-        $this->unitTestGenerator = $unitTestGenerator;
-        $this->writer = $writer;
+    ) {
+        $this->docsGenerator             = $docsGenerator;
+        $this->sniffGenerator            = $sniffGenerator;
+        $this->templateRenderer          = $templateRenderer;
+        $this->unitTestGenerator         = $unitTestGenerator;
+        $this->unitTestIncFixedGenerator = $unitTestIncFixedGenerator;
+        $this->unitTestIncGenerator      = $unitTestIncGenerator;
+        $this->writer                    = $writer;
     }
 
     /**
-     * Scaffold a new sniff, its documentation, and unit tests.
+     * Print the help message.
      *
-     * @param string $workspace The path to the workspace where the sniff should be created.
-     * @param string $name The name of the sniff to create, in the format "Namespace.Standard.Category.Sniff".
-     *
-     * @return void
-     *
-     * @throws \PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException
-     */
-    public function scaffold($workspace, $name)
-    {
-        $workspace = Workspace::fromString($workspace);
-        $sniffName = SniffName::fromString($name);
-
-        $this->createDocumentation($workspace, $sniffName);
-        $this->createSniff($workspace, $sniffName);
-        $this->createUnitTest($workspace, $sniffName);
-        $this->createUnitTestInc($workspace, $sniffName);
-        $this->createUnitTestIncFixed($workspace, $sniffName);
-    }
-
-    private function createDocumentation(Workspace $workspace, SniffName $sniffName)
-    {
-        $path = $this->pathResolver->resolveDocumentationPath($workspace, $sniffName);
-        if (file_exists($path)) {
-            $this->writer->toStderr('File already exists: ' . $path . PHP_EOL);
-
-            return;
-        }
-
-        $this->writer->toStdout('Creating file: ' . $path . PHP_EOL);
-
-        $contents = $this->documentationGenerator->generate($sniffName);
-
-        $this->fileCreator->create($path, $contents);
-
-        $this->writer->toStdout('Created file: ' . $path . PHP_EOL);
-
-    }
-
-    /**
-     * @throws \PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException
-     */
-    private function createSniff(Workspace $workspace, SniffName $sniffName)
-    {
-        $path = $this->pathResolver->resolveSniffPath($workspace, $sniffName);
-        if (file_exists($path)) {
-            $this->writer->toStderr('File already exists: ' . $path . PHP_EOL);
-
-            return;
-        }
-
-        $this->writer->toStdout('Creating file: ' . $path . PHP_EOL);
-
-        $contents = $this->sniffGenerator->generate($sniffName);
-
-        $this->fileCreator->create($path, $contents);
-
-        $this->writer->toStdout('Created file: ' . $path . PHP_EOL);
-    }
-
-    /**
-     * @throws \PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException
-     */
-    private function createUnitTest(Workspace $workspace, SniffName $sniffName)
-    {
-        $path = $this->pathResolver->resolveUnitTestPath($workspace, $sniffName);
-        if (file_exists($path)) {
-            $this->writer->toStderr('File already exists: ' . $path . PHP_EOL);
-
-            return;
-        }
-
-        $this->writer->toStdout('Creating file: ' . $path . PHP_EOL);
-
-        $contents = $this->unitTestGenerator->generate($sniffName);
-
-        $this->fileCreator->create($path, $contents);
-
-        $this->writer->toStdout('Created file: ' . $path . PHP_EOL);
-    }
-
-    /**
-     * @throws \PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException
-     */
-    private function createUnitTestInc(Workspace $workspace, SniffName $sniffName)
-    {
-        $path = $this->pathResolver->resolveUnitTestIncPath($workspace, $sniffName);
-        if (file_exists($path)) {
-            $this->writer->toStderr('File already exists: ' . $path . PHP_EOL);
-
-            return;
-        }
-
-        $this->writer->toStdout('Creating file: ' . $path . PHP_EOL);
-
-        $contents = $this->fixtureGenerator->generate($sniffName);
-
-        $this->fileCreator->create($path, $contents);
-
-        $this->writer->toStdout('Created file: ' . $path . PHP_EOL);
-    }
-
-    /**
-     * @throws \PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException
-     */
-    private function createUnitTestIncFixed(Workspace $workspace, SniffName $sniffName)
-    {
-        $path = $this->pathResolver->resolveUnitTestIncFixedPath($workspace, $sniffName);
-        if (file_exists($path)) {
-            $this->writer->toStderr('File already exists: ' . $path . PHP_EOL);
-
-            return;
-        }
-
-        $this->writer->toStdout('Creating file: ' . $path . PHP_EOL);
-
-        $contents = $this->fixedFixtureGenerator->generate($sniffName);
-
-        $this->fileCreator->create($path, $contents);
-
-        $this->writer->toStdout('Created file: ' . $path . PHP_EOL);
-    }
-
-    /**
-     * Print the help message
-     *
-     * @return void
+     * @return never
      */
     public function printHelp()
     {
-        $this->writer->toStdout(implode(PHP_EOL, [
+        $this->writer->toStdout(\implode(\PHP_EOL, [
+            'Scaffold a new PHPCS sniff class, along with its unit test, fixtures and documentation files.',
+            '',
             'Usage:',
             '  phpcs-scaffold Namespace.Standard.Category.Sniff',
             '',
@@ -256,5 +104,32 @@ final class Scaffolder
             'Options:',
             '  -h, --help            Print this help.',
         ]));
+
+        exit(0);
+    }
+
+    /**
+     * Scaffold a new sniff, its documentation, and unit tests.
+     *
+     * @param SniffNameInterface $sniffName the name of the sniff to create, e.g. "Namespace.Standard.Category.Sniff"
+     * @param WorkspaceInterface $workspace the path to the workspace where the sniff should be created
+     *
+     * @throws ScaffolderException
+     *
+     * @return void
+     */
+    public function scaffold(SniffNameInterface $sniffName, WorkspaceInterface $workspace)
+    {
+        $this->writer->toStdout(\sprintf('Scaffolding sniff "%s"%s', $sniffName->getName(), \PHP_EOL . \PHP_EOL));
+
+        $this->docsGenerator->generate($sniffName, $workspace);
+
+        $this->sniffGenerator->generate($sniffName, $workspace);
+
+        $this->unitTestGenerator->generate($sniffName, $workspace);
+
+        $this->unitTestIncFixedGenerator->generate($sniffName, $workspace);
+
+        $this->unitTestIncGenerator->generate($sniffName, $workspace);
     }
 }

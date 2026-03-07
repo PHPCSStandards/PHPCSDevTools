@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHPCSDevTools, tools for PHP_CodeSniffer sniff developers.
  *
@@ -8,25 +9,19 @@
  * @link      https://github.com/PHPCSStandards/PHPCSDevTools
  */
 
-namespace PHPCSDevTools\Tests\Scaffold\Generator;
+namespace PHPCSDevTools\Tests\Scaffold\Resolver\ShortClassResolver;
 
-use PHPCSDevTools\Scripts\Scaffold\Generator\FixtureGenerator;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\ShortClassResolver\SniffShortClassResolver;
 use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
 
 /**
- * Test the FixtureGenerator class.
+ * Test the SniffShortClassResolver class.
  *
- * @covers \PHPCSDevTools\Scripts\Scaffold\Generator\FixtureGenerator
+ * @covers \PHPCSDevTools\Scripts\Scaffold\Resolver\ShortClassResolver\SniffShortClassResolver
  */
-final class FixtureGeneratorTest extends XTestCase
+final class SniffShortClassResolverTest extends XTestCase
 {
 
-    /**
-     * Example test method.
-     *
-     * @Throws \Throwable
-     * @return void
-     */
     public function testExample()
     {
         self::assertTrue(true);

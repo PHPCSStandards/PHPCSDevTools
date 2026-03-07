@@ -4,20 +4,20 @@
                title="name"
 >
     <standard>
-        <![CDATA[
+    <![CDATA[
         description
-        ]]>
+    ]]>
     </standard>
     <code_comparison>
         <code title="Valid: example">
-            <![CDATA[
+        <![CDATA[
             // Valid code
-            ]]>
+        ]]>
         </code>
         <code title="Invalid: example">
-            <![CDATA[
+        <![CDATA[
             // Invalid code
-            ]]>
+        ]]>
         </code>
     </code_comparison>
 </documentation>

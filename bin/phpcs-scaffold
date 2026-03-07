@@ -1,16 +1,8 @@
 #!/usr/bin/env php
 <?php
+
 /**
- * Scaffold a new PHPCS sniff class, along with its unit test, fixtures and documentation files.
- *
- * This script should be run from the root of a PHPCS standards repo and can
- * be used both on PHPCS itself and by external standards.
- *
- * Usage:
- *   phpcs-scaffold Namespace.Standard.Category.Sniff
- *
- * Options:
- *   -h, --help            Print this help.
+ * PHPCSDevTools, tools for PHP_CodeSniffer sniff developers.
  *
  * @package   PHPCSDevTools
  * @copyright 2019 PHPCSDevTools Contributors
@@ -18,6 +10,30 @@
  * @link      https://github.com/PHPCSStandards/PHPCSDevTools
  */
 
+use PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException;
+use PHPCSDevTools\Scripts\Scaffold\FileCreator;
+use PHPCSDevTools\Scripts\Scaffold\FileReader;
+use PHPCSDevTools\Scripts\Scaffold\Generator\DocsGenerator;
+use PHPCSDevTools\Scripts\Scaffold\Generator\SniffGenerator;
+use PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestGenerator;
+use PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestIncFixedGenerator;
+use PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestIncGenerator;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\FullyQualifiedClassResolver\SniffFullyQualifiedClassResolver;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\FullyQualifiedClassResolver\UnitTestFullyQualifiedClassResolver;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver\SniffNamespaceResolver;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver\UnitTestNamespaceResolver;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\DocsPathResolver;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\SniffPathResolver;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\UnitTestIncFixedPathResolver;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\UnitTestIncPathResolver;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\UnitTestPathResolver;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\ShortClassResolver\SniffShortClassResolver;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\ShortClassResolver\UnitTestShortClassResolver;
+use PHPCSDevTools\Scripts\Scaffold\Scaffolder;
+use PHPCSDevTools\Scripts\Scaffold\SniffName;
+use PHPCSDevTools\Scripts\Scaffold\TemplateRenderer;
+use PHPCSDevTools\Scripts\Scaffold\Workspace;
+use PHPCSDevTools\Scripts\Utils\CliWriter;
 
 $autoloadLocations = [
     __DIR__ . '/../devtools-autoload.php', // Git clone or direct run from within vendor package directory.
@@ -29,44 +45,96 @@ $autoloadLocations = [
 
 // Try and find a usable autoload file.
 foreach ($autoloadLocations as $file) {
-    $file = realpath($file);
-    if ($file !== false && is_file($file) === true) {
+    $file = \realpath($file);
+    if ($file !== false && \is_file($file) === true) {
         require_once $file;
+
         break;
     }
 }
 
-$fileReader = new PHPCSDevTools\Scripts\Scaffold\FileReader();
-$fileCreator = new PHPCSDevTools\Scripts\Scaffold\FileCreator();
-$writer = new PHPCSDevTools\Scripts\Utils\CliWriter();
+$writer = new CliWriter();
 
-$classResolver = new PHPCSDevTools\Scripts\Scaffold\Resolver\ClassResolver();
-$namespaceResolver = new PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver();
-$pathResolver = new PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver();
+$fileReader  = new FileReader();
+$fileCreator = new FileCreator();
 
-$templateRenderer = new PHPCSDevTools\Scripts\Scaffold\TemplateRenderer($fileReader);
+$docsPathResolver             = new DocsPathResolver();
+$sniffPathResolver            = new SniffPathResolver();
+$unitTestIncFixedPathResolver = new UnitTestIncFixedPathResolver();
+$unitTestIncPathResolver      = new UnitTestIncPathResolver();
+$unitTestPathResolver         = new UnitTestPathResolver();
 
-$documentationGenerator = new PHPCSDevTools\Scripts\Scaffold\Generator\DocumentationGenerator($templateRenderer);
-$fixedFixtureGenerator = new PHPCSDevTools\Scripts\Scaffold\Generator\FixedFixtureGenerator($templateRenderer);
-$fixtureGenerator = new PHPCSDevTools\Scripts\Scaffold\Generator\FixtureGenerator($templateRenderer);
-$sniffGenerator = new PHPCSDevTools\Scripts\Scaffold\Generator\SniffGenerator($classResolver, $namespaceResolver, $templateRenderer);
-$unitTestGenerator = new PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestGenerator($classResolver, $namespaceResolver, $templateRenderer);
+$sniffNamespaceResolver    = new SniffNamespaceResolver();
+$unitTestNamespaceResolver = new UnitTestNamespaceResolver();
 
-$scaffolder = new PHPCSDevTools\Scripts\Scaffold\Scaffolder(
-    $documentationGenerator,
+$sniffShortClassResolver    = new SniffShortClassResolver();
+$unitTestShortClassResolver = new UnitTestShortClassResolver();
+
+$sniffFullyQualifiedClassResolver    = new SniffFullyQualifiedClassResolver();
+$unitTestFullyQualifiedClassResolver = new UnitTestFullyQualifiedClassResolver();
+
+$templateRenderer = new TemplateRenderer($fileReader);
+
+$docsGenerator             = new DocsGenerator($docsPathResolver, $fileCreator, $templateRenderer, $writer);
+$sniffGenerator            = new SniffGenerator(
     $fileCreator,
-    $fixedFixtureGenerator,
-    $fixtureGenerator,
-    $namespaceResolver,
-    $pathResolver,
-    $sniffGenerator,
-    $unitTestGenerator,
+    $sniffNamespaceResolver,
+    $sniffPathResolver,
+    $sniffShortClassResolver,
+    $templateRenderer,
+    $writer
+);
+$unitTestGenerator         = new UnitTestGenerator(
+    $fileCreator,
+    $sniffFullyQualifiedClassResolver,
+    $templateRenderer,
+    $unitTestFullyQualifiedClassResolver,
+    $unitTestNamespaceResolver,
+    $unitTestPathResolver,
+    $unitTestShortClassResolver,
+    $writer
+);
+$unitTestIncGenerator      = new UnitTestIncGenerator(
+    $fileCreator,
+    $templateRenderer,
+    $unitTestIncPathResolver,
+    $writer
+);
+$unitTestIncFixedGenerator = new UnitTestIncFixedGenerator(
+    $fileCreator,
+    $templateRenderer,
+    $unitTestIncFixedPathResolver,
     $writer
 );
 
-if (count($argv) !== 2 || in_array($argv[1], ['-h', '--help'], true) === true) {
+$scaffolder = new Scaffolder(
+    $docsGenerator,
+    $sniffGenerator,
+    $templateRenderer,
+    $unitTestGenerator,
+    $unitTestIncFixedGenerator,
+    $unitTestIncGenerator,
+    $writer
+);
+
+if (\count($argv) !== 2 || \in_array($argv[1], ['-h', '--help'], true)) {
     $scaffolder->printHelp();
-    exit(0);
 }
 
-$scaffolder->scaffold(getcwd(), $argv[1]);
+try {
+    $sniffName = SniffName::fromString($argv[1]);
+    $workspace = Workspace::fromCurrentWorkingDirectory();
+
+    $scaffolder->scaffold($sniffName, $workspace);
+
+    exit(0);
+} catch (ScaffolderException $throwable) {
+    $writer->toStderr(\sprintf(
+        'Error: %s%s%s',
+        $throwable->getMessage(),
+        \PHP_EOL . \PHP_EOL,
+        $throwable->getTraceAsString()
+    ));
+
+    exit(1);
+}

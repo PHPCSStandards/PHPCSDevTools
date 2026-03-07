@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHPCSDevTools, tools for PHP_CodeSniffer sniff developers.
  *
@@ -10,35 +11,85 @@
 
 namespace PHPCSDevTools\Scripts\Scaffold\Generator;
 
+use PHPCSDevTools\Scripts\Scaffold\FileCreatorInterface;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver\SniffNamespaceResolverInterface;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\SniffPathResolverInterface;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\ShortClassResolver\SniffShortClassResolverInterface;
+use PHPCSDevTools\Scripts\Scaffold\SniffNameInterface;
+use PHPCSDevTools\Scripts\Scaffold\TemplateRendererInterface;
+use PHPCSDevTools\Scripts\Scaffold\WorkspaceInterface;
+use PHPCSDevTools\Scripts\Utils\Writer;
 
-use PHPCSDevTools\Scripts\Scaffold\Resolver\ClassResolver;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver;
-use PHPCSDevTools\Scripts\Scaffold\SniffName;
-use PHPCSDevTools\Scripts\Scaffold\TemplateRenderer;
+final class SniffGenerator implements SniffGeneratorInterface
+{
 
-final class SniffGenerator {
-    /** @var ClassResolver */
-    private $classResolver;
-    /** @var NamespaceResolver */
-    private $namespaceResolver;
-    /** @var TemplateRenderer */
+    /**
+     * @var FileCreatorInterface
+     */
+    private $fileCreator;
+
+    /**
+     * @var SniffNamespaceResolverInterface
+     */
+    private $sniffNamespaceResolver;
+
+    /**
+     * @var SniffPathResolverInterface
+     */
+    private $sniffPathResolver;
+
+    /**
+     * @var SniffShortClassResolverInterface
+     */
+    private $sniffShortClassResolver;
+
+    /**
+     * @var TemplateRendererInterface
+     */
     private $templateRenderer;
+
+    /**
+     * @var Writer
+     */
+    private $writer;
+
     public function __construct(
-        ClassResolver $classResolver,
-        NamespaceResolver $namespaceResolver,
-        TemplateRenderer $templateRenderer
+        FileCreatorInterface $fileCreator,
+        SniffNamespaceResolverInterface $sniffNamespaceResolver,
+        SniffPathResolverInterface $sniffPathResolver,
+        SniffShortClassResolverInterface $sniffShortClassResolver,
+        TemplateRendererInterface $templateRenderer,
+        Writer $writer
     ) {
-        $this->classResolver = $classResolver;
-        $this->namespaceResolver = $namespaceResolver;
-        $this->templateRenderer = $templateRenderer;
+        $this->fileCreator             = $fileCreator;
+        $this->sniffNamespaceResolver  = $sniffNamespaceResolver;
+        $this->sniffPathResolver       = $sniffPathResolver;
+        $this->sniffShortClassResolver = $sniffShortClassResolver;
+        $this->templateRenderer        = $templateRenderer;
+        $this->writer                  = $writer;
     }
 
-    /** @return non-empty-string */
-    public function generate(SniffName $sniffName)
+    /**
+     * @inheritDoc
+     */
+    public function generate(SniffNameInterface $sniffName, WorkspaceInterface $workspace)
     {
-        return $this->templateRenderer->render('sniff.php', [
-            'class' => $this->classResolver->resolveSniffClass($sniffName),
-            'namespace' => $this->namespaceResolver->resolveSniffNamespace($sniffName),
+        $path = $this->sniffPathResolver->resolve($sniffName, $workspace);
+        if ($this->fileCreator->exists($path)) {
+            $this->writer->toStderr('File already exists: ' . $path . \PHP_EOL);
+
+            return;
+        }
+
+        $this->writer->toStdout('Creating file: ' . $path . \PHP_EOL);
+
+        $contents = $this->templateRenderer->render('sniff.php', [
+            'class'     => $this->sniffShortClassResolver->resolve($sniffName),
+            'namespace' => $this->sniffNamespaceResolver->resolve($sniffName),
         ]);
+
+        $this->fileCreator->create($path, $contents);
+
+        $this->writer->toStdout('Created file: ' . $path . \PHP_EOL);
     }
 }

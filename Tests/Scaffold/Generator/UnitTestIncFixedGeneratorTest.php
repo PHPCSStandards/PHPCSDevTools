@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHPCSDevTools, tools for PHP_CodeSniffer sniff developers.
  *
@@ -8,25 +9,19 @@
  * @link      https://github.com/PHPCSStandards/PHPCSDevTools
  */
 
-namespace PHPCSDevTools\Tests\Scaffold\Resolver;
+namespace PHPCSDevTools\Tests\Scaffold\Generator;
 
-use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver;
+use PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestIncFixedGenerator;
 use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
 
 /**
- * Test the PathResolver class.
+ * Test the UnitTestIncFixedGenerator class.
  *
- * @covers \PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver
+ * @covers \PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestIncFixedGenerator
  */
-final class PathResolverTest extends XTestCase
+final class UnitTestIncFixedGeneratorTest extends XTestCase
 {
 
-    /**
-     * Example test method.
-     *
-     * @Throws \Throwable
-     * @return void
-     */
     public function testExample()
     {
         self::assertTrue(true);

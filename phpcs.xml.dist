@@ -11,6 +11,7 @@
 
     <file>.</file>
     <file>./bin/phpcs-check-feature-completeness</file>
+    <file>./bin/phpcs-scaffold</file>
 
     <!-- Exclude Composer vendor directory. -->
     <exclude-pattern>*/Tests/Fixtures/*</exclude-pattern>
