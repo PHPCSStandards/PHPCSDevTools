@@ -36,17 +36,40 @@ final class HelpTextFormatter
     const LEFT_MARGIN = '  ';
 
     /**
-     * Format help text from a structured array of options.
+     * The help texts to format.
+     *
+     * @var array<string, array<array<string, string>>>
+     */
+    private $helpTexts;
+
+    /**
+     * Whether to use colored output.
+     *
+     * @var bool
+     */
+    private $showColored;
+
+    /**
+     * Constructor.
      *
      * @param array<string, array<array<string, string>>> $helpTexts   The help texts to format.
      * @param bool                                        $showColored Whether to use colored output.
+     */
+    public function __construct(array $helpTexts, $showColored)
+    {
+        $this->helpTexts   = $helpTexts;
+        $this->showColored = $showColored;
+    }
+
+    /**
+     * Format the help text.
      *
      * @return string The formatted help text.
      */
-    public static function format(array $helpTexts, $showColored)
+    public function format()
     {
         $output = '';
-        foreach ($helpTexts as $section => $options) {
+        foreach ($this->helpTexts as $section => $options) {
             $longestOptionLength = 0;
             foreach ($options as $option) {
                 if (isset($option['arg'])) {
@@ -54,7 +77,7 @@ final class HelpTextFormatter
                 }
             }
 
-            if ($showColored === true) {
+            if ($this->showColored === true) {
                 $output .= "\033[33m{$section}:\033[0m" . \PHP_EOL;
             } else {
                 $output .= "{$section}:" . \PHP_EOL;
@@ -66,7 +89,7 @@ final class HelpTextFormatter
             foreach ($options as $option) {
                 if (isset($option['text'])) {
                     $text = $option['text'];
-                    if ($showColored === true) {
+                    if ($this->showColored === true) {
                         $text = \preg_replace('`(\[[^\]]+\])`', "\033[36m" . '$1' . "\033[0m", $text);
                     }
                     $output .= self::LEFT_MARGIN . $text . \PHP_EOL;
@@ -74,7 +97,7 @@ final class HelpTextFormatter
 
                 if (isset($option['arg'])) {
                     $arg = \str_pad($option['arg'], $longestOptionLength);
-                    if ($showColored === true) {
+                    if ($this->showColored === true) {
                         $arg = \preg_replace('`(<[^>]+>)`', "\033[0m\033[36m" . '$1', $arg);
                         $arg = "\033[32m{$arg}\033[0m";
                     }

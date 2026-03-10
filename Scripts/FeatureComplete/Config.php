@@ -416,6 +416,7 @@ final class Config
      */
     private function getHelp()
     {
-        return HelpTextFormatter::format($this->helpTexts, $this->showColored);
+        $formatter = new HelpTextFormatter($this->helpTexts, $this->showColored);
+        return $formatter->format();
     }
 }

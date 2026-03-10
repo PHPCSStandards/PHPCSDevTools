@@ -34,7 +34,8 @@ final class HelpTextFormatterTest extends XTestCase
      */
     public function testFormat(array $helpTexts, $expected, $useColor)
     {
-        $this->assertSame($expected, HelpTextFormatter::format($helpTexts, $useColor));
+        $formatter = new HelpTextFormatter($helpTexts, $useColor);
+        $this->assertSame($expected, $formatter->format());
     }
 
     /**
