@@ -12,18 +12,31 @@
 namespace PHPCSDevTools\Tests\Scaffold\Resolver\NamespaceResolver;
 
 use PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver\UnitTestNamespaceResolver;
-use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
+use PHPCSDevTools\Tests\Scaffold\AbstractTestcase;
 
 /**
  * Test the UnitTestNamespaceResolver class.
  *
  * @covers \PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver\UnitTestNamespaceResolver
  */
-final class UnitTestNamespaceResolverTest extends XTestCase
+final class UnitTestNamespaceResolverTest extends AbstractTestcase
 {
 
-    public function testExample()
+    /**
+     * It resolves the namespace for a unit test class.
+     *
+     * @return void
+     */
+    public function testResolveBuildsTheUnitTestNamespace()
     {
-        self::assertTrue(true);
+        $sniffName = $this->createMockSniffName(function ($mock) {
+            $mock->expects(self::once())->method('getNamespace')->willReturn('Vendor');
+            $mock->expects(self::once())->method('getStandard')->willReturn('Standard');
+            $mock->expects(self::once())->method('getCategory')->willReturn('Category');
+        });
+
+        $resolver = new UnitTestNamespaceResolver();
+
+        self::assertSame('Vendor\Standard\Tests\Category', $resolver->resolve($sniffName));
     }
 }

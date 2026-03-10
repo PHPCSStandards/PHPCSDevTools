@@ -13,6 +13,9 @@ namespace PHPCSDevTools\Scripts\Scaffold;
 
 use PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException;
 
+/**
+ * Represents a workspace for scaffolding operations.
+ */
 final class Workspace implements WorkspaceInterface
 {
 
@@ -33,19 +36,15 @@ final class Workspace implements WorkspaceInterface
     public function __construct($path)
     {
         if (\is_string($path) === false) {
-            throw new ScaffolderException('Invalid workspace path provided. Workspace path must be a string.');
+            throw new ScaffolderException('Workspace path must be a string.');
         }
 
-        if (empty($path)) {
-            throw new ScaffolderException(
-                'Invalid workspace path provided. Workspace path must be a non-empty string.'
-            );
+        if (\trim($path) === '') {
+            throw new ScaffolderException('Workspace path must be a non-empty string.');
         }
 
         if (\is_dir($path) === false) {
-            throw new ScaffolderException(
-                'Invalid workspace path provided. Workspace path must be a valid directory.'
-            );
+            throw new ScaffolderException('Workspace path must be a valid directory.');
         }
 
         $this->path = $path;
@@ -59,21 +58,5 @@ final class Workspace implements WorkspaceInterface
     public function getPath()
     {
         return $this->path;
-    }
-
-    /**
-     * @throws ScaffolderException
-     *
-     * @return self
-     */
-    public static function fromCurrentWorkingDirectory()
-    {
-        $path = \getcwd();
-
-        if ($path === false) {
-            throw new ScaffolderException('Unable to determine current working directory.');
-        }
-
-        return new self($path);
     }
 }

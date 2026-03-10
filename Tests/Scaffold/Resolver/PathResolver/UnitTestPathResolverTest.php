@@ -12,18 +12,37 @@
 namespace PHPCSDevTools\Tests\Scaffold\Resolver\PathResolver;
 
 use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\UnitTestPathResolver;
-use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
+use PHPCSDevTools\Tests\Scaffold\AbstractTestcase;
 
 /**
  * Test the UnitTestPathResolver class.
  *
  * @covers \PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\UnitTestPathResolver
  */
-final class UnitTestPathResolverTest extends XTestCase
+final class UnitTestPathResolverTest extends AbstractTestcase
 {
 
-    public function testExample()
+    /**
+     * It resolves the unit test file path.
+     *
+     * @return void
+     */
+    public function testResolveBuildsTheUnitTestFilePath()
     {
-        self::assertTrue(true);
+        $sniffName = $this->createMockSniffName(function ($mock) {
+            $mock->expects(self::once())->method('getStandard')->willReturn('Standard');
+            $mock->expects(self::once())->method('getCategory')->willReturn('Category');
+            $mock->expects(self::once())->method('getSniff')->willReturn('MySniff');
+        });
+        $workspace = $this->createMockWorkspace(function ($mock) {
+            $mock->expects(self::once())->method('getPath')->willReturn('/project');
+        });
+
+        $resolver = new UnitTestPathResolver();
+
+        self::assertSame(
+            '/project/Standard/Tests/Category/MySniffUnitTest.php',
+            $resolver->resolve($sniffName, $workspace)
+        );
     }
 }

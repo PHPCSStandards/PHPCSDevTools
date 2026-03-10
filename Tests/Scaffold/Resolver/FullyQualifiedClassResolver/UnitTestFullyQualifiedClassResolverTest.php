@@ -12,18 +12,30 @@
 namespace PHPCSDevTools\Tests\Scaffold\Resolver\FullyQualifiedClassResolver;
 
 use PHPCSDevTools\Scripts\Scaffold\Resolver\FullyQualifiedClassResolver\UnitTestFullyQualifiedClassResolver;
-use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
+use PHPCSDevTools\Tests\Scaffold\AbstractTestcase;
 
 /**
- * Test the UnitTestFullyQualifiedClassResolver class.
- *
  * @covers \PHPCSDevTools\Scripts\Scaffold\Resolver\FullyQualifiedClassResolver\UnitTestFullyQualifiedClassResolver
  */
-final class UnitTestFullyQualifiedClassResolverTest extends XTestCase
+final class UnitTestFullyQualifiedClassResolverTest extends AbstractTestcase
 {
 
-    public function testExample()
+    /**
+     * It resolves the fully qualified class name for a unit test.
+     *
+     * @return void
+     */
+    public function testResolveBuildsTheUnitTestFullyQualifiedClassName()
     {
-        self::assertTrue(true);
+        $sniffName = $this->createMockSniffName(function ($mock) {
+            $mock->expects(self::once())->method('getNamespace')->willReturn('Vendor');
+            $mock->expects(self::once())->method('getStandard')->willReturn('Standard');
+            $mock->expects(self::once())->method('getCategory')->willReturn('Category');
+            $mock->expects(self::once())->method('getSniff')->willReturn('MySniff');
+        });
+
+        $resolver = new UnitTestFullyQualifiedClassResolver();
+
+        self::assertSame('Vendor\Standard\Tests\Category\MySniffUnitTest', $resolver->resolve($sniffName));
     }
 }

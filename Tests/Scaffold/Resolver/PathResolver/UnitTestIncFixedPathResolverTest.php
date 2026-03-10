@@ -12,18 +12,37 @@
 namespace PHPCSDevTools\Tests\Scaffold\Resolver\PathResolver;
 
 use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\UnitTestIncFixedPathResolver;
-use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
+use PHPCSDevTools\Tests\Scaffold\AbstractTestcase;
 
 /**
  * Test the UnitTestIncFixedPathResolver class.
  *
  * @covers \PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\UnitTestIncFixedPathResolver
  */
-final class UnitTestIncFixedPathResolverTest extends XTestCase
+final class UnitTestIncFixedPathResolverTest extends AbstractTestcase
 {
 
-    public function testExample()
+    /**
+     * It resolves the fixed fixture path.
+     *
+     * @return void
+     */
+    public function testResolveBuildsTheFixedFixturePath()
     {
-        self::assertTrue(true);
+        $sniffName = $this->createMockSniffName(function ($mock) {
+            $mock->expects(self::once())->method('getStandard')->willReturn('Standard');
+            $mock->expects(self::once())->method('getCategory')->willReturn('Category');
+            $mock->expects(self::once())->method('getSniff')->willReturn('MySniff');
+        });
+        $workspace = $this->createMockWorkspace(function ($mock) {
+            $mock->expects(self::once())->method('getPath')->willReturn('/project');
+        });
+
+        $resolver = new UnitTestIncFixedPathResolver();
+
+        self::assertSame(
+            '/project/Standard/Tests/Category/MySniffUnitTest.inc.fixed',
+            $resolver->resolve($sniffName, $workspace)
+        );
     }
 }

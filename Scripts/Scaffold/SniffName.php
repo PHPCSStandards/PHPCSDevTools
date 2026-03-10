@@ -41,22 +41,53 @@ final class SniffName implements SniffNameInterface
      */
     private $standard;
 
-    private function __construct($name, $rootNamespace, $standard, $category, $sniff)
+    /**
+     * @param non-empty-string $name full sniff name in the format "Namespace.Standard.Category.Sniff"
+     */
+    public function __construct($name)
     {
-        if (\is_string($rootNamespace) === false || empty($rootNamespace)) {
-            throw new ScaffolderException('Invalid namespace provided. Namespace must be a non-empty string.');
+        if (\is_string($name) === false) {
+            throw new ScaffolderException('Sniff name must be a string.');
         }
 
-        if (\is_string($standard) === false || empty($standard)) {
-            throw new ScaffolderException('Invalid standard provided. Standard must be a non-empty string.');
+        if (\trim($name) === '') {
+            throw new ScaffolderException('Sniff name must be a non-empty string.');
         }
 
-        if (\is_string($category) === false || empty($category)) {
-            throw new ScaffolderException('Invalid category provided. Category must be a non-empty string.');
+        $parts = \explode('.', $name, 4);
+
+        if (\count($parts) !== 4) {
+            throw new ScaffolderException(
+                'Sniff name must be a dot-separated string with 4 parts: "Namespace.Standard.Category.Sniff".'
+            );
         }
 
-        if (\is_string($sniff) === false || empty($sniff)) {
-            throw new ScaffolderException('Invalid sniff provided. Sniff must be a non-empty string.');
+        $rootNamespace = $parts[0];
+
+        if (\trim($rootNamespace) === '') {
+            throw new ScaffolderException('Namespace must be a non-empty string.');
+        }
+
+        $standard = $parts[1];
+
+        if (\trim($standard) === '') {
+            throw new ScaffolderException('Standard must be a non-empty string.');
+        }
+
+        $category = $parts[2];
+
+        if (\trim($category) === '') {
+            throw new ScaffolderException('Category must be a non-empty string.');
+        }
+
+        $sniff = $parts[3];
+
+        if (\trim($sniff) === '') {
+            throw new ScaffolderException('Sniff must be a non-empty string.');
+        }
+
+        if (\strpos($sniff, '.') !== false) {
+            throw new ScaffolderException('Invalid sniff provided. Sniff must not contain a dot.');
         }
 
         $this->category      = $category;
@@ -104,29 +135,5 @@ final class SniffName implements SniffNameInterface
     public function getStandard()
     {
         return $this->standard;
-    }
-
-    /**
-     * @param non-empty-string $name
-     *
-     * @throws ScaffolderException
-     *
-     * @return self
-     */
-    public static function fromString($name)
-    {
-        if (\is_string($name) === false || empty($name)) {
-            throw new ScaffolderException('Invalid sniff name provided. Sniff name must be a non-empty string.');
-        }
-
-        $parts = \explode('.', $name, 4);
-
-        if ($parts === false || \count($parts) !== 4) {
-            throw new ScaffolderException(
-                'Invalid sniff name provided. Sniff name must be in the format "Namespace.Standard.Category.Sniff".'
-            );
-        }
-
-        return new self($name, $parts[0], $parts[1], $parts[2], $parts[3]);
     }
 }

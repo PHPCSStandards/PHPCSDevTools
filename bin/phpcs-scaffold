@@ -11,8 +11,7 @@
  */
 
 use PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException;
-use PHPCSDevTools\Scripts\Scaffold\FileCreator;
-use PHPCSDevTools\Scripts\Scaffold\FileReader;
+use PHPCSDevTools\Scripts\Scaffold\Filesystem;
 use PHPCSDevTools\Scripts\Scaffold\Generator\DocsGenerator;
 use PHPCSDevTools\Scripts\Scaffold\Generator\SniffGenerator;
 use PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestGenerator;
@@ -53,77 +52,52 @@ foreach ($autoloadLocations as $file) {
     }
 }
 
-$writer = new CliWriter();
-
-$fileReader  = new FileReader();
-$fileCreator = new FileCreator();
-
-$docsPathResolver             = new DocsPathResolver();
-$sniffPathResolver            = new SniffPathResolver();
-$unitTestIncFixedPathResolver = new UnitTestIncFixedPathResolver();
-$unitTestIncPathResolver      = new UnitTestIncPathResolver();
-$unitTestPathResolver         = new UnitTestPathResolver();
-
-$sniffNamespaceResolver    = new SniffNamespaceResolver();
-$unitTestNamespaceResolver = new UnitTestNamespaceResolver();
-
-$sniffShortClassResolver    = new SniffShortClassResolver();
-$unitTestShortClassResolver = new UnitTestShortClassResolver();
-
-$sniffFullyQualifiedClassResolver    = new SniffFullyQualifiedClassResolver();
-$unitTestFullyQualifiedClassResolver = new UnitTestFullyQualifiedClassResolver();
-
-$templateRenderer = new TemplateRenderer($fileReader);
-
-$docsGenerator             = new DocsGenerator($docsPathResolver, $fileCreator, $templateRenderer, $writer);
-$sniffGenerator            = new SniffGenerator(
-    $fileCreator,
-    $sniffNamespaceResolver,
-    $sniffPathResolver,
-    $sniffShortClassResolver,
-    $templateRenderer,
-    $writer
-);
-$unitTestGenerator         = new UnitTestGenerator(
-    $fileCreator,
-    $sniffFullyQualifiedClassResolver,
-    $templateRenderer,
-    $unitTestFullyQualifiedClassResolver,
-    $unitTestNamespaceResolver,
-    $unitTestPathResolver,
-    $unitTestShortClassResolver,
-    $writer
-);
-$unitTestIncGenerator      = new UnitTestIncGenerator(
-    $fileCreator,
-    $templateRenderer,
-    $unitTestIncPathResolver,
-    $writer
-);
-$unitTestIncFixedGenerator = new UnitTestIncFixedGenerator(
-    $fileCreator,
-    $templateRenderer,
-    $unitTestIncFixedPathResolver,
-    $writer
-);
+$filesystem = new Filesystem();
+$renderer   = new TemplateRenderer($filesystem);
+$writer     = new CliWriter();
 
 $scaffolder = new Scaffolder(
-    $docsGenerator,
-    $sniffGenerator,
-    $templateRenderer,
-    $unitTestGenerator,
-    $unitTestIncFixedGenerator,
-    $unitTestIncGenerator,
+    new DocsGenerator(new DocsPathResolver(), $filesystem, $renderer, $writer),
+    new SniffGenerator(
+        $filesystem,
+        new SniffNamespaceResolver(),
+        new SniffPathResolver(),
+        new SniffShortClassResolver(),
+        $renderer,
+        $writer
+    ),
+    new UnitTestGenerator(
+        $filesystem,
+        new SniffFullyQualifiedClassResolver(),
+        $renderer,
+        new UnitTestFullyQualifiedClassResolver(),
+        new UnitTestNamespaceResolver(),
+        new UnitTestPathResolver(),
+        new UnitTestShortClassResolver(),
+        $writer
+    ),
+    new UnitTestIncFixedGenerator($filesystem, $renderer, new UnitTestIncFixedPathResolver(), $writer),
+    new UnitTestIncGenerator($filesystem, $renderer, new UnitTestIncPathResolver(), $writer),
     $writer
 );
 
-if (\count($argv) !== 2 || \in_array($argv[1], ['-h', '--help'], true)) {
+$options = \getopt('h', ['help']);
+// If the user has asked for help, print it and exit.
+if (\array_key_exists('h', $options) || \array_key_exists('help', $options)) {
     $scaffolder->printHelp();
+    exit(0);
+}
+
+$arguments = isset($_SERVER['argv']) ? \array_values($_SERVER['argv']) : [];
+// The first argument is the script name, so we need at least 2 arguments to have a sniff name.
+if (\count($arguments) < 2) {
+    $scaffolder->printHelp();
+    exit(0);
 }
 
 try {
-    $sniffName = SniffName::fromString($argv[1]);
-    $workspace = Workspace::fromCurrentWorkingDirectory();
+    $sniffName = new SniffName($arguments[1]);
+    $workspace = new Workspace(\getcwd());
 
     $scaffolder->scaffold($sniffName, $workspace);
 
@@ -131,9 +105,9 @@ try {
 } catch (ScaffolderException $throwable) {
     $writer->toStderr(\sprintf(
         'Error: %s%s%s',
-        $throwable->getMessage(),
+        $throwable->getTraceAsString(),
         \PHP_EOL . \PHP_EOL,
-        $throwable->getTraceAsString()
+        $throwable->getMessage()
     ));
 
     exit(1);

@@ -11,13 +11,10 @@
 
 namespace PHPCSDevTools\Scripts\Scaffold\Generator;
 
-use PHPCSDevTools\Scripts\Scaffold\FileCreatorInterface;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\ClassResolverInterface;
+use PHPCSDevTools\Scripts\Scaffold\FilesystemInterface;
 use PHPCSDevTools\Scripts\Scaffold\Resolver\FullyQualifiedClassResolver\SniffFullyQualifiedClassResolverInterface;
 use PHPCSDevTools\Scripts\Scaffold\Resolver\FullyQualifiedClassResolver\UnitTestFullyQualifiedClassResolverInterface;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\FullyQualifiedClassResolverInterface;
 use PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver\UnitTestNamespaceResolverInterface;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolverInterface;
 use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\UnitTestPathResolverInterface;
 use PHPCSDevTools\Scripts\Scaffold\Resolver\ShortClassResolver\UnitTestShortClassResolverInterface;
 use PHPCSDevTools\Scripts\Scaffold\SniffNameInterface;
@@ -29,32 +26,27 @@ final class UnitTestGenerator implements UnitTestGeneratorInterface
 {
 
     /**
-     * @var FileCreatorInterface
+     * @var FilesystemInterface
      */
-    private $fileCreator;
-
-    /**
-     * @var FullyQualifiedClassResolverInterface
-     */
-    private $sniffFullyQualifiedClassResolver;
+    private $filesystem;
 
     /**
      * @var TemplateRendererInterface
      */
-    private $templateRenderer;
+    private $renderer;
 
     /**
-     * @var ClassResolverInterface
+     * @var SniffFullyQualifiedClassResolverInterface
      */
-    private $unitTestClassResolver;
+    private $sniffFullyQualifiedClassResolver;
 
     /**
-     * @var FullyQualifiedClassResolverInterface
+     * @var UnitTestFullyQualifiedClassResolverInterface
      */
     private $unitTestFullyQualifiedClassResolver;
 
     /**
-     * @var NamespaceResolverInterface
+     * @var UnitTestNamespaceResolverInterface
      */
     private $unitTestNamespaceResolver;
 
@@ -74,18 +66,18 @@ final class UnitTestGenerator implements UnitTestGeneratorInterface
     private $writer;
 
     public function __construct(
-        FileCreatorInterface $fileCreator,
+        FilesystemInterface $filesystem,
         SniffFullyQualifiedClassResolverInterface $sniffFullyQualifiedClassResolver,
-        TemplateRendererInterface $templateRenderer,
+        TemplateRendererInterface $renderer,
         UnitTestFullyQualifiedClassResolverInterface $unitTestFullyQualifiedClassResolver,
         UnitTestNamespaceResolverInterface $unitTestNamespaceResolver,
         UnitTestPathResolverInterface $unitTestPathResolver,
         UnitTestShortClassResolverInterface $unitTestShortClassResolver,
         Writer $writer
     ) {
-        $this->fileCreator                         = $fileCreator;
-        $this->sniffFullyQualifiedClassResolver    = $sniffFullyQualifiedClassResolver;
-        $this->templateRenderer                    = $templateRenderer;
+        $this->filesystem                       = $filesystem;
+        $this->sniffFullyQualifiedClassResolver = $sniffFullyQualifiedClassResolver;
+        $this->renderer                         = $renderer;
         $this->unitTestFullyQualifiedClassResolver = $unitTestFullyQualifiedClassResolver;
         $this->unitTestNamespaceResolver           = $unitTestNamespaceResolver;
         $this->unitTestPathResolver                = $unitTestPathResolver;
@@ -99,7 +91,7 @@ final class UnitTestGenerator implements UnitTestGeneratorInterface
     public function generate(SniffNameInterface $sniffName, WorkspaceInterface $workspace)
     {
         $path = $this->unitTestPathResolver->resolve($sniffName, $workspace);
-        if ($this->fileCreator->exists($path)) {
+        if ($this->filesystem->exists($path)) {
             $this->writer->toStderr('File already exists: ' . $path . \PHP_EOL);
 
             return;
@@ -107,7 +99,7 @@ final class UnitTestGenerator implements UnitTestGeneratorInterface
 
         $this->writer->toStdout('Creating file: ' . $path . \PHP_EOL);
 
-        $contents = $this->templateRenderer->render('test.php', [
+        $contents = $this->renderer->render('test.php', [
             'sniffName'                   => $sniffName->getSniff(),
             'unitTestShortClass'          => $this->unitTestShortClassResolver->resolve($sniffName),
             'unitTestNamespace'           => $this->unitTestNamespaceResolver->resolve($sniffName),
@@ -115,7 +107,7 @@ final class UnitTestGenerator implements UnitTestGeneratorInterface
             'unitTestFullyQualifiedClass' => $this->unitTestFullyQualifiedClassResolver->resolve($sniffName),
         ]);
 
-        $this->fileCreator->create($path, $contents);
+        $this->filesystem->write($path, $contents);
 
         $this->writer->toStdout('Created file: ' . $path . \PHP_EOL);
     }

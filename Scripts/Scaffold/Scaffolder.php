@@ -33,11 +33,6 @@ final class Scaffolder implements ScaffolderInterface
     private $sniffGenerator;
 
     /**
-     * @var TemplateRendererInterface
-     */
-    private $templateRenderer;
-
-    /**
      * @var UnitTestGeneratorInterface
      */
     private $unitTestGenerator;
@@ -60,7 +55,6 @@ final class Scaffolder implements ScaffolderInterface
     /**
      * @param DocsGeneratorInterface             $docsGenerator
      * @param SniffGeneratorInterface            $sniffGenerator
-     * @param TemplateRendererInterface          $templateRenderer
      * @param UnitTestGeneratorInterface         $unitTestGenerator
      * @param UnitTestIncFixedGeneratorInterface $unitTestIncFixedGenerator
      * @param UnitTestIncGeneratorInterface      $unitTestIncGenerator
@@ -69,7 +63,6 @@ final class Scaffolder implements ScaffolderInterface
     public function __construct(
         DocsGeneratorInterface $docsGenerator,
         SniffGeneratorInterface $sniffGenerator,
-        TemplateRendererInterface $templateRenderer,
         UnitTestGeneratorInterface $unitTestGenerator,
         UnitTestIncFixedGeneratorInterface $unitTestIncFixedGenerator,
         UnitTestIncGeneratorInterface $unitTestIncGenerator,
@@ -77,7 +70,6 @@ final class Scaffolder implements ScaffolderInterface
     ) {
         $this->docsGenerator             = $docsGenerator;
         $this->sniffGenerator            = $sniffGenerator;
-        $this->templateRenderer          = $templateRenderer;
         $this->unitTestGenerator         = $unitTestGenerator;
         $this->unitTestIncFixedGenerator = $unitTestIncFixedGenerator;
         $this->unitTestIncGenerator      = $unitTestIncGenerator;
@@ -87,7 +79,7 @@ final class Scaffolder implements ScaffolderInterface
     /**
      * Print the help message.
      *
-     * @return never
+     * @return void
      */
     public function printHelp()
     {
@@ -104,8 +96,6 @@ final class Scaffolder implements ScaffolderInterface
             'Options:',
             '  -h, --help            Print this help.',
         ]));
-
-        exit(0);
     }
 
     /**

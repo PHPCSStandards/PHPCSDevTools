@@ -12,18 +12,31 @@
 namespace PHPCSDevTools\Tests\Scaffold\Resolver\NamespaceResolver;
 
 use PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver\SniffNamespaceResolver;
-use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
+use PHPCSDevTools\Tests\Scaffold\AbstractTestcase;
 
 /**
  * Test the SniffNamespaceResolver class.
  *
  * @covers \PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver\SniffNamespaceResolver
  */
-final class SniffNamespaceResolverTest extends XTestCase
+final class SniffNamespaceResolverTest extends AbstractTestcase
 {
 
-    public function testExample()
+    /**
+     * It resolves the namespace for a sniff class.
+     *
+     * @return void
+     */
+    public function testResolveBuildsTheSniffNamespace()
     {
-        self::assertTrue(true);
+        $sniffName = $this->createMockSniffName(function ($mock) {
+            $mock->expects(self::once())->method('getNamespace')->willReturn('Vendor');
+            $mock->expects(self::once())->method('getStandard')->willReturn('Standard');
+            $mock->expects(self::once())->method('getCategory')->willReturn('Category');
+        });
+
+        $resolver = new SniffNamespaceResolver();
+
+        self::assertSame('Vendor\Standard\Sniffs\Category', $resolver->resolve($sniffName));
     }
 }

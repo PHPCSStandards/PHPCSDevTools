@@ -12,25 +12,23 @@
 namespace PHPCSDevTools\Tests\Scaffold\Exception;
 
 use PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException;
-use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
+use PHPCSDevTools\Tests\Scaffold\AbstractTestcase;
 
 /**
  * Test the ScaffolderException class.
  *
  * @covers \PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException
  */
-final class ScaffolderExceptionTest extends XTestCase
+final class ScaffolderExceptionTest extends AbstractTestcase
 {
 
     /**
-     * Example test method.
-     *
-     * @Throws \Throwable
+     * It extends \Exception.
      *
      * @return void
      */
-    public function testExample()
+    public function testExtendsTheBaseExceptionClass()
     {
-        self::assertTrue(true);
+        self::assertInstanceOf('\\Exception', new ScaffolderException('msg'));
     }
 }

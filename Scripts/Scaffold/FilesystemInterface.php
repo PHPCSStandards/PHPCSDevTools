@@ -11,19 +11,14 @@
 
 namespace PHPCSDevTools\Scripts\Scaffold;
 
-use PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException;
-
-interface FileReaderInterface
+interface FilesystemInterface
 {
 
-    /**
-     * Read the contents of a file.
-     *
-     * @param non-empty-string $filePath the path to the file to read
-     *
-     * @throws ScaffolderException
-     *
-     * @return non-empty-string
-     */
+    public function createDirectory($path);
+
+    public function exists($path);
+
     public function read($filePath);
+
+    public function write($path, $contents);
 }

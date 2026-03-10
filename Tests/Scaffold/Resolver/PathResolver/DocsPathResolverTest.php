@@ -12,18 +12,37 @@
 namespace PHPCSDevTools\Tests\Scaffold\Resolver\PathResolver;
 
 use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\DocsPathResolver;
-use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
+use PHPCSDevTools\Tests\Scaffold\AbstractTestcase;
 
 /**
  * Test the DocsPathResolver class.
  *
  * @covers \PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\DocsPathResolver
  */
-final class DocsPathResolverTest extends XTestCase
+final class DocsPathResolverTest extends AbstractTestcase
 {
 
-    public function testExample()
+    /**
+     * It resolves the docs file path.
+     *
+     * @return void
+     */
+    public function testResolveBuildsTheDocumentationPath()
     {
-        self::assertTrue(true);
+        $sniffName = $this->createMockSniffName(function ($mock) {
+            $mock->expects(self::once())->method('getStandard')->willReturn('Standard');
+            $mock->expects(self::once())->method('getCategory')->willReturn('Category');
+            $mock->expects(self::once())->method('getSniff')->willReturn('MySniff');
+        });
+        $workspace = $this->createMockWorkspace(function ($mock) {
+            $mock->expects(self::once())->method('getPath')->willReturn('/project');
+        });
+
+        $resolver = new DocsPathResolver();
+
+        self::assertSame(
+            '/project/Standard/Docs/Category/MySniffStandard.xml',
+            $resolver->resolve($sniffName, $workspace)
+        );
     }
 }

@@ -12,18 +12,29 @@
 namespace PHPCSDevTools\Tests\Scaffold\Resolver\ShortClassResolver;
 
 use PHPCSDevTools\Scripts\Scaffold\Resolver\ShortClassResolver\UnitTestShortClassResolver;
-use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
+use PHPCSDevTools\Tests\Scaffold\AbstractTestcase;
 
 /**
  * Test the UnitTestShortClassResolver class.
  *
  * @covers \PHPCSDevTools\Scripts\Scaffold\Resolver\ShortClassResolver\UnitTestShortClassResolver
  */
-final class UnitTestShortClassResolverTest extends XTestCase
+final class UnitTestShortClassResolverTest extends AbstractTestcase
 {
 
-    public function testExample()
+    /**
+     * It resolves the short class name for a unit test.
+     *
+     * @return void
+     */
+    public function testResolveBuildsTheUnitTestShortClassName()
     {
-        self::assertTrue(true);
+        $sniffName = $this->createMockSniffName(function ($mock) {
+            $mock->expects(self::once())->method('getSniff')->willReturn('MySniff');
+        });
+
+        $resolver = new UnitTestShortClassResolver();
+
+        self::assertSame('MySniffUnitTest', $resolver->resolve($sniffName));
     }
 }

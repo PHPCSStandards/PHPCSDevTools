@@ -11,7 +11,7 @@
 
 namespace PHPCSDevTools\Scripts\Scaffold\Generator;
 
-use PHPCSDevTools\Scripts\Scaffold\FileCreatorInterface;
+use PHPCSDevTools\Scripts\Scaffold\FilesystemInterface;
 use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\UnitTestIncFixedPathResolverInterface;
 use PHPCSDevTools\Scripts\Scaffold\SniffNameInterface;
 use PHPCSDevTools\Scripts\Scaffold\TemplateRendererInterface;
@@ -22,14 +22,14 @@ final class UnitTestIncFixedGenerator implements UnitTestIncFixedGeneratorInterf
 {
 
     /**
-     * @var FileCreatorInterface
+     * @var FilesystemInterface
      */
-    private $fileCreator;
+    private $filesystem;
 
     /**
      * @var TemplateRendererInterface
      */
-    private $templateRenderer;
+    private $renderer;
 
     /**
      * @var UnitTestIncFixedPathResolverInterface
@@ -44,13 +44,13 @@ final class UnitTestIncFixedGenerator implements UnitTestIncFixedGeneratorInterf
     private $writer;
 
     public function __construct(
-        FileCreatorInterface $fileCreator,
-        TemplateRendererInterface $templateRenderer,
+        FilesystemInterface $filesystem,
+        TemplateRendererInterface $renderer,
         UnitTestIncFixedPathResolverInterface $unitTestIncFixedPathResolver,
         Writer $writer
     ) {
-        $this->fileCreator                  = $fileCreator;
-        $this->templateRenderer             = $templateRenderer;
+        $this->filesystem                   = $filesystem;
+        $this->renderer                     = $renderer;
         $this->unitTestIncFixedPathResolver = $unitTestIncFixedPathResolver;
         $this->writer                       = $writer;
     }
@@ -61,7 +61,7 @@ final class UnitTestIncFixedGenerator implements UnitTestIncFixedGeneratorInterf
     public function generate(SniffNameInterface $sniffName, WorkspaceInterface $workspace)
     {
         $path = $this->unitTestIncFixedPathResolver->resolve($sniffName, $workspace);
-        if ($this->fileCreator->exists($path)) {
+        if ($this->filesystem->exists($path)) {
             $this->writer->toStderr('File already exists: ' . $path . \PHP_EOL);
 
             return;
@@ -69,9 +69,9 @@ final class UnitTestIncFixedGenerator implements UnitTestIncFixedGeneratorInterf
 
         $this->writer->toStdout('Creating file: ' . $path . \PHP_EOL);
 
-        $contents = $this->templateRenderer->render('fixture.inc.fixed');
+        $contents = $this->renderer->render('fixture.inc.fixed');
 
-        $this->fileCreator->create($path, $contents);
+        $this->filesystem->write($path, $contents);
 
         $this->writer->toStdout('Created file: ' . $path . \PHP_EOL);
     }

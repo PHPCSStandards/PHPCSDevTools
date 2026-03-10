@@ -12,11 +12,10 @@
 namespace PHPCSDevTools\Scripts\Scaffold\Generator;
 
 use PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException;
-use PHPCSDevTools\Scripts\Scaffold\FileCreatorInterface;
+use PHPCSDevTools\Scripts\Scaffold\FilesystemInterface;
 use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\DocsPathResolverInterface;
 use PHPCSDevTools\Scripts\Scaffold\SniffNameInterface;
 use PHPCSDevTools\Scripts\Scaffold\TemplateRendererInterface;
-use PHPCSDevTools\Scripts\Scaffold\Workspace;
 use PHPCSDevTools\Scripts\Scaffold\WorkspaceInterface;
 use PHPCSDevTools\Scripts\Utils\Writer;
 
@@ -31,16 +30,16 @@ final class DocsGenerator implements DocsGeneratorInterface
     private $docsPathResolver;
 
     /**
-     * @var FileCreatorInterface
+     * @var FilesystemInterface
      */
-    private $fileCreator;
+    private $filesystem;
 
     /**
      * The template renderer.
      *
      * @var TemplateRendererInterface
      */
-    private $templateRenderer;
+    private $renderer;
 
     /**
      * The writer.
@@ -52,19 +51,19 @@ final class DocsGenerator implements DocsGeneratorInterface
     /**
      *
      * @param DocsPathResolverInterface $docsPathResolver the path resolver for the docs file
-     * @param FileCreatorInterface      $fileCreator      the file creator for creating the docs file
-     * @param TemplateRendererInterface $templateRenderer the template renderer for rendering the docs file
+     * @param FilesystemInterface       $filesystem       the file creator for creating the docs file
+     * @param TemplateRendererInterface $renderer         the template renderer for rendering the docs file
      * @param Writer                    $writer           The writer
      */
     public function __construct(
         DocsPathResolverInterface $docsPathResolver,
-        FileCreatorInterface $fileCreator,
-        TemplateRendererInterface $templateRenderer,
+        FilesystemInterface $filesystem,
+        TemplateRendererInterface $renderer,
         Writer $writer
     ) {
         $this->docsPathResolver = $docsPathResolver;
-        $this->fileCreator      = $fileCreator;
-        $this->templateRenderer = $templateRenderer;
+        $this->filesystem       = $filesystem;
+        $this->renderer         = $renderer;
         $this->writer           = $writer;
     }
 
@@ -82,7 +81,7 @@ final class DocsGenerator implements DocsGeneratorInterface
     {
         $path = $this->docsPathResolver->resolve($sniffName, $workspace);
 
-        if ($this->fileCreator->exists($path)) {
+        if ($this->filesystem->exists($path)) {
             $this->writer->toStderr('File already exists: ' . $path . \PHP_EOL);
 
             return;
@@ -90,14 +89,14 @@ final class DocsGenerator implements DocsGeneratorInterface
 
         $this->writer->toStdout('Creating file: ' . $path . \PHP_EOL);
 
-        $contents = $this->templateRenderer->render('docs.xml', [
+        $contents = $this->renderer->render('docs.xml', [
             'namespace' => $sniffName->getNamespace(),
             'standard'  => $sniffName->getStandard(),
             'category'  => $sniffName->getCategory(),
             'sniff'     => $sniffName->getSniff(),
         ]);
 
-        $this->fileCreator->create($path, $contents);
+        $this->filesystem->write($path, $contents);
 
         $this->writer->toStdout('Created file: ' . $path . \PHP_EOL);
     }
