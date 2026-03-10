@@ -290,7 +290,8 @@ final class Config
             || isset($argsFlipped['--help'])
         ) {
             $this->writer->toStderr($this->getVersion());
-            $this->writer->toStdout($this->getHelp());
+            $formatter = new HelpTextFormatter($this->helpTexts, $this->showColored);
+            $this->writer->toStdout($formatter->format());
             $this->executeCheck = false;
             return;
         }
@@ -407,16 +408,5 @@ final class Config
         $text .= \PHP_EOL . 'by Juliette Reinders Folmer' . \PHP_EOL . \PHP_EOL;
 
         return $text;
-    }
-
-    /**
-     * Retrieve usage instructions.
-     *
-     * @return string
-     */
-    private function getHelp()
-    {
-        $formatter = new HelpTextFormatter($this->helpTexts, $this->showColored);
-        return $formatter->format();
     }
 }
