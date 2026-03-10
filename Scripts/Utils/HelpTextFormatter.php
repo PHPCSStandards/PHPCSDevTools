@@ -19,7 +19,7 @@ namespace PHPCSDevTools\Scripts\Utils;
  *
  * @since 2.0.0
  */
-class HelpTextFormatter
+final class HelpTextFormatter
 {
     /**
      * Max width for help text.

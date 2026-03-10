@@ -18,7 +18,7 @@ use Yoast\PHPUnitPolyfills\TestCases\XTestCase;
  *
  * @covers \PHPCSDevTools\Scripts\Utils\HelpTextFormatter
  */
-class HelpTextFormatterTest extends XTestCase
+final class HelpTextFormatterTest extends XTestCase
 {
 
     /**
@@ -79,14 +79,14 @@ class HelpTextFormatterTest extends XTestCase
                         ],
                     ],
                 ],
-                'expected'  => 'Usage:' . PHP_EOL .
-                               '  Command [options]' . PHP_EOL . PHP_EOL .
-                               'Options:' . PHP_EOL .
-                               '  --help    Display this help message.' . PHP_EOL .
-                               '  --version Display version information.' . PHP_EOL .
-                               '  <file>    The file to process.' . PHP_EOL .
-                               '            This is a test with multiple sentences.' . PHP_EOL .
-                               '            Each sentence should be properly wrapped.' . PHP_EOL . PHP_EOL,
+                'expected'  => 'Usage:' . PHP_EOL
+                                . '  Command [options]' . PHP_EOL . PHP_EOL
+                                . 'Options:' . PHP_EOL
+                                . '  --help    Display this help message.' . PHP_EOL
+                                . '  --version Display version information.' . PHP_EOL
+                                . '  <file>    The file to process.' . PHP_EOL
+                                . '            This is a test with multiple sentences.' . PHP_EOL
+                                . '            Each sentence should be properly wrapped.' . PHP_EOL . PHP_EOL,
                 'useColor'  => false,
             ],
             'with color'       => [
@@ -103,10 +103,10 @@ class HelpTextFormatterTest extends XTestCase
                         ],
                     ],
                 ],
-                'expected'  => "\033[33mUsage:\033[0m" . PHP_EOL .
-                               "  Command \033[36m[options]\033[0m" . PHP_EOL . PHP_EOL .
-                               "\033[33mOptions:\033[0m" . PHP_EOL .
-                               "  \033[32m--help\033[0m Display this help message." . PHP_EOL . PHP_EOL,
+                'expected'  => "\033[33mUsage:\033[0m" . PHP_EOL
+                                . "  Command \033[36m[options]\033[0m" . PHP_EOL . PHP_EOL
+                                . "\033[33mOptions:\033[0m" . PHP_EOL
+                                . "  \033[32m--help\033[0m Display this help message." . PHP_EOL . PHP_EOL,
                 'useColor'  => true,
             ],
         ];
