@@ -17,6 +17,30 @@ namespace PHPCSDevTools\Scripts\Utils;
  * This class is not part of the public API. Backward compatibility is not guaranteed.
  * ---------------------------------------------------------------------------------------------
  *
+ * The $helpTexts array passed to the constructor defines the content of the help text output,
+ * organized into sections. It should be a structured array where each key is a section header
+ * (e.g., "Usage", "Options") and the value is a list of items. Each item is an array in one
+ * of the following formats:
+ *
+ * - Text-only item: ['text' => 'Some descriptive text']
+ *   Displayed as a plain text line under the section header. Square-bracketed portions
+ *   (e.g., [options]) will be highlighted when colored output is enabled.
+ *
+ * - Argument item: ['arg' => '--option-name', 'desc' => 'Description of the option.']
+ *   Displayed as a formatted option line with the argument left-aligned and the description
+ *   word-wrapped. Multi-sentence descriptions are broken at sentence boundaries.
+ *
+ * Example:
+ * [
+ *     'Usage'   => [
+ *         ['text' => 'command-name [options]'],
+ *     ],
+ *     'Options' => [
+ *         ['arg' => '--help', 'desc' => 'Display this help message.'],
+ *         ['arg' => '--version', 'desc' => 'Display version. Shows the current version number.'],
+ *     ],
+ * ]
+ *
  * @since 2.0.0
  */
 final class HelpTextFormatter
@@ -38,6 +62,8 @@ final class HelpTextFormatter
     /**
      * The help texts to format.
      *
+     * See the class docblock for more details on the format.
+     *
      * @var array<string, array<array<string, string>>>
      */
     private $helpTexts;
@@ -52,7 +78,8 @@ final class HelpTextFormatter
     /**
      * Constructor.
      *
-     * @param array<string, array<array<string, string>>> $helpTexts   The help texts to format.
+     * @param array<string, array<array<string, string>>> $helpTexts   The help texts to format. See the class
+     *                                                                 docblock for more details on the format.
      * @param bool                                        $showColored Whether to use colored output.
      */
     public function __construct(array $helpTexts, $showColored)
