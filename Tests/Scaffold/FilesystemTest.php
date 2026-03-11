@@ -431,12 +431,26 @@ final class FilesystemTest extends AbstractTestcase
      */
     public function testThrowsWhenTheDirectoryCannotBeCreated()
     {
-        $filesystem = new Filesystem();
+        $filesystem   = new Filesystem();
+        $scheme       = 'fsuncreatable';
+        $wrapperClass = __NAMESPACE__ . '\\FilesystemUncreatableDirectoryStreamWrapper';
+
+        if (! \in_array($scheme, \stream_get_wrappers(), true)) {
+            \stream_wrapper_register($scheme, $wrapperClass);
+        }
+
+        $path = $scheme . '://root/shouldfail.txt';
 
         $this->expectException('PHPCSDevTools\\Scripts\\Scaffold\\Exception\\ScaffolderException');
-        $this->expectExceptionMessage('Failed to create directory: "/dev/null".');
+        $this->expectExceptionMessage('Failed to create directory: "' . $scheme . '://root".');
 
-        $filesystem->write('/dev/null/shouldfail.txt', 'fail');
+        try {
+            $filesystem->write($path, 'fail');
+        } catch (\Exception $exception) {
+            \stream_wrapper_unregister($scheme);
+
+            throw $exception;
+        }
     }
 
     /**
