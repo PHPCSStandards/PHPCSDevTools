@@ -467,14 +467,15 @@ final class FilesystemTest extends AbstractTestcase
      */
     public function testThrowsWhenTheFileIsNotReadable()
     {
-        $filesystem = new Filesystem();
+        $filesystem   = new Filesystem();
+        $scheme       = 'fsunreadable';
+        $wrapperClass = __NAMESPACE__ . '\\FilesystemUnreadableStreamWrapper';
 
-        $path = \implode(\DIRECTORY_SEPARATOR, [\sys_get_temp_dir(), __FUNCTION__]);
+        if (! \in_array($scheme, \stream_get_wrappers(), true)) {
+            \stream_wrapper_register($scheme, $wrapperClass);
+        }
 
-        \file_put_contents($path, __FUNCTION__);
-
-        // Write-only, not readable.
-        \chmod($path, 0222);
+        $path = $scheme . '://example';
 
         $this->expectException('PHPCSDevTools\\Scripts\\Scaffold\\Exception\\ScaffolderException');
         $this->expectExceptionMessage(\sprintf('File path "%s" is not readable.', $path));
@@ -482,8 +483,7 @@ final class FilesystemTest extends AbstractTestcase
         try {
             $filesystem->read($path);
         } catch (\Exception $exception) {
-            \chmod($path, 0644);
-            \unlink($path);
+            \stream_wrapper_unregister($scheme);
 
             throw $exception;
         }

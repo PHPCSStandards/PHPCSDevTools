@@ -60,7 +60,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockDocsGenerator($factory = null)
     {
-        $mockObject = $this->getMockBuilder('PHPCSDevTools\\Scripts\\Scaffold\\Generator\\DocsGeneratorInterface')->getMock();
+        $mockObject = $this->getMockBuilder(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Generator\\DocsGeneratorInterface'
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -154,7 +156,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockNamespaceResolver($factory = null)
     {
-        $mockObject = $this->getMockBuilder('PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\NamespaceResolverInterface')->getMock();
+        $mockObject = $this->getMockBuilder(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\NamespaceResolverInterface'
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -172,7 +176,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockPathResolver($factory = null)
     {
-        $mockObject = $this->getMockBuilder('PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\PathResolverInterface')->getMock();
+        $mockObject = $this->getMockBuilder(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\PathResolverInterface'
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -226,7 +232,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockShortClassResolver($factory = null)
     {
-        $mockObject = $this->getMockBuilder('PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\ShortClassResolverInterface')->getMock();
+        $mockObject = $this->getMockBuilder(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\ShortClassResolverInterface'
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -244,7 +252,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockShortClassResolverInterface($factory = null)
     {
-        $mockObject = $this->getMockBuilder('PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\ShortClassResolverInterface')->getMock();
+        $mockObject = $this->getMockBuilder(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\ShortClassResolverInterface'
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -282,7 +292,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockSniffGenerator($factory = null)
     {
-        $mockObject = $this->getMockBuilder('PHPCSDevTools\\Scripts\\Scaffold\\Generator\\SniffGeneratorInterface')->getMock();
+        $mockObject = $this->getMockBuilder(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Generator\\SniffGeneratorInterface'
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -398,7 +410,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockUnitTestGenerator($factory = null)
     {
-        $mockObject = $this->getMockBuilder('PHPCSDevTools\\Scripts\\Scaffold\\Generator\\UnitTestGeneratorInterface')->getMock();
+        $mockObject = $this->getMockBuilder(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Generator\\UnitTestGeneratorInterface'
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -456,7 +470,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockUnitTestIncGenerator($factory = null)
     {
-        $mockObject = $this->getMockBuilder('PHPCSDevTools\\Scripts\\Scaffold\\Generator\\UnitTestIncGeneratorInterface')->getMock();
+        $mockObject = $this->getMockBuilder(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Generator\\UnitTestIncGeneratorInterface'
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
