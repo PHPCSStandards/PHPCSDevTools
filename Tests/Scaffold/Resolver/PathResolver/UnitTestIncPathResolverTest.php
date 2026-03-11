@@ -35,13 +35,19 @@ final class UnitTestIncPathResolverTest extends AbstractTestcase
             $mock->expects(self::once())->method('getSniff')->willReturn('MySniff');
         });
         $workspace = $this->createMockWorkspace(function ($mock) {
-            $mock->expects(self::once())->method('getPath')->willReturn('/project');
+            $mock->expects(self::once())->method('getPath')->willReturn(\DIRECTORY_SEPARATOR . 'project');
         });
 
         $resolver = new UnitTestIncPathResolver();
 
         self::assertSame(
-            '/project/Standard/Tests/Category/MySniffUnitTest.inc',
+            \DIRECTORY_SEPARATOR . \implode(\DIRECTORY_SEPARATOR, [
+                'project',
+                'Standard',
+                'Tests',
+                'Category',
+                'MySniffUnitTest.inc',
+            ]),
             $resolver->resolve($sniffName, $workspace)
         );
     }

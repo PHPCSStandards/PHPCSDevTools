@@ -35,13 +35,19 @@ final class DocsPathResolverTest extends AbstractTestcase
             $mock->expects(self::once())->method('getSniff')->willReturn('MySniff');
         });
         $workspace = $this->createMockWorkspace(function ($mock) {
-            $mock->expects(self::once())->method('getPath')->willReturn('/project');
+            $mock->expects(self::once())->method('getPath')->willReturn(\DIRECTORY_SEPARATOR . 'project');
         });
 
         $resolver = new DocsPathResolver();
 
         self::assertSame(
-            '/project/Standard/Docs/Category/MySniffStandard.xml',
+            \DIRECTORY_SEPARATOR . \implode(\DIRECTORY_SEPARATOR, [
+                'project',
+                'Standard',
+                'Docs',
+                'Category',
+                'MySniffStandard.xml',
+            ]),
             $resolver->resolve($sniffName, $workspace)
         );
     }
