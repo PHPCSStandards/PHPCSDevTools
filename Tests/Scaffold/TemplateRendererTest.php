@@ -488,6 +488,10 @@ final class TemplateRendererTest extends AbstractTestcase
      */
     public function testTemplateRendererThrowsWhenTemplateFileDoesNotExist()
     {
+        if (\PHP_VERSION_ID < 50600) {
+            self::markTestSkipped('PHP 5.6 or higher is required to run this test.');
+        }
+
         $filesystem = $this->createMockFilesystem(function ($mock) {
             $mock->expects(self::exactly(2))->method('exists')->willReturn(true, false);
         });
