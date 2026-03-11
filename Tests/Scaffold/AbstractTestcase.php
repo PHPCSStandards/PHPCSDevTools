@@ -78,9 +78,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockDocsPathResolver($factory = null)
     {
-        $mockObject = $this->createMock(
+        $mockObject = $this->getMockBuilder(
             'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\PathResolver\\DocsPathResolverInterface'
-        );
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -116,9 +116,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockFullyQualifiedClassResolver($factory = null)
     {
-        $mockObject = $this->createMock(
+        $mockObject = $this->getMockBuilder(
             'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\FullyQualifiedClassResolverInterface'
-        );
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -262,9 +262,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockSniffFullyQualifiedClassResolver($factory = null)
     {
-        $mockObject = $this->createMock(
+        $mockObject = $this->getMockBuilder(
             'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\FullyQualifiedClassResolver\\SniffFullyQualifiedClassResolverInterface'
-        );
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -318,9 +318,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockSniffNamespaceResolver($factory = null)
     {
-        $mockObject = $this->createMock(
+        $mockObject = $this->getMockBuilder(
             'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\NamespaceResolver\\SniffNamespaceResolverInterface'
-        );
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -338,9 +338,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockSniffPathResolver($factory = null)
     {
-        $mockObject = $this->createMock(
+        $mockObject = $this->getMockBuilder(
             'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\PathResolver\\SniffPathResolverInterface'
-        );
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -358,9 +358,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockSniffShortClassResolver($factory = null)
     {
-        $mockObject = $this->createMock(
+        $mockObject = $this->getMockBuilder(
             'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\ShortClassResolver\\SniffShortClassResolverInterface'
-        );
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -378,9 +378,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockUnitTestFullyQualifiedClassResolver($factory = null)
     {
-        $mockObject = $this->createMock(
+        $mockObject = $this->getMockBuilder(
             'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\FullyQualifiedClassResolver\\UnitTestFullyQualifiedClassResolverInterface'
-        );
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -416,9 +416,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockUnitTestIncFixedGenerator($factory = null)
     {
-        $mockObject = $this->createMock(
+        $mockObject = $this->getMockBuilder(
             'PHPCSDevTools\\Scripts\\Scaffold\\Generator\\UnitTestIncFixedGeneratorInterface'
-        );
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -436,9 +436,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockUnitTestIncFixedPathResolver($factory = null)
     {
-        $mockObject = $this->createMock(
+        $mockObject = $this->getMockBuilder(
             'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\PathResolver\\UnitTestIncFixedPathResolverInterface'
-        );
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -474,9 +474,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockUnitTestIncPathResolver($factory = null)
     {
-        $mockObject = $this->createMock(
+        $mockObject = $this->getMockBuilder(
             'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\PathResolver\\UnitTestIncPathResolverInterface'
-        );
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -494,9 +494,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockUnitTestNamespaceResolver($factory = null)
     {
-        $mockObject = $this->createMock(
+        $mockObject = $this->getMockBuilder(
             'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\NamespaceResolver\\UnitTestNamespaceResolverInterface'
-        );
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -514,9 +514,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockUnitTestPathResolver($factory = null)
     {
-        $mockObject = $this->createMock(
+        $mockObject = $this->getMockBuilder(
             'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\PathResolver\\UnitTestPathResolverInterface'
-        );
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -534,9 +534,9 @@ abstract class AbstractTestcase extends TestCase
      */
     public function createMockUnitTestShortClassResolver($factory = null)
     {
-        $mockObject = $this->createMock(
+        $mockObject = $this->getMockBuilder(
             'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\ShortClassResolver\\UnitTestShortClassResolverInterface'
-        );
+        )->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
