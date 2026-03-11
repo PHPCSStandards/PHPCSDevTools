@@ -13,14 +13,6 @@
     executionOrder="depends,random"
     forceCoversAnnotation="true">
 
-    <coverage cacheDirectory="./.cache/phpunit/coverage-cache" pathCoverage="true" processUncoveredFiles="true">
-        <include>
-            <directory suffix=".php">./Scripts/Scaffold/</directory>
-        </include>
-        <report>
-            <text outputFile="./.cache/phpunit/coverage.txt"/>
-        </report>
-    </coverage>
     <testsuites>
         <testsuite name="DebugSniff">
             <directory suffix="Test.php">./PHPCSDebug/Tests/</directory>

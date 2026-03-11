@@ -22,19 +22,6 @@
         requireCoverageMetadata="true"
     >
 
-    <source>
-        <include>
-            <directory>./Scripts/Scaffold/</directory>
-        </include>
-    </source>
-    <coverage pathCoverage="true">
-        <report>
-            <!-- <html outputDirectory="./.cache/phpunit/coverage-html"/>-->
-            <clover outputFile="./.cache/phpunit/clover.xml"/>
-            <text outputFile="./.cache/phpunit/coverage.txt"/>
-            <xml outputDirectory="./.cache/phpunit/coverage-xml"/>
-        </report>
-    </coverage>
     <testsuites>
         <testsuite name="DebugSniff">
             <directory suffix="Test.php">./PHPCSDebug/Tests/</directory>
