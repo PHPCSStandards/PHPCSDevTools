@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install PHP
-        uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # 2.36.0
+        uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # 2.37.0
         with:
           php-version: 'latest'
           coverage: none
@@ -45,7 +45,7 @@ jobs:
       # Install dependencies and handle caching in one go.
       # @link https://github.com/marketplace/actions/install-php-dependencies-with-composer
       - name: Install Composer dependencies
-        uses: "ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520" # 3.1.1
+        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
         with:
           # Bust the cache at least once a month - output format: YYYY-MM.
           custom-cache-suffix: $(date -u "+%Y-%m")
@@ -141,18 +141,18 @@ jobs:
         run: diff -B ./PHPCSDebug/ruleset.xml <(xmllint --format "./PHPCSDebug/ruleset.xml")
 
   phpstan:
-    uses: PHPCSStandards/.github/.github/workflows/reusable-phpstan.yml@0d44fe2771ae7bc1254a0a4ec596d8110d16d3dc # v1.1.1
+    uses: PHPCSStandards/.github/.github/workflows/reusable-phpstan.yml@3d96a6d85381655b6cb0bc4eac175a78f18d9d8f # v1.1.2
 
   markdownlint:
     name: 'Lint Markdown'
-    uses: PHPCSStandards/.github/.github/workflows/reusable-markdownlint.yml@0d44fe2771ae7bc1254a0a4ec596d8110d16d3dc # v1.1.1
+    uses: PHPCSStandards/.github/.github/workflows/reusable-markdownlint.yml@3d96a6d85381655b6cb0bc4eac175a78f18d9d8f # v1.1.2
 
   remark:
     name: 'QA Markdown'
-    uses: PHPCSStandards/.github/.github/workflows/reusable-remark.yml@0d44fe2771ae7bc1254a0a4ec596d8110d16d3dc # v1.1.1
+    uses: PHPCSStandards/.github/.github/workflows/reusable-remark.yml@3d96a6d85381655b6cb0bc4eac175a78f18d9d8f # v1.1.2
 
   yamllint:
     name: 'Lint Yaml'
-    uses: PHPCSStandards/.github/.github/workflows/reusable-yamllint.yml@0d44fe2771ae7bc1254a0a4ec596d8110d16d3dc # v1.1.1
+    uses: PHPCSStandards/.github/.github/workflows/reusable-yamllint.yml@3d96a6d85381655b6cb0bc4eac175a78f18d9d8f # v1.1.2
     with:
       strict: true
