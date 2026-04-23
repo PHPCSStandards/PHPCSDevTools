@@ -47,7 +47,10 @@
     "autoload": {
         "psr-4": {
             "PHPCSDevTools\\Scripts\\": "Scripts/"
-        }
+        },
+        "files": [
+            "devtools-autoload.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
