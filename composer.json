@@ -77,32 +77,25 @@
             "@php ./vendor/squizlabs/php_codesniffer/bin/phpcbf"
         ],
         "test": [
-            "@phpunit"
+            "@php ./vendor/phpunit/phpunit/phpunit"
         ],
         "test-sniff": [
-            "@phpunit --testsuite DebugSniff"
+            "@php ./vendor/phpunit/phpunit/phpunit --testsuite DebugSniff"
         ],
         "test-tools": [
-            "@phpunit --testsuite DevTools"
+            "@php ./vendor/phpunit/phpunit/phpunit --testsuite DevTools"
         ],
         "test-lte9": [
-            "@phpunit -c phpunitlte9.xml.dist"
+            "@php ./vendor/phpunit/phpunit/phpunit -c phpunitlte9.xml.dist"
         ],
         "test-sniff-lte9": [
-            "@phpunit -c phpunitlte9.xml.dist --testsuite DebugSniff"
+            "@php ./vendor/phpunit/phpunit/phpunit -c phpunitlte9.xml.dist --testsuite DebugSniff"
         ],
         "test-tools-lte9": [
-            "@phpunit -c phpunitlte9.xml.dist --testsuite DevTools"
+            "@php ./vendor/phpunit/phpunit/phpunit -c phpunitlte9.xml.dist --testsuite DevTools"
         ],
         "check-complete": [
             "@php ./bin/phpcs-check-feature-completeness ./PHPCSDebug"
-        ],
-        "phpunit": [
-            "@xdebug",
-            "@php ./vendor/phpunit/phpunit/phpunit"
-        ],
-        "xdebug": [
-            "@putenv XDEBUG_MODE=coverage"
         ]
     }
 }
