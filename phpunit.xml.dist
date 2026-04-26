@@ -5,7 +5,7 @@
         backupGlobals="true"
         bootstrap="./phpunit-bootstrap.php"
         beStrictAboutTestsThatDoNotTestAnything="false"
-        cacheDirectory="build/phpunit-cache"
+        cacheDirectory="build/phpunit/cache"
         colors="true"
         displayDetailsOnTestsThatTriggerErrors="true"
         displayDetailsOnTestsThatTriggerWarnings="true"
@@ -21,7 +21,25 @@
         failOnPhpunitDeprecation="false"
         requireCoverageMetadata="true"
     >
-
+    <coverage
+            disableCodeCoverageIgnore="true"
+            ignoreDeprecatedCodeUnits="true"
+            includeUncoveredFiles="true"
+            pathCoverage="true"
+            processUncoveredFiles="true">
+        <report>
+             <clover outputFile="build/phpunit/clover.xml"/>
+            <text outputFile="build/phpunit/coverage.txt"/>
+        </report>
+    </coverage>
+    <logging>
+        <junit outputFile="build/phpunit/junit.xml"/>
+    </logging>
+    <source restrictDeprecations="true" restrictNotices="true" restrictWarnings="true">
+        <include>
+            <directory>./Scripts/Scaffold/</directory>
+        </include>
+    </source>
     <testsuites>
         <testsuite name="DebugSniff">
             <directory suffix="Test.php">./PHPCSDebug/Tests/</directory>
@@ -29,6 +47,8 @@
         <testsuite name="DevTools">
             <directory suffix="Test.php">./Tests/DocsXsd/</directory>
             <directory suffix="Test.php">./Tests/FeatureComplete/</directory>
+        </testsuite>
+        <testsuite name="Scaffold">
             <directory suffix="Test.php">./Tests/Scaffold/</directory>
         </testsuite>
     </testsuites>
