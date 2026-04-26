@@ -12,9 +12,12 @@
 namespace PHPCSDevTools\Scripts\Scaffold;
 
 use PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException;
+use PHPCSDevTools\Tests\Scaffold\WorkspaceTest;
 
 /**
  * Represents a workspace for scaffolding operations.
+ *
+ * @see WorkspaceTest
  */
 final class Workspace implements WorkspaceInterface
 {
@@ -55,8 +58,22 @@ final class Workspace implements WorkspaceInterface
      *
      * @return non-empty-string
      */
-    public function getPath()
+    public function toString()
     {
         return $this->path;
+    }
+
+    /**
+     * Create a Workspace instance from the current working directory.
+     *
+     * @param non-empty-string $path the path to the workspace
+     *
+     * @throws ScaffolderException if the current working directory is not a valid directory
+     *
+     * @return self
+     */
+    public static function fromString($path)
+    {
+        return new self($path);
     }
 }

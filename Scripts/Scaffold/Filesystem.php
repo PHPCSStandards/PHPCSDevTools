@@ -12,14 +12,20 @@
 namespace PHPCSDevTools\Scripts\Scaffold;
 
 use PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException;
+use PHPCSDevTools\Tests\Scaffold\FilesystemTest;
 
+/**
+ * Provides filesystem operations for scaffold generation.
+ *
+ * @see FilesystemTest
+ */
 final class Filesystem implements FilesystemInterface
 {
 
     /**
      * Create a directory if it does not already exist.
      *
-     * @param non-empty-string $path directory path
+     * @param string $path directory path
      *
      * @throws ScaffolderException if the path is invalid or the directory cannot be created
      *
@@ -35,7 +41,7 @@ final class Filesystem implements FilesystemInterface
             throw new ScaffolderException('Directory path must be a non-empty string.');
         }
 
-        if (\is_dir($path) === true) {
+        if (\is_dir($path)) {
             throw new ScaffolderException('Directory already exists: ' . $path);
         }
 
@@ -59,9 +65,25 @@ final class Filesystem implements FilesystemInterface
     }
 
     /**
+     * Get the current working directory.
+     *
+     * @return non-empty-string
+     */
+    public function currentWorkingDirectory()
+    {
+        $result = \getcwd();
+
+        if ($result === false) {
+            throw new ScaffolderException('Failed to get current working directory.');
+        }
+
+        return $result;
+    }
+
+    /**
      * Check if a file exists at the given path.
      *
-     * @param non-empty-string $path the path to check for existence
+     * @param string $path the path to check for existence
      *
      * @throws ScaffolderException if the path is not a valid non-empty string
      *
@@ -81,9 +103,38 @@ final class Filesystem implements FilesystemInterface
     }
 
     /**
+     * Find all paths in a directory and its subdirectories that match the given regular expression.
+     *
+     * @param string $path  file or directory path
+     * @param string $regex regular expression to filter results
+     *
+     * @return list<non-empty-string>
+     */
+    public function find($path, $regex)
+    {
+        $iterator = new \RegexIterator(
+            new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator(
+                    $path,
+                    \FilesystemIterator::FOLLOW_SYMLINKS | \FilesystemIterator::SKIP_DOTS
+                )
+            ),
+            $regex
+        );
+
+        $paths = [];
+
+        foreach ($iterator as $file) {
+            $paths[$file->getPathname()] = true;
+        }
+
+        return \array_keys($paths);
+    }
+
+    /**
      * Read the contents of a file.
      *
-     * @param non-empty-string $path the path to the file to read
+     * @param string $path the path to the file to read
      *
      * @throws ScaffolderException
      *
@@ -170,11 +221,9 @@ final class Filesystem implements FilesystemInterface
         });
 
         try {
-            $written = \file_put_contents($path, $contents);
+            \file_put_contents($path, $contents);
 
             \restore_error_handler();
-
-            return $written;
         } catch (\Exception $exception) {
             \restore_error_handler();
 

@@ -10,105 +10,44 @@
  * @link      https://github.com/PHPCSStandards/PHPCSDevTools
  */
 
-use PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException;
-use PHPCSDevTools\Scripts\Scaffold\Filesystem;
-use PHPCSDevTools\Scripts\Scaffold\Generator\DocsGenerator;
-use PHPCSDevTools\Scripts\Scaffold\Generator\SniffGenerator;
-use PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestGenerator;
-use PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestIncFixedGenerator;
-use PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestIncGenerator;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\FullyQualifiedClassResolver\SniffFullyQualifiedClassResolver;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\FullyQualifiedClassResolver\UnitTestFullyQualifiedClassResolver;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver\SniffNamespaceResolver;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver\UnitTestNamespaceResolver;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\DocsPathResolver;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\SniffPathResolver;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\UnitTestIncFixedPathResolver;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\UnitTestIncPathResolver;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\UnitTestPathResolver;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\ShortClassResolver\SniffShortClassResolver;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\ShortClassResolver\UnitTestShortClassResolver;
-use PHPCSDevTools\Scripts\Scaffold\Scaffolder;
-use PHPCSDevTools\Scripts\Scaffold\SniffName;
-use PHPCSDevTools\Scripts\Scaffold\TemplateRenderer;
-use PHPCSDevTools\Scripts\Scaffold\Workspace;
-use PHPCSDevTools\Scripts\Utils\CliWriter;
+use PHPCSDevTools\Scripts\Scaffold\Container;
 
-$autoloadLocations = [
-    __DIR__ . '/../devtools-autoload.php', // Git clone or direct run from within vendor package directory.
-    __DIR__ . '/../phpcsstandards/phpcsdevtools/devtools-autoload.php', // Composer bin dir install.
-    __DIR__ . '/../autoload.php', // Try Composer autoload from a bin dir install.
-    __DIR__ . '/../../../autoload.php', // Try Composer autoload from within vendor package directory.
-    __DIR__ . '/../vendor/autoload.php', // Try Composer autoload from a git clone install.
-];
+/**
+ * PHPCSDevTools, tools for PHP_CodeSniffer sniff developers.
+ *
+ * @package PHPCSDevTools
+ *
+ * @copyright 2019 PHPCSDevTools Contributors
+ * @license   https://opensource.org/licenses/LGPL-3.0 LGPL3
+ *
+ * @link https://github.com/PHPCSStandards/PHPCSDevTools
+ */
+$rootDirectory = \dirname(__DIR__);
 
-// Try and find a usable autoload file.
-foreach ($autoloadLocations as $file) {
-    $file = \realpath($file);
-    if ($file !== false && \is_file($file) === true) {
-        require_once $file;
+if (isset($GLOBALS['_composer_autoload_path']) === true) {
+    require $GLOBALS['_composer_autoload_path'];
+} else {
+    $autoloadPath = \implode(\DIRECTORY_SEPARATOR, [$rootDirectory, 'vendor', 'autoload.php']);
 
-        break;
-    }
+    \assert(\is_file($autoloadPath) === true, 'Autoload file not found. Run "composer install" to generate it.');
+
+    require $autoloadPath;
 }
 
-$filesystem = new Filesystem();
-$renderer   = new TemplateRenderer($filesystem);
-$writer     = new CliWriter();
+$scaffoldConfigPath = \implode(\DIRECTORY_SEPARATOR, [$rootDirectory, 'config', 'scaffold']);
+if (\is_dir($scaffoldConfigPath) === false) {
+    throw new \RuntimeException('Scaffold configuration directory not found: ' . $scaffoldConfigPath);
+}
 
-$scaffolder = new Scaffolder(
-    new DocsGenerator(new DocsPathResolver(), $filesystem, $renderer, $writer),
-    new SniffGenerator(
-        $filesystem,
-        new SniffNamespaceResolver(),
-        new SniffPathResolver(),
-        new SniffShortClassResolver(),
-        $renderer,
-        $writer
-    ),
-    new UnitTestGenerator(
-        $filesystem,
-        new SniffFullyQualifiedClassResolver(),
-        $renderer,
-        new UnitTestFullyQualifiedClassResolver(),
-        new UnitTestNamespaceResolver(),
-        new UnitTestPathResolver(),
-        new UnitTestShortClassResolver(),
-        $writer
-    ),
-    new UnitTestIncFixedGenerator($filesystem, $renderer, new UnitTestIncFixedPathResolver(), $writer),
-    new UnitTestIncGenerator($filesystem, $renderer, new UnitTestIncPathResolver(), $writer),
-    $writer
+$aliases   = require $scaffoldConfigPath . \DIRECTORY_SEPARATOR . 'aliases.php';
+$factories = require $scaffoldConfigPath . \DIRECTORY_SEPARATOR . 'factories.php';
+$services  = require $scaffoldConfigPath . \DIRECTORY_SEPARATOR . 'services.php';
+
+$container = new Container($aliases, $factories, $services);
+
+$application = $container->get('PHPCSDevTools\\Scripts\\Scaffold\\Console\\ApplicationInterface');
+
+$application->run(
+    $container->get('PHPCSDevTools\\Scripts\\Scaffold\\Console\\RequestInterface'),
+    $container->get('PHPCSDevTools\\Scripts\\Scaffold\\WorkspaceInterface')
 );
-
-$options = \getopt('h', ['help']);
-// If the user has asked for help, print it and exit.
-if (\array_key_exists('h', $options) || \array_key_exists('help', $options)) {
-    $scaffolder->printHelp();
-    exit(0);
-}
-
-$arguments = isset($_SERVER['argv']) ? \array_values($_SERVER['argv']) : [];
-// The first argument is the script name, so we need at least 2 arguments to have a sniff name.
-if (\count($arguments) < 2) {
-    $scaffolder->printHelp();
-    exit(0);
-}
-
-try {
-    $sniffName = new SniffName($arguments[1]);
-    $workspace = new Workspace(\getcwd());
-
-    $scaffolder->scaffold($sniffName, $workspace);
-
-    exit(0);
-} catch (ScaffolderException $throwable) {
-    $writer->toStderr(\sprintf(
-        'Error: %s%s%s',
-        $throwable->getTraceAsString(),
-        \PHP_EOL . \PHP_EOL,
-        $throwable->getMessage()
-    ));
-
-    exit(1);
-}

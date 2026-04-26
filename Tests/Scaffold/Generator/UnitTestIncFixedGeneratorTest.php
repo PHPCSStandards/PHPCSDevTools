@@ -11,15 +11,24 @@
 
 namespace PHPCSDevTools\Tests\Scaffold\Generator;
 
-use PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestIncFixedGenerator;
+use PHPCSDevTools\Scripts\Scaffold\DotSeparatedSniff;
+use PHPCSDevTools\Scripts\Scaffold\Event\ApplicationStartedEvent;
+use PHPCSDevTools\Scripts\Scaffold\Listener\ApplicationStartedEvent\GenerateUnitTestIncFixedListener;
+use PHPCSDevTools\Scripts\Scaffold\Workspace;
 use PHPCSDevTools\Tests\Scaffold\AbstractTestcase;
 use PHPCSDevTools\Tests\TestWriter;
 
 /**
- * Test the UnitTestIncFixedGenerator class.
+ * Test the GenerateUnitTestIncFixedListener class.
  *
- * @covers \PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestIncFixedGenerator
+ * @covers \PHPCSDevTools\Scripts\Scaffold\Listener\ApplicationStartedEvent\GenerateUnitTestIncFixedListener
  *
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Event\ApplicationStartedEvent
+ * @uses \PHPCSDevTools\Scripts\Scaffold\DotSeparatedSniff
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Standard\Category
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Standard\Name
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Standard\Sniff
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Workspace
  * @uses \PHPCSDevTools\Tests\TestWriter
  */
 final class UnitTestIncFixedGeneratorTest extends AbstractTestcase
@@ -32,50 +41,24 @@ final class UnitTestIncFixedGeneratorTest extends AbstractTestcase
      */
     public function testCreatesANewFixedFixtureFileWhenItDoesNotAlreadyExist()
     {
-        $sniffName    = $this->createMockSniffName();
-        $workspace    = $this->createMockWorkspace();
+        $sniff = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $event = new ApplicationStartedEvent($sniff, new Workspace(\sys_get_temp_dir()));
+
         $filesystem   = $this->createMockFilesystem(function ($mock) {
-            $mock->expects(self::once())
-                ->method('exists')
-                ->with('/tmp/fixture.inc.fixed')
-                ->willReturn(false);
-            $mock->expects(self::once())
-                ->method('write')
-                ->with('/tmp/fixture.inc.fixed', 'fixed content');
+            $mock->expects(self::once())->method('exists')->with('/tmp/fixture.inc.fixed')->willReturn(false);
+            $mock->expects(self::once())->method('write')->with('/tmp/fixture.inc.fixed', 'fixed content');
         });
         $renderer     = $this->createMockRenderer(function ($mock) {
-            $mock->expects(self::once())
-                ->method('render')
-                ->with('fixture.inc.fixed')
-                ->willReturn('fixed content');
+            $mock->expects(self::once())->method('render')->with('fixture.inc.fixed')->willReturn('fixed content');
         });
-        $pathResolver = $this->createMockUnitTestIncFixedPathResolver(function ($mock) use ($sniffName, $workspace) {
-            $mock->expects(self::once())
-                ->method('resolve')
-                ->with($sniffName, $workspace)
-                ->willReturn('/tmp/fixture.inc.fixed');
+        $pathResolver = $this->createMockUnitTestIncFixedPathResolver(function ($mock) use ($sniff) {
+            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('/tmp/fixture.inc.fixed');
         });
         $writer       = new TestWriter();
 
-        $pathResolver->expects(self::once())
-            ->method('resolve')
-            ->with($sniffName, $workspace)
-            ->willReturn('/tmp/fixture.inc.fixed');
-        $filesystem->expects(self::once())
-            ->method('exists')
-            ->with('/tmp/fixture.inc.fixed')
-            ->willReturn(false);
-        $renderer->expects(self::once())
-            ->method('render')
-            ->with('fixture.inc.fixed')
-            ->willReturn('fixed content');
-        $filesystem->expects(self::once())
-            ->method('write')
-            ->with('/tmp/fixture.inc.fixed', 'fixed content');
+        $listener = new GenerateUnitTestIncFixedListener($filesystem, $renderer, $pathResolver, $writer);
 
-        $generator = new UnitTestIncFixedGenerator($filesystem, $renderer, $pathResolver, $writer);
-
-        $generator->generate($sniffName, $workspace);
+        $listener($event);
 
         self::assertSame(
             'Creating file: /tmp/fixture.inc.fixed' . \PHP_EOL . 'Created file: /tmp/fixture.inc.fixed' . \PHP_EOL,
@@ -90,41 +73,42 @@ final class UnitTestIncFixedGeneratorTest extends AbstractTestcase
      */
     public function testDoesNotOverwriteAnExistingFixedFixtureFile()
     {
-        $sniffName    = $this->createMockSniffName();
-        $workspace    = $this->createMockWorkspace();
+        $sniff = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $event = new ApplicationStartedEvent($sniff, new Workspace(\sys_get_temp_dir()));
+
         $filesystem   = $this->createMockFilesystem(function ($mock) {
-            $mock->expects(self::once())
-                ->method('exists')
-                ->with('/tmp/fixture.inc.fixed')
-                ->willReturn(true);
+            $mock->expects(self::once())->method('exists')->with('/tmp/fixture.inc.fixed')->willReturn(true);
             $mock->expects(self::never())->method('write');
         });
         $renderer     = $this->createMockRenderer(function ($mock) {
             $mock->expects(self::never())->method('render');
         });
-        $pathResolver = $this->createMockUnitTestIncFixedPathResolver(function ($mock) use ($sniffName, $workspace) {
-            $mock->expects(self::once())
-                ->method('resolve')
-                ->with($sniffName, $workspace)
-                ->willReturn('/tmp/fixture.inc.fixed');
+        $pathResolver = $this->createMockUnitTestIncFixedPathResolver(function ($mock) use ($sniff) {
+            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('/tmp/fixture.inc.fixed');
         });
         $writer       = new TestWriter();
 
-        $pathResolver->expects(self::once())
-            ->method('resolve')
-            ->with($sniffName, $workspace)
-            ->willReturn('/tmp/fixture.inc.fixed');
-        $filesystem->expects(self::once())
-            ->method('exists')
-            ->with('/tmp/fixture.inc.fixed')
-            ->willReturn(true);
-        $renderer->expects(self::never())->method('render');
-        $filesystem->expects(self::never())->method('write');
+        $listener = new GenerateUnitTestIncFixedListener($filesystem, $renderer, $pathResolver, $writer);
 
-        $generator = new UnitTestIncFixedGenerator($filesystem, $renderer, $pathResolver, $writer);
-
-        $generator->generate($sniffName, $workspace);
+        $listener($event);
 
         self::assertSame('File already exists: /tmp/fixture.inc.fixed' . \PHP_EOL, $writer->getStderr());
+    }
+
+    /**
+     * Verify GenerateUnitTestIncFixedListener implements ListenerInterface.
+     *
+     * @return void
+     */
+    public function testImplementsRequiredInterfaces()
+    {
+        $listener = new GenerateUnitTestIncFixedListener(
+            $this->createMockFilesystem(),
+            $this->createMockRenderer(),
+            $this->createMockUnitTestIncFixedPathResolver(),
+            new TestWriter()
+        );
+
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Listener\\ListenerInterface', $listener);
     }
 }

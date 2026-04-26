@@ -116,10 +116,10 @@ final class FilesystemTest extends AbstractTestcase
 
         try {
             $filesystem->createDirectory($directory);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             \rmdir($directory);
 
-            throw $e;
+            throw $exception;
         }
     }
 
@@ -195,6 +195,20 @@ final class FilesystemTest extends AbstractTestcase
     }
 
     /**
+     * Test that currentWorkingDirectory returns the actual working directory.
+     *
+     * @covers \PHPCSDevTools\Scripts\Scaffold\Filesystem::currentWorkingDirectory
+     *
+     * @return void
+     */
+    public function testCurrentWorkingDirectoryReturnsCwd()
+    {
+        $filesystem = new Filesystem();
+
+        self::assertSame(\getcwd(), $filesystem->currentWorkingDirectory());
+    }
+
+    /**
      * Verify exists returns false for a missing path.
      *
      * @covers \PHPCSDevTools\Scripts\Scaffold\Filesystem::exists
@@ -260,6 +274,67 @@ final class FilesystemTest extends AbstractTestcase
         $this->expectExceptionMessage('Path must be a non-empty string.');
 
         $filesystem->exists('');
+    }
+
+    /**
+     * Verify find returns matching ruleset paths without duplicates.
+     *
+     * @covers \PHPCSDevTools\Scripts\Scaffold\Filesystem::find
+     *
+     * @return void
+     */
+    public function testFindReturnsMatchingPaths()
+    {
+        $root              = $this->createTempWorkspace();
+        $firstStandard     = $root . \DIRECTORY_SEPARATOR . 'StandardOne';
+        $secondStandard    = $root . \DIRECTORY_SEPARATOR . 'StandardTwo';
+        $firstRulesetPath  = $firstStandard . \DIRECTORY_SEPARATOR . 'ruleset.xml';
+        $secondRulesetPath = $secondStandard . \DIRECTORY_SEPARATOR . 'ruleset.xml';
+
+        try {
+            \mkdir($firstStandard, 0777, true);
+            \mkdir($secondStandard, 0777, true);
+            \file_put_contents($firstRulesetPath, '<ruleset name="One"/>');
+            \file_put_contents($secondRulesetPath, '<ruleset name="Two"/>');
+
+            $filesystem = new Filesystem();
+            $paths      = $filesystem->find($root, '#(?:^|[/\\\\])ruleset\.xml$#u');
+
+            \sort($paths);
+
+            self::assertSame([$firstRulesetPath, $secondRulesetPath], $paths);
+        } catch (\Exception $e) {
+        }
+
+        if (\file_exists($firstRulesetPath)) {
+            \unlink($firstRulesetPath);
+        }
+
+        if (\file_exists($secondRulesetPath)) {
+            \unlink($secondRulesetPath);
+        }
+
+        if (\is_dir($firstStandard)) {
+            \rmdir($firstStandard);
+        }
+
+        if (\is_dir($secondStandard)) {
+            \rmdir($secondStandard);
+        }
+
+        if (\is_dir($root)) {
+            \rmdir($root);
+        }
+    }
+
+    /**
+     * Verify Filesystem implements FilesystemInterface.
+     *
+     * @return void
+     */
+    public function testImplementsFilesystemInterface()
+    {
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\FilesystemInterface', new Filesystem());
     }
 
     /**
@@ -357,10 +432,10 @@ final class FilesystemTest extends AbstractTestcase
         try {
             // Attempt to read the directory like a file, which should fail.
             $filesystem->read($path);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             \rmdir($path);
 
-            throw $e;
+            throw $exception;
         }
     }
 
@@ -435,7 +510,7 @@ final class FilesystemTest extends AbstractTestcase
         $scheme       = 'fsuncreatable';
         $wrapperClass = __NAMESPACE__ . '\\FilesystemUncreatableDirectoryStreamWrapper';
 
-        if (! \in_array($scheme, \stream_get_wrappers(), true)) {
+        if (\in_array($scheme, \stream_get_wrappers(), true) === false) {
             \stream_wrapper_register($scheme, $wrapperClass);
         }
 
@@ -485,7 +560,7 @@ final class FilesystemTest extends AbstractTestcase
         $scheme       = 'fsunreadable';
         $wrapperClass = __NAMESPACE__ . '\\FilesystemUnreadableStreamWrapper';
 
-        if (! \in_array($scheme, \stream_get_wrappers(), true)) {
+        if (\in_array($scheme, \stream_get_wrappers(), true) === false) {
             \stream_wrapper_register($scheme, $wrapperClass);
         }
 
@@ -538,10 +613,12 @@ final class FilesystemTest extends AbstractTestcase
     {
         $filesystem = new Filesystem();
 
+        $path = [];
+
         $this->expectException('PHPCSDevTools\\Scripts\\Scaffold\\Exception\\ScaffolderException');
         $this->expectExceptionMessage('Path must be a string.');
 
-        $filesystem->write([], 'abc');
+        $filesystem->write($path, 'abc');
     }
 
     /**
@@ -572,10 +649,12 @@ final class FilesystemTest extends AbstractTestcase
     {
         $filesystem = new Filesystem();
 
+        $contents = [];
+
         $this->expectException('PHPCSDevTools\\Scripts\\Scaffold\\Exception\\ScaffolderException');
         $this->expectExceptionMessage('Contents must be a string.');
 
-        $filesystem->write('/tmp/fc.txt', []);
+        $filesystem->write('/tmp/fc.txt', $contents);
     }
 
     /**

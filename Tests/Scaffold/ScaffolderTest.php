@@ -11,167 +11,141 @@
 
 namespace PHPCSDevTools\Tests\Scaffold;
 
-use PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException;
-use PHPCSDevTools\Scripts\Scaffold\Scaffolder;
-use PHPCSDevTools\Tests\TestWriter;
+use PHPCSDevTools\Scripts\Scaffold\Console\Application;
+use PHPCSDevTools\Scripts\Scaffold\Console\Request;
+use PHPCSDevTools\Scripts\Scaffold\Workspace;
 
 /**
- * Test the Scaffolder class.
+ * Test the Application class.
  *
- * @covers \PHPCSDevTools\Scripts\Scaffold\Scaffolder
+ * @covers \PHPCSDevTools\Scripts\Scaffold\Console\Application
  *
- * @uses \PHPCSDevTools\Tests\TestWriter
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Console\Request
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Event\ApplicationConstructedEvent
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Event\Exception\ApplicationExceptionEvent
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Event\ApplicationFinishedEvent
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Event\ApplicationStartedEvent
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Event\ApplicationStartingEvent
+ * @uses \PHPCSDevTools\Scripts\Scaffold\DotSeparatedSniff
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Workspace
  */
 final class ScaffolderTest extends AbstractTestcase
 {
 
     /**
-     * Verify the help text is sent to the writer.
+     * Verify the constructor does not dispatch events.
      *
      * @return void
      */
-    public function testPrintsTheHelpText()
+    public function testConstructorDoesNotDispatchEvents()
     {
-        $scaffolder = new Scaffolder(
-            $this->createMockDocsGenerator(),
-            $this->createMockSniffGenerator(),
-            $this->createMockUnitTestGenerator(),
-            $this->createMockUnitTestIncFixedGenerator(),
-            $this->createMockUnitTestIncGenerator(),
-            $this->createMockWriter(function ($mock) {
-                $mock->expects(self::once())
-                    ->method('toStdout')
-                    ->with(self::identicalTo(\implode(\PHP_EOL, [
-                        'Scaffold a new PHPCS sniff class, along with its unit test, fixtures and documentation files.',
-                        '',
-                        'Usage:',
-                        '  phpcs-scaffold Namespace.Standard.Category.Sniff',
-                        '',
-                        'Example:',
-                        '  phpcs-scaffold PHPCSExtra.Universal.DeclareStatements.DeclareStatementsStyle',
-                        '  phpcs-scaffold MyCompany.MyStandard.MyCategory.MySniff',
-                        '',
-                        'Options:',
-                        '  -h, --help            Print this help.',
-                    ])));
-            })
-        );
+        $dispatcher = $this->createMockDispatcher(function ($mock) {
+            $mock->expects(self::never())
+                ->method('dispatch');
+        });
 
-        $scaffolder->printHelp();
+        new Application($dispatcher);
     }
 
     /**
-     * Verify all generators are invoked for a valid sniff.
+     * Verify Application implements ApplicationInterface.
      *
      * @return void
      */
-    public function testScaffoldsAllFilesForTheProvidedSniffName()
+    public function testImplementsScaffolderInterface()
     {
-        $workspace = $this->createMockWorkspace();
-
-        $sniffName = $this->createMockSniffName(function ($mock) {
-            $mock->expects(self::once())->method('getName')->willReturn('Vendor.Standard.Category.Sniff');
+        $dispatcher = $this->createMockDispatcher(function ($mock) {
+            $mock->expects(self::never())
+                ->method('dispatch');
         });
 
-        $docsGenerator = $this->createMockDocsGenerator(function ($mock) use ($sniffName, $workspace) {
-            $mock->expects(self::once())->method('generate')->with($sniffName, $workspace);
-        });
+        $application = new Application($dispatcher);
 
-        $sniffGenerator = $this->createMockSniffGenerator(function ($mock) use ($sniffName, $workspace) {
-            $mock->expects(self::once())->method('generate')->with($sniffName, $workspace);
-        });
-
-        $unitTestGenerator = $this->createMockUnitTestGenerator(function ($mock) use ($sniffName, $workspace) {
-            $mock->expects(self::once())->method('generate')->with($sniffName, $workspace);
-        });
-
-        $unitTestIncFixedGenerator = $this->createMockUnitTestIncFixedGenerator(function ($mock) use (
-            $sniffName,
-            $workspace
-        ) {
-            $mock->expects(self::once())->method('generate')->with($sniffName, $workspace);
-        });
-
-        $unitTestIncGenerator = $this->createMockUnitTestIncGenerator(function ($mock) use ($sniffName, $workspace) {
-            $mock->expects(self::once())->method('generate')->with($sniffName, $workspace);
-        });
-
-        $writer = new TestWriter();
-
-        $scaffolder = new Scaffolder(
-            $docsGenerator,
-            $sniffGenerator,
-            $unitTestGenerator,
-            $unitTestIncFixedGenerator,
-            $unitTestIncGenerator,
-            $writer
-        );
-
-        $scaffolder->scaffold($sniffName, $workspace);
-
-        self::assertSame(
-            'Scaffolding sniff "Vendor.Standard.Category.Sniff"' . \PHP_EOL . \PHP_EOL,
-            $writer->getStdout()
-        );
-
-        self::assertSame('', $writer->getStderr());
-
-        self::assertSame(
-            'Scaffolding sniff "Vendor.Standard.Category.Sniff"' . \PHP_EOL . \PHP_EOL,
-            $writer->getOutput()
-        );
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Console\\ApplicationInterface', $application);
     }
 
     /**
-     * Verify generators are not run after an earlier generator fails.
+     * Verify running the application dispatches exception details when start handling fails.
      *
      * @return void
      */
-    public function testStopsRunningGeneratorsWhenAnEarlierGeneratorFails()
+    public function testRunDispatchesExceptionEventAndFailedExitCodeWhenStartedDispatchFails()
     {
-        $sniffName = $this->createMockSniffName(function ($mock) {
-            $mock->expects(self::once())->method('getName')->willReturn('Vendor.Standard.Category.Sniff');
+        $workspace     = new Workspace(\sys_get_temp_dir());
+        $request       = new Request(['bin/phpcs-scaffold', 'Standard.Category.Sniff']);
+        $events        = [];
+        $dispatchCount = 0;
+
+        $dispatcher = $this->createMockDispatcher(function ($mock) use (&$events, &$dispatchCount) {
+            $mock->expects(self::exactly(5))
+                ->method('dispatch')
+                ->willReturnCallback(function ($event) use (&$events, &$dispatchCount) {
+                    ++$dispatchCount;
+                    $events[] = $event;
+
+                    if ($dispatchCount === 3) {
+                        throw new \Exception('Listener failure.');
+                    }
+                });
         });
 
-        $workspace = $this->createMockWorkspace();
+        $application = new Application($dispatcher);
 
-        $docsGenerator = $this->createMockDocsGenerator(function ($mock) use ($sniffName, $workspace) {
-            $mock->expects(self::once())
-                ->method('generate')
-                ->with($sniffName, $workspace)
-                ->willThrowException(new ScaffolderException('Docs generation failed.'));
-        });
+        $application->run($request, $workspace);
 
-        $sniffGenerator = $this->createMockSniffGenerator(function ($mock) {
-            $mock->expects(self::never())->method('generate');
-        });
-
-        $unitTestGenerator = $this->createMockUnitTestGenerator(function ($mock) {
-            $mock->expects(self::never())->method('generate');
-        });
-
-        $unitTestIncFixedGenerator = $this->createMockUnitTestIncFixedGenerator(function ($mock) {
-            $mock->expects(self::never())->method('generate');
-        });
-
-        $unitTestIncGenerator = $this->createMockUnitTestIncGenerator(function ($mock) {
-            $mock->expects(self::never())->method('generate');
-        });
-
-        $writer = $this->createMockWriter();
-
-        $scaffolder = new Scaffolder(
-            $docsGenerator,
-            $sniffGenerator,
-            $unitTestGenerator,
-            $unitTestIncFixedGenerator,
-            $unitTestIncGenerator,
-            $writer
+        self::assertCount(5, $events);
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Event\\ApplicationConstructedEvent', $events[0]);
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Event\\ApplicationStartingEvent', $events[1]);
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Event\\ApplicationStartedEvent', $events[2]);
+        self::assertInstanceOf(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Event\\Exception\\ApplicationExceptionEvent',
+            $events[3]
         );
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Event\\ApplicationFinishedEvent', $events[4]);
 
-        $this->expectException('\\PHPCSDevTools\\Scripts\\Scaffold\\Exception\\ScaffolderException');
-        $this->expectExceptionMessage('Docs generation failed.');
+        self::assertSame('Standard.Category.Sniff', $events[3]->getDotSeparatedSniff()->toString());
+        self::assertSame('Listener failure.', $events[3]->getException()->getMessage());
+        self::assertSame($workspace, $events[3]->getWorkspace());
+        self::assertSame(1, $events[4]->getExitCode());
+        self::assertSame('Standard.Category.Sniff', $events[4]->getSniff()->toString());
+        self::assertSame($workspace, $events[4]->getWorkspace());
+    }
 
-        $scaffolder->scaffold($sniffName, $workspace);
+    /**
+     * Verify running the application dispatches the expected success events.
+     *
+     * @return void
+     */
+    public function testRunDispatchesTheExpectedSuccessEvents()
+    {
+        $workspace = new Workspace(\sys_get_temp_dir());
+        $request   = new Request(['bin/phpcs-scaffold', 'Standard.Category.Sniff']);
+        $events    = [];
+
+        $dispatcher = $this->createMockDispatcher(function ($mock) use (&$events) {
+            $mock->expects(self::exactly(4))
+                ->method('dispatch')
+                ->willReturnCallback(function ($event) use (&$events) {
+                    $events[] = $event;
+                });
+        });
+
+        $application = new Application($dispatcher);
+
+        $application->run($request, $workspace);
+
+        self::assertCount(4, $events);
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Event\\ApplicationConstructedEvent', $events[0]);
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Event\\ApplicationStartingEvent', $events[1]);
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Event\\ApplicationStartedEvent', $events[2]);
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Event\\ApplicationFinishedEvent', $events[3]);
+
+        self::assertSame($workspace, $events[0]->getWorkspace());
+        self::assertSame($request, $events[1]->getRequest());
+        self::assertSame('Standard.Category.Sniff', $events[2]->getDotSeparatedSniff()->toString());
+        self::assertSame($workspace, $events[2]->getWorkspace());
+        self::assertSame(0, $events[3]->getExitCode());
+        self::assertSame('Standard.Category.Sniff', $events[3]->getSniff()->toString());
+        self::assertSame($workspace, $events[3]->getWorkspace());
     }
 }

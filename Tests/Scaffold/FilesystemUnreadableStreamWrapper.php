@@ -45,7 +45,7 @@ final class FilesystemUnreadableStreamWrapper
      * @param string $path
      * @param int    $flags
      *
-     * @return array
+     * @return array<int|string, int>
      */
     public function url_stat($path, $flags)
     {

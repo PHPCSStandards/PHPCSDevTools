@@ -43,7 +43,7 @@ final class FilesystemReadFailureStreamWrapper
      * @param string $path  queried path
      * @param int    $flags stat flags
      *
-     * @return array
+     * @return array<int|string, int>
      */
     public function url_stat($path, $flags)
     {

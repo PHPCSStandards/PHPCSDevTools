@@ -11,6 +11,9 @@
 
 namespace PHPCSDevTools\Scripts\Scaffold;
 
+/**
+ * Represents a scaffold workspace path.
+ */
 interface WorkspaceInterface
 {
 
@@ -19,5 +22,5 @@ interface WorkspaceInterface
      *
      * @return non-empty-string
      */
-    public function getPath();
+    public function toString();
 }

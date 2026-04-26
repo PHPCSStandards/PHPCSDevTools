@@ -11,6 +11,13 @@
 
 namespace PHPCSDevTools\Scripts\Scaffold\Exception;
 
+use PHPCSDevTools\Tests\Scaffold\Exception\ScaffolderExceptionTest;
+
+/**
+ * Represents an error that occurs during scaffold generation.
+ *
+ * @see ScaffolderExceptionTest
+ */
 final class ScaffolderException extends \Exception
 {
 }

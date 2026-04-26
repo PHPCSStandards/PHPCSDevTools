@@ -14,19 +14,18 @@ namespace PHPCSDevTools\Tests\Scaffold;
 use PHPCSDevTools\Scripts\Scaffold\Workspace;
 
 /**
- * Test the Workspace class.
+ * Test the workspace value object.
  *
  * @covers \PHPCSDevTools\Scripts\Scaffold\Workspace
  *
  * @uses \PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException
+ * @uses \PHPCSDevTools\Scripts\Scaffold\WorkspaceInterface
  */
 final class WorkspaceTest extends AbstractTestcase
 {
 
     /**
      * Verify the constructor throws for a non-existent directory path.
-     *
-     * @covers \PHPCSDevTools\Scripts\Scaffold\Workspace::__construct
      *
      * @return void
      */
@@ -41,8 +40,6 @@ final class WorkspaceTest extends AbstractTestcase
     /**
      * Verify the constructor throws for a non-string path.
      *
-     * @covers \PHPCSDevTools\Scripts\Scaffold\Workspace::__construct
-     *
      * @return void
      */
     public function testConstructorThrowsForANonStringPath()
@@ -55,8 +52,6 @@ final class WorkspaceTest extends AbstractTestcase
 
     /**
      * Verify the constructor throws for an empty string path.
-     *
-     * @covers \PHPCSDevTools\Scripts\Scaffold\Workspace::__construct
      *
      * @return void
      */
@@ -71,8 +66,6 @@ final class WorkspaceTest extends AbstractTestcase
     /**
      * Verify the constructor throws for an empty whitespace string path.
      *
-     * @covers \PHPCSDevTools\Scripts\Scaffold\Workspace::__construct
-     *
      * @return void
      */
     public function testConstructorThrowsForAnEmptyWhitespaceStringPath()
@@ -80,14 +73,11 @@ final class WorkspaceTest extends AbstractTestcase
         $this->expectException('PHPCSDevTools\\Scripts\\Scaffold\\Exception\\ScaffolderException');
         $this->expectExceptionMessage('Workspace path must be a non-empty string.');
 
-        new Workspace('    ');
+        new Workspace('   ');
     }
 
     /**
-     * Verify __construct creates a workspace instance.
-     *
-     * @covers \PHPCSDevTools\Scripts\Scaffold\Workspace::__construct
-     * @covers \PHPCSDevTools\Scripts\Scaffold\Workspace::getPath
+     * Verify valid directories can be wrapped in a workspace instance.
      *
      * @return void
      */
@@ -96,15 +86,39 @@ final class WorkspaceTest extends AbstractTestcase
         $directory = \sys_get_temp_dir();
         $workspace = new Workspace($directory);
 
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\WorkspaceInterface', $workspace);
+        self::assertSame($directory, $workspace->toString());
+    }
+
+    /**
+     * Verify the named constructor creates an equivalent instance.
+     *
+     * @return void
+     */
+    public function testFromStringCreatesAWorkspace()
+    {
+        $directory = \sys_get_temp_dir();
+        $workspace = Workspace::fromString($directory);
+
         self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Workspace', $workspace);
-        self::assertSame($directory, $workspace->getPath());
+        self::assertSame($directory, $workspace->toString());
+    }
+
+    /**
+     * Verify Workspace implements its interface.
+     *
+     * @return void
+     */
+    public function testImplementsWorkspaceInterface()
+    {
+        self::assertInstanceOf(
+            'PHPCSDevTools\\Scripts\\Scaffold\\WorkspaceInterface',
+            new Workspace(\sys_get_temp_dir())
+        );
     }
 
     /**
      * Verify the workspace path is stored and returned.
-     *
-     * @covers \PHPCSDevTools\Scripts\Scaffold\Workspace::__construct
-     * @covers \PHPCSDevTools\Scripts\Scaffold\Workspace::getPath
      *
      * @return void
      */
@@ -113,6 +127,6 @@ final class WorkspaceTest extends AbstractTestcase
         $directory = \sys_get_temp_dir();
         $workspace = new Workspace($directory);
 
-        self::assertSame($directory, $workspace->getPath());
+        self::assertSame($directory, $workspace->toString());
     }
 }

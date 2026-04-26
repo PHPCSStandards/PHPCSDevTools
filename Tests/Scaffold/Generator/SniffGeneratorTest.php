@@ -11,15 +11,24 @@
 
 namespace PHPCSDevTools\Tests\Scaffold\Generator;
 
-use PHPCSDevTools\Scripts\Scaffold\Generator\SniffGenerator;
+use PHPCSDevTools\Scripts\Scaffold\DotSeparatedSniff;
+use PHPCSDevTools\Scripts\Scaffold\Event\ApplicationStartedEvent;
+use PHPCSDevTools\Scripts\Scaffold\Listener\ApplicationStartedEvent\GenerateSniffListener;
+use PHPCSDevTools\Scripts\Scaffold\Workspace;
 use PHPCSDevTools\Tests\Scaffold\AbstractTestcase;
 use PHPCSDevTools\Tests\TestWriter;
 
 /**
- * Test the SniffGenerator class.
+ * Test the GenerateSniffListener class.
  *
- * @covers \PHPCSDevTools\Scripts\Scaffold\Generator\SniffGenerator
+ * @covers \PHPCSDevTools\Scripts\Scaffold\Listener\ApplicationStartedEvent\GenerateSniffListener
  *
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Event\ApplicationStartedEvent
+ * @uses \PHPCSDevTools\Scripts\Scaffold\DotSeparatedSniff
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Standard\Category
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Standard\Name
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Standard\Sniff
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Workspace
  * @uses \PHPCSDevTools\Tests\TestWriter
  */
 final class SniffGeneratorTest extends AbstractTestcase
@@ -32,59 +41,43 @@ final class SniffGeneratorTest extends AbstractTestcase
      */
     public function testCreatesANewSniffFileWhenItDoesNotAlreadyExist()
     {
-        $sniffName = $this->createMockSniffName();
+        $sniff = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $event = new ApplicationStartedEvent($sniff, new Workspace(\sys_get_temp_dir()));
 
-        $workspace = $this->createMockWorkspace();
-
-        $filesystem = $this->createMockFilesystem(function ($mock) {
-            $mock->expects(self::once())
-                ->method('exists')
-                ->with('/tmp/Sniff.php')
-                ->willReturn(false);
-            $mock->expects(self::once())
-                ->method('write')
-                ->with('/tmp/Sniff.php', '<?php // sniff');
+        $filesystem         = $this->createMockFilesystem(function ($mock) {
+            $mock->expects(self::once())->method('exists')->with('/tmp/Sniff.php')->willReturn(false);
+            $mock->expects(self::once())->method('write')->with('/tmp/Sniff.php', '<?php // sniff');
         });
-
-        $sniffNamespaceResolver  = $this->createMockSniffNamespaceResolver(function ($mock) use ($sniffName) {
-            $mock->expects(self::once())
-                ->method('resolve')
-                ->with($sniffName)
-                ->willReturn('My\\Namespace');
+        $namespaceResolver  = $this->createMockSniffNamespaceResolver(function ($mock) use ($sniff) {
+            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('My\\Namespace');
         });
-        $sniffPathResolver       = $this->createMockSniffPathResolver(function ($mock) use ($sniffName, $workspace) {
-            $mock->expects(self::once())
-                ->method('resolve')
-                ->with($sniffName, $workspace)
-                ->willReturn('/tmp/Sniff.php');
+        $pathResolver       = $this->createMockSniffPathResolver(function ($mock) use ($sniff) {
+            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('/tmp/Sniff.php');
         });
-        $sniffShortClassResolver = $this->createMockSniffShortClassResolver(function ($mock) use ($sniffName) {
-            $mock->expects(self::once())
-                ->method('resolve')
-                ->with($sniffName)
-                ->willReturn('MySniff');
+        $shortClassResolver = $this->createMockSniffShortClassResolver(function ($mock) use ($sniff) {
+            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('MySniffSniff');
         });
-        $renderer                = $this->createMockRenderer(function ($mock) {
+        $renderer           = $this->createMockRenderer(function ($mock) {
             $mock->expects(self::once())
                 ->method('render')
                 ->with('sniff.php', [
-                    'class'     => 'MySniff',
+                    'class'     => 'MySniffSniff',
                     'namespace' => 'My\\Namespace',
                 ])
                 ->willReturn('<?php // sniff');
         });
-        $writer                  = new TestWriter();
+        $writer             = new TestWriter();
 
-        $generator = new SniffGenerator(
+        $listener = new GenerateSniffListener(
             $filesystem,
-            $sniffNamespaceResolver,
-            $sniffPathResolver,
-            $sniffShortClassResolver,
+            $namespaceResolver,
+            $pathResolver,
+            $shortClassResolver,
             $renderer,
             $writer
         );
 
-        $generator->generate($sniffName, $workspace);
+        $listener($event);
 
         self::assertSame(
             'Creating file: /tmp/Sniff.php' . \PHP_EOL . 'Created file: /tmp/Sniff.php' . \PHP_EOL,
@@ -93,57 +86,63 @@ final class SniffGeneratorTest extends AbstractTestcase
     }
 
     /**
-     * Verify an existing sniff file is reported and not overwritten.
+     * Verify existing sniff files are reported and not overwritten.
      *
      * @return void
      */
     public function testDoesNotOverwriteAnExistingSniffFile()
     {
-        $sniffName = $this->createMockSniffName();
+        $sniff = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $event = new ApplicationStartedEvent($sniff, new Workspace(\sys_get_temp_dir()));
 
-        $workspace = $this->createMockWorkspace();
-
-        $filesystem = $this->createMockFilesystem(function ($mock) {
-            $mock->expects(self::once())
-                ->method('exists')
-                ->with('/tmp/Sniff.php')
-                ->willReturn(true);
-
+        $filesystem         = $this->createMockFilesystem(function ($mock) {
+            $mock->expects(self::once())->method('exists')->with('/tmp/Sniff.php')->willReturn(true);
             $mock->expects(self::never())->method('write');
         });
-
-        $sniffNamespaceResolver = $this->createMockSniffNamespaceResolver(function ($mock) {
+        $namespaceResolver  = $this->createMockSniffNamespaceResolver(function ($mock) {
             $mock->expects(self::never())->method('resolve');
         });
-
-        $sniffPathResolver = $this->createMockSniffPathResolver(function ($mock) use ($sniffName, $workspace) {
-            $mock->expects(self::once())
-                ->method('resolve')
-                ->with($sniffName, $workspace)
-                ->willReturn('/tmp/Sniff.php');
+        $pathResolver       = $this->createMockSniffPathResolver(function ($mock) use ($sniff) {
+            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('/tmp/Sniff.php');
         });
-
-        $sniffShortClassResolver = $this->createMockSniffShortClassResolver(function ($mock) {
+        $shortClassResolver = $this->createMockSniffShortClassResolver(function ($mock) {
             $mock->expects(self::never())->method('resolve');
         });
-
-        $renderer = $this->createMockRenderer(function ($mock) {
+        $renderer           = $this->createMockRenderer(function ($mock) {
             $mock->expects(self::never())->method('render');
         });
+        $writer             = new TestWriter();
 
-        $writer = new TestWriter();
-
-        $generator = new SniffGenerator(
+        $listener = new GenerateSniffListener(
             $filesystem,
-            $sniffNamespaceResolver,
-            $sniffPathResolver,
-            $sniffShortClassResolver,
+            $namespaceResolver,
+            $pathResolver,
+            $shortClassResolver,
             $renderer,
             $writer
         );
 
-        $generator->generate($sniffName, $workspace);
+        $listener($event);
 
         self::assertSame('File already exists: /tmp/Sniff.php' . \PHP_EOL, $writer->getStderr());
+    }
+
+    /**
+     * Verify GenerateSniffListener implements ListenerInterface.
+     *
+     * @return void
+     */
+    public function testImplementsRequiredInterfaces()
+    {
+        $listener = new GenerateSniffListener(
+            $this->createMockFilesystem(),
+            $this->createMockSniffNamespaceResolver(),
+            $this->createMockSniffPathResolver(),
+            $this->createMockSniffShortClassResolver(),
+            $this->createMockRenderer(),
+            new TestWriter()
+        );
+
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Listener\\ListenerInterface', $listener);
     }
 }

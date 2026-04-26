@@ -11,15 +11,24 @@
 
 namespace PHPCSDevTools\Tests\Scaffold\Generator;
 
-use PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestGenerator;
+use PHPCSDevTools\Scripts\Scaffold\DotSeparatedSniff;
+use PHPCSDevTools\Scripts\Scaffold\Event\ApplicationStartedEvent;
+use PHPCSDevTools\Scripts\Scaffold\Listener\ApplicationStartedEvent\GenerateUnitTestListener;
+use PHPCSDevTools\Scripts\Scaffold\Workspace;
 use PHPCSDevTools\Tests\Scaffold\AbstractTestcase;
 use PHPCSDevTools\Tests\TestWriter;
 
 /**
- * Test the UnitTestGenerator class.
+ * Test the GenerateUnitTestListener class.
  *
- * @covers \PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestGenerator
+ * @covers \PHPCSDevTools\Scripts\Scaffold\Listener\ApplicationStartedEvent\GenerateUnitTestListener
  *
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Event\ApplicationStartedEvent
+ * @uses \PHPCSDevTools\Scripts\Scaffold\DotSeparatedSniff
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Standard\Category
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Standard\Name
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Standard\Sniff
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Workspace
  * @uses \PHPCSDevTools\Tests\TestWriter
  */
 final class UnitTestGeneratorTest extends AbstractTestcase
@@ -32,85 +41,56 @@ final class UnitTestGeneratorTest extends AbstractTestcase
      */
     public function testCreatesANewUnitTestFileWhenItDoesNotAlreadyExist()
     {
+        $sniff = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $event = new ApplicationStartedEvent($sniff, new Workspace(\sys_get_temp_dir()));
 
-        $sniffName                  = $this->createMockSniffName(function ($mock) {
-            $mock->expects(self::once())
-                ->method('getSniff')
-                ->willReturn('MySniff');
-        });
-        $workspace                  = $this->createMockWorkspace();
         $filesystem                 = $this->createMockFilesystem(function ($mock) {
-            $mock->expects(self::once())
-                ->method('exists')
-                ->with('/tmp/UnitTest.php')
-                ->willReturn(false);
-            $mock->expects(self::once())
-                ->method('write')
-                ->with('/tmp/UnitTest.php', '<?php // unit test');
+            $mock->expects(self::once())->method('exists')->with('/tmp/UnitTest.php')->willReturn(false);
+            $mock->expects(self::once())->method('write')->with('/tmp/UnitTest.php', '<?php // unit test');
         });
-        $sniffFQCNResolver          = $this->createMockSniffFullyQualifiedClassResolver(function ($mock) use (
-            $sniffName
-        ) {
-            $mock->expects(self::once())
-                ->method('resolve')
-                ->with($sniffName)
-                ->willReturn('SniffFQCN');
+        $sniffResolver              = $this->createMockSniffFullyQualifiedClassResolver(function ($mock) use ($sniff) {
+            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('SniffFQCN');
         });
         $renderer                   = $this->createMockRenderer(function ($mock) {
             $mock->expects(self::once())
                 ->method('render')
                 ->with('test.php', [
                     'sniffName'                   => 'MySniff',
-                    'unitTestShortClass'          => 'UnitTestShortClass',
-                    'unitTestNamespace'           => 'UnitTestNamespace',
+                    'unitTestShortClass'          => 'MySniffUnitTest',
+                    'unitTestNamespace'           => 'Tests\\Category',
                     'sniffFullyQualifiedClass'    => 'SniffFQCN',
                     'unitTestFullyQualifiedClass' => 'UnitTestFQCN',
                 ])
                 ->willReturn('<?php // unit test');
         });
-        $unitTestFQCNResolver       = $this->createMockUnitTestFullyQualifiedClassResolver(function ($mock) use (
-            $sniffName
+        $unitTestFqcnResolver       = $this->createMockUnitTestFullyQualifiedClassResolver(function ($mock) use (
+            $sniff
         ) {
-            $mock->expects(self::once())
-                ->method('resolve')
-                ->with($sniffName)
-                ->willReturn('UnitTestFQCN');
+            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('UnitTestFQCN');
         });
-        $unitTestNamespaceResolver  = $this->createMockUnitTestNamespaceResolver(function ($mock) use ($sniffName) {
-            $mock->expects(self::once())
-                ->method('resolve')
-                ->with($sniffName)
-                ->willReturn('UnitTestNamespace');
+        $unitTestNamespaceResolver  = $this->createMockUnitTestNamespaceResolver(function ($mock) use ($sniff) {
+            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('Tests\\Category');
         });
-        $unitTestPathResolver       = $this->createMockUnitTestPathResolver(function ($mock) use (
-            $sniffName,
-            $workspace
-        ) {
-            $mock->expects(self::once())
-                ->method('resolve')
-                ->with($sniffName, $workspace)
-                ->willReturn('/tmp/UnitTest.php');
+        $unitTestPathResolver       = $this->createMockUnitTestPathResolver(function ($mock) use ($sniff) {
+            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('/tmp/UnitTest.php');
         });
-        $unitTestShortClassResolver = $this->createMockUnitTestShortClassResolver(function ($mock) use ($sniffName) {
-            $mock->expects(self::once())
-                ->method('resolve')
-                ->with($sniffName)
-                ->willReturn('UnitTestShortClass');
+        $unitTestShortClassResolver = $this->createMockUnitTestShortClassResolver(function ($mock) use ($sniff) {
+            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('MySniffUnitTest');
         });
         $writer                     = new TestWriter();
 
-        $generator = new UnitTestGenerator(
+        $listener = new GenerateUnitTestListener(
             $filesystem,
-            $sniffFQCNResolver,
+            $sniffResolver,
             $renderer,
-            $unitTestFQCNResolver,
+            $unitTestFqcnResolver,
             $unitTestNamespaceResolver,
             $unitTestPathResolver,
             $unitTestShortClassResolver,
             $writer
         );
 
-        $generator->generate($sniffName, $workspace);
+        $listener($event);
 
         self::assertSame(
             'Creating file: /tmp/UnitTest.php' . \PHP_EOL . 'Created file: /tmp/UnitTest.php' . \PHP_EOL,
@@ -125,55 +105,67 @@ final class UnitTestGeneratorTest extends AbstractTestcase
      */
     public function testDoesNotOverwriteAnExistingUnitTestFile()
     {
+        $sniff = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $event = new ApplicationStartedEvent($sniff, new Workspace(\sys_get_temp_dir()));
 
-        $sniffName                  = $this->createMockSniffName();
-        $workspace                  = $this->createMockWorkspace();
         $filesystem                 = $this->createMockFilesystem(function ($mock) {
-            $mock->expects(self::once())
-                ->method('exists')
-                ->with('/tmp/UnitTest.php')
-                ->willReturn(true);
+            $mock->expects(self::once())->method('exists')->with('/tmp/UnitTest.php')->willReturn(true);
             $mock->expects(self::never())->method('write');
         });
-        $sniffFQCNResolver          = $this->createMockSniffFullyQualifiedClassResolver(function ($mock) {
+        $sniffResolver              = $this->createMockSniffFullyQualifiedClassResolver(function ($mock) {
             $mock->expects(self::never())->method('resolve');
         });
         $renderer                   = $this->createMockRenderer(function ($mock) {
             $mock->expects(self::never())->method('render');
         });
-        $unitTestFQCNResolver       = $this->createMockUnitTestFullyQualifiedClassResolver(function ($mock) {
+        $unitTestFqcnResolver       = $this->createMockUnitTestFullyQualifiedClassResolver(function ($mock) {
             $mock->expects(self::never())->method('resolve');
         });
         $unitTestNamespaceResolver  = $this->createMockUnitTestNamespaceResolver(function ($mock) {
             $mock->expects(self::never())->method('resolve');
         });
-        $unitTestPathResolver       = $this->createMockUnitTestPathResolver(function ($mock) use (
-            $sniffName,
-            $workspace
-        ) {
-            $mock->expects(self::once())
-                ->method('resolve')
-                ->with($sniffName, $workspace)
-                ->willReturn('/tmp/UnitTest.php');
+        $unitTestPathResolver       = $this->createMockUnitTestPathResolver(function ($mock) use ($sniff) {
+            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('/tmp/UnitTest.php');
         });
         $unitTestShortClassResolver = $this->createMockUnitTestShortClassResolver(function ($mock) {
             $mock->expects(self::never())->method('resolve');
         });
         $writer                     = new TestWriter();
 
-        $generator = new UnitTestGenerator(
+        $listener = new GenerateUnitTestListener(
             $filesystem,
-            $sniffFQCNResolver,
+            $sniffResolver,
             $renderer,
-            $unitTestFQCNResolver,
+            $unitTestFqcnResolver,
             $unitTestNamespaceResolver,
             $unitTestPathResolver,
             $unitTestShortClassResolver,
             $writer
         );
 
-        $generator->generate($sniffName, $workspace);
+        $listener($event);
 
         self::assertSame('File already exists: /tmp/UnitTest.php' . \PHP_EOL, $writer->getStderr());
+    }
+
+    /**
+     * Verify GenerateUnitTestListener implements ListenerInterface.
+     *
+     * @return void
+     */
+    public function testImplementsRequiredInterfaces()
+    {
+        $listener = new GenerateUnitTestListener(
+            $this->createMockFilesystem(),
+            $this->createMockSniffFullyQualifiedClassResolver(),
+            $this->createMockRenderer(),
+            $this->createMockUnitTestFullyQualifiedClassResolver(),
+            $this->createMockUnitTestNamespaceResolver(),
+            $this->createMockUnitTestPathResolver(),
+            $this->createMockUnitTestShortClassResolver(),
+            new TestWriter()
+        );
+
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Listener\\ListenerInterface', $listener);
     }
 }

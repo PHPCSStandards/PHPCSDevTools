@@ -11,15 +11,27 @@
 
 namespace PHPCSDevTools\Tests\Scaffold\Generator;
 
-use PHPCSDevTools\Scripts\Scaffold\Generator\DocsGenerator;
+use PHPCSDevTools\Scripts\Scaffold\DotSeparatedSniff;
+use PHPCSDevTools\Scripts\Scaffold\Event\ApplicationStartedEvent;
+use PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException;
+use PHPCSDevTools\Scripts\Scaffold\Listener\ApplicationStartedEvent\GenerateDocsListener;
+use PHPCSDevTools\Scripts\Scaffold\Standard\NamespaceName;
+use PHPCSDevTools\Scripts\Scaffold\Workspace;
 use PHPCSDevTools\Tests\Scaffold\AbstractTestcase;
 use PHPCSDevTools\Tests\TestWriter;
 
 /**
- * Test the DocsGenerator class.
+ * Test the GenerateDocsListener class.
  *
- * @covers \PHPCSDevTools\Scripts\Scaffold\Generator\DocsGenerator
+ * @covers \PHPCSDevTools\Scripts\Scaffold\Listener\ApplicationStartedEvent\GenerateDocsListener
  *
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Event\ApplicationStartedEvent
+ * @uses \PHPCSDevTools\Scripts\Scaffold\DotSeparatedSniff
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Standard\Category
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Standard\Name
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Standard\NamespaceName
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Standard\Sniff
+ * @uses \PHPCSDevTools\Scripts\Scaffold\Workspace
  * @uses \PHPCSDevTools\Tests\TestWriter
  */
 final class DocsGeneratorTest extends AbstractTestcase
@@ -28,41 +40,53 @@ final class DocsGeneratorTest extends AbstractTestcase
     /**
      * Verify a new docs file is rendered, created, and reported.
      *
+     * @throws ScaffolderException
+     *
      * @return void
      */
     public function testCreatesANewDocsFileWhenItDoesNotAlreadyExist()
     {
-        $sniffName        = $this->createMockSniffName();
-        $workspace        = $this->createMockWorkspace();
-        $docsPathResolver = $this->createMockDocsPathResolver(function ($mock) use ($sniffName, $workspace) {
+        $sniff = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $event = new ApplicationStartedEvent($sniff, new Workspace(\sys_get_temp_dir()));
+
+        $docsPathResolver      = $this->createMockDocsPathResolver(function ($mock) use ($sniff) {
             $mock->expects(self::once())
                 ->method('resolve')
-                ->with($sniffName, $workspace)
+                ->with($sniff)
                 ->willReturn('/tmp/docs.xml');
         });
-
-        $filesystem = $this->createMockFilesystem(function ($mock) {
-            $mock->expects(self::once())
-                ->method('exists')
-                ->with('/tmp/docs.xml')
-                ->willReturn(false);
-
-            $mock->expects(self::once())
-                ->method('write')
-                ->with('/tmp/docs.xml', '<xml/>');
+        $filesystem            = $this->createMockFilesystem(function ($mock) {
+            $mock->expects(self::once())->method('exists')->with('/tmp/docs.xml')->willReturn(false);
+            $mock->expects(self::once())->method('write')->with('/tmp/docs.xml', '<xml/>');
         });
-
-        $renderer = $this->createMockRenderer(function ($mock) {
+        $namespaceNameProvider = $this->createMockNamespaceNameProvider(function ($mock) use ($sniff) {
+            $mock->expects(self::once())
+                ->method('provide')
+                ->with($sniff->getStandard())
+                ->willReturn(NamespaceName::fromString('Vendor\\Standard'));
+        });
+        $renderer              = $this->createMockRenderer(function ($mock) {
             $mock->expects(self::once())
                 ->method('render')
-                ->with('docs.xml', self::callback('is_array'))
+                ->with('docs.xml', [
+                    'namespace' => 'Vendor\\Standard',
+                    'standard'  => 'Standard',
+                    'category'  => 'Category',
+                    'sniff'     => 'MySniff',
+                ])
                 ->willReturn('<xml/>');
         });
-        $writer   = new TestWriter();
+        $writer                = new TestWriter();
 
-        $generator = new DocsGenerator($docsPathResolver, $filesystem, $renderer, $writer);
+        $listener = new GenerateDocsListener(
+            $docsPathResolver,
+            $filesystem,
+            $namespaceNameProvider,
+            $renderer,
+            $writer
+        );
 
-        $generator->generate($sniffName, $workspace);
+        $listener($event);
 
         self::assertSame(
             'Creating file: /tmp/docs.xml' . \PHP_EOL . 'Created file: /tmp/docs.xml' . \PHP_EOL,
@@ -71,92 +95,61 @@ final class DocsGeneratorTest extends AbstractTestcase
     }
 
     /**
-     * Verify an existing docs file is reported and not overwritten.
+     * Verify existing docs files are reported and left untouched.
      *
      * @return void
      */
     public function testDoesNotOverwriteAnExistingDocsFile()
     {
-        $sniffName        = $this->createMockSniffName();
-        $workspace        = $this->createMockWorkspace();
-        $docsPathResolver = $this->createMockDocsPathResolver(function ($mock) use ($sniffName, $workspace) {
+        $sniff = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $event = new ApplicationStartedEvent($sniff, new Workspace(\sys_get_temp_dir()));
+
+        $docsPathResolver      = $this->createMockDocsPathResolver(function ($mock) use ($sniff) {
             $mock->expects(self::once())
                 ->method('resolve')
-                ->with($sniffName, $workspace)
+                ->with($sniff)
                 ->willReturn('/tmp/docs.xml');
         });
-
-        $filesystem = $this->createMockFilesystem(function ($mock) {
-            $mock->expects(self::once())
-                ->method('exists')
-                ->with('/tmp/docs.xml')
-                ->willReturn(true);
-
+        $filesystem            = $this->createMockFilesystem(function ($mock) {
+            $mock->expects(self::once())->method('exists')->with('/tmp/docs.xml')->willReturn(true);
             $mock->expects(self::never())->method('write');
         });
-        $renderer   = $this->createMockRenderer(function ($mock) {
+        $namespaceNameProvider = $this->createMockNamespaceNameProvider(function ($mock) {
+            $mock->expects(self::never())->method('provide');
+        });
+        $renderer              = $this->createMockRenderer(function ($mock) {
             $mock->expects(self::never())->method('render');
         });
+        $writer                = new TestWriter();
 
-        $writer = new TestWriter();
+        $listener = new GenerateDocsListener(
+            $docsPathResolver,
+            $filesystem,
+            $namespaceNameProvider,
+            $renderer,
+            $writer
+        );
 
-        $generator = new DocsGenerator($docsPathResolver, $filesystem, $renderer, $writer);
-
-        $generator->generate($sniffName, $workspace);
+        $listener($event);
 
         self::assertSame('File already exists: /tmp/docs.xml' . \PHP_EOL, $writer->getStderr());
     }
 
     /**
-     * Verify the expected template variables are passed to the renderer.
+     * Verify GenerateDocsListener implements ListenerInterface.
      *
      * @return void
      */
-    public function testPassesTheResolvedSniffPartsToTheTemplateRenderer()
+    public function testImplementsRequiredInterfaces()
     {
-        $filesystem = $this->createMockFilesystem(function ($mock) {
-            $mock->expects(self::once())
-                ->method('exists')
-                ->with('/tmp/docs.xml')
-                ->willReturn(false);
+        $listener = new GenerateDocsListener(
+            $this->createMockDocsPathResolver(),
+            $this->createMockFilesystem(),
+            $this->createMockNamespaceNameProvider(),
+            $this->createMockRenderer(),
+            new TestWriter()
+        );
 
-            $mock->expects(self::once())
-                ->method('write')
-                ->with('/tmp/docs.xml', '<xml/>');
-        });
-
-        $renderer = $this->createMockRenderer(function ($mock) {
-            $mock->expects(self::once())
-                ->method('render')
-                ->with('docs.xml', [
-                    'namespace' => 'NS',
-                    'standard'  => 'STD',
-                    'category'  => 'CAT',
-                    'sniff'     => 'SNIFF',
-                ])
-                ->willReturn('<xml/>');
-        });
-
-        $sniffName = $this->createMockSniffName(function ($mock) {
-            $mock->expects(self::once())->method('getNamespace')->willReturn('NS');
-            $mock->expects(self::once())->method('getStandard')->willReturn('STD');
-            $mock->expects(self::once())->method('getCategory')->willReturn('CAT');
-            $mock->expects(self::once())->method('getSniff')->willReturn('SNIFF');
-        });
-
-        $workspace = $this->createMockWorkspace();
-
-        $docsPathResolver = $this->createMockDocsPathResolver(function ($mock) use ($sniffName, $workspace) {
-            $mock->expects(self::once())
-                ->method('resolve')
-                ->with($sniffName, $workspace)
-                ->willReturn('/tmp/docs.xml');
-        });
-
-        $writer = new TestWriter();
-
-        $generator = new DocsGenerator($docsPathResolver, $filesystem, $renderer, $writer);
-
-        $generator->generate($sniffName, $workspace);
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Listener\\ListenerInterface', $listener);
     }
 }

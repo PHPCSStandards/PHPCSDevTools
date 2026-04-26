@@ -11,154 +11,231 @@
 
 namespace PHPCSDevTools\Tests\Scaffold;
 
+use PHPCSDevTools\Scripts\Scaffold\Console\Application;
+use PHPCSDevTools\Scripts\Scaffold\Console\ApplicationInterface;
+use PHPCSDevTools\Scripts\Scaffold\ContainerInterface;
+use PHPCSDevTools\Scripts\Scaffold\DispatcherInterface;
+use PHPCSDevTools\Scripts\Scaffold\DotSeparatedSniffInterface;
 use PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException;
 use PHPCSDevTools\Scripts\Scaffold\FilesystemInterface;
-use PHPCSDevTools\Scripts\Scaffold\Generator\DocsGeneratorInterface;
-use PHPCSDevTools\Scripts\Scaffold\Generator\SniffGeneratorInterface;
-use PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestGeneratorInterface;
-use PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestIncFixedGeneratorInterface;
-use PHPCSDevTools\Scripts\Scaffold\Generator\UnitTestIncGeneratorInterface;
-use PHPCSDevTools\Scripts\Scaffold\GeneratorInterface;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\FullyQualifiedClassResolver\SniffFullyQualifiedClassResolverInterface;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\FullyQualifiedClassResolver\UnitTestFullyQualifiedClassResolverInterface;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\FullyQualifiedClassResolverInterface;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver\SniffNamespaceResolverInterface;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolver\UnitTestNamespaceResolverInterface;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\NamespaceResolverInterface;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\DocsPathResolverInterface;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\SniffPathResolverInterface;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\UnitTestIncFixedPathResolverInterface;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\UnitTestIncPathResolverInterface;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolver\UnitTestPathResolverInterface;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\PathResolverInterface;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\ShortClassResolver\SniffShortClassResolverInterface;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\ShortClassResolver\UnitTestShortClassResolverInterface;
-use PHPCSDevTools\Scripts\Scaffold\Resolver\ShortClassResolverInterface;
-use PHPCSDevTools\Scripts\Scaffold\ScaffolderInterface;
-use PHPCSDevTools\Scripts\Scaffold\SniffNameInterface;
-use PHPCSDevTools\Scripts\Scaffold\TemplateRenderer;
-use PHPCSDevTools\Scripts\Scaffold\TemplateRendererInterface;
+use PHPCSDevTools\Scripts\Scaffold\Listener\ListenerInterface;
+use PHPCSDevTools\Scripts\Scaffold\Provider\DirectoryProviderInterface;
+use PHPCSDevTools\Scripts\Scaffold\Provider\NamespaceNameProviderInterface;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\DocsPathResolverInterface;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\ResolverInterface;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\SniffFullyQualifiedClassResolverInterface;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\SniffNamespaceResolverInterface;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\SniffPathResolverInterface;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\SniffShortClassResolverInterface;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\UnitTestFullyQualifiedClassResolverInterface;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\UnitTestIncFixedPathResolverInterface;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\UnitTestIncPathResolverInterface;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\UnitTestNamespaceResolverInterface;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\UnitTestPathResolverInterface;
+use PHPCSDevTools\Scripts\Scaffold\Resolver\UnitTestShortClassResolverInterface;
+use PHPCSDevTools\Scripts\Scaffold\Standard\DirectoryInterface;
+use PHPCSDevTools\Scripts\Scaffold\Template\TemplateDirectoryInterface;
+use PHPCSDevTools\Scripts\Scaffold\Template\TemplateRenderer;
+use PHPCSDevTools\Scripts\Scaffold\Template\TemplateRendererInterface;
 use PHPCSDevTools\Scripts\Scaffold\WorkspaceInterface;
 use PHPCSDevTools\Scripts\Utils\Writer;
+use PHPCSDevTools\Tests\IOTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
-use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 /**
  * Abstract test case for the Scaffold tests.
  *
  * Provides helper methods to create mocks of the various Scaffold components.
  */
-abstract class AbstractTestcase extends TestCase
+abstract class AbstractTestcase extends IOTestCase
 {
 
     /**
-     * Create the mock DocsGeneratorInterface.
+     * The path to the project root.
      *
-     * @param null|\Closure(DocsGeneratorInterface&MockObject):void $factory
+     * @var null|string
+     */
+    protected $projectRoot;
+
+    /**
+     * Build a CLI command for the scaffold executable.
      *
-     * @return DocsGeneratorInterface&MockObject
+     * @param list<string> $arguments the command arguments to append
+     *
+     * @return string
+     */
+    public function buildCliCommand(array $arguments = [])
+    {
+        return \implode(' ', \array_map('escapeshellarg', \array_merge([
+            \PHP_BINARY,
+            \implode(\DIRECTORY_SEPARATOR, [$this->getProjectRoot(), 'bin', 'phpcs-scaffold']),
+        ], $arguments)));
+    }
+
+    /**
+     * Create a console application using the default scaffold options.
+     *
+     * @return Application
+     */
+    public function createApplication()
+    {
+        return new Application($this->createMockDispatcher());
+    }
+
+    /**
+     * Create the mock ContainerInterface.
+     *
+     * @param null|\Closure(ContainerInterface&MockObject):void $factory optional callback used to configure the mock
+     *
+     * @return ContainerInterface&MockObject
+     */
+    public function createMockContainer($factory = null)
+    {
+        return $this->createMockObject('PHPCSDevTools\\Scripts\\Scaffold\\ContainerInterface', $factory);
+    }
+
+    /**
+     * Create the mock DirectoryProviderInterface.
+     *
+     * @param null|\Closure(DirectoryProviderInterface&MockObject):void $factory optional callback used to configure the mock
+     *
+     * @return DirectoryProviderInterface&MockObject
+     */
+    public function createMockDirectoryProvider($factory = null)
+    {
+        return $this->createMockObject(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Provider\\DirectoryProviderInterface',
+            $factory
+        );
+    }
+
+    /**
+     * Create the mock DispatcherInterface.
+     *
+     * @param null|\Closure(DispatcherInterface&MockObject):void $factory optional callback used to configure the mock
+     *
+     * @return DispatcherInterface&MockObject
+     */
+    public function createMockDispatcher($factory = null)
+    {
+        return $this->createMockObject('PHPCSDevTools\\Scripts\\Scaffold\\DispatcherInterface', $factory);
+    }
+
+    /**
+     * Create the mock docs generation listener.
+     *
+     * @param null|\Closure(ListenerInterface&MockObject):void $factory optional callback used to configure the mock
+     *
+     * @return ListenerInterface&MockObject
      */
     public function createMockDocsGenerator($factory = null)
     {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Generator\\DocsGeneratorInterface'
-        )->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockListener($factory);
     }
 
     /**
      * Create the mock DocsPathResolverInterface.
      *
-     * @param null|\Closure(DocsPathResolverInterface&MockObject):void $factory
+     * @param null|\Closure(DocsPathResolverInterface&MockObject):void $factory optional callback used to configure the mock
      *
      * @return DocsPathResolverInterface&MockObject
      */
     public function createMockDocsPathResolver($factory = null)
     {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\PathResolver\\DocsPathResolverInterface'
-        )->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockObject(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\DocsPathResolverInterface',
+            $factory
+        );
     }
 
     /**
      * Create the mock Filesystem.
      *
-     * @param null|\Closure(FilesystemInterface&MockObject):void $factory
+     * @param null|\Closure(FilesystemInterface&MockObject):void $factory optional callback used to configure the mock
      *
      * @return FilesystemInterface&MockObject
      */
     public function createMockFilesystem($factory = null)
     {
-        $mockObject = $this->getMockBuilder('PHPCSDevTools\\Scripts\\Scaffold\\FilesystemInterface')->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockObject('PHPCSDevTools\\Scripts\\Scaffold\\FilesystemInterface', $factory);
     }
 
     /**
      * Create the mock FullyQualifiedClassResolverInterface.
      *
-     * @param null|\Closure(FullyQualifiedClassResolverInterface&MockObject):void $factory
+     * @param null|\Closure(MockObject&ResolverInterface):void $factory optional callback used to configure the mock
      *
-     * @return FullyQualifiedClassResolverInterface&MockObject
+     * @return MockObject&ResolverInterface
      */
     public function createMockFullyQualifiedClassResolver($factory = null)
     {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\FullyQualifiedClassResolverInterface'
-        )->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockObject('PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\ResolverInterface', $factory);
     }
 
     /**
-     * Create the mock GeneratorInterface.
+     * Create the mock listener interface.
      *
-     * @param null|\Closure(GeneratorInterface&MockObject):void $factory
+     * @param null|\Closure(ListenerInterface&MockObject):void $factory optional callback used to configure the mock
      *
-     * @return GeneratorInterface&MockObject
+     * @return ListenerInterface&MockObject
      */
     public function createMockGenerator($factory = null)
     {
-        $mockObject = $this->getMockBuilder('PHPCSDevTools\\Scripts\\Scaffold\\GeneratorInterface')->getMock();
+        return $this->createMockListener($factory);
+    }
 
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
+    /**
+     * Create the mock ListenerInterface.
+     *
+     * @param null|\Closure(ListenerInterface&MockObject):void $factory optional callback used to configure the mock
+     *
+     * @return ListenerInterface&MockObject
+     */
+    public function createMockListener($factory = null)
+    {
+        return $this->createMockObject('PHPCSDevTools\\Scripts\\Scaffold\\Listener\\ListenerInterface', $factory);
+    }
 
-        return $mockObject;
+    /**
+     * Create the mock NamespaceNameProviderInterface.
+     *
+     * @param null|\Closure(MockObject&NamespaceNameProviderInterface):void $factory optional callback used to configure the mock
+     *
+     * @return MockObject&NamespaceNameProviderInterface
+     */
+    public function createMockNamespaceNameProvider($factory = null)
+    {
+        return $this->createMockObject(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Provider\\NamespaceNameProviderInterface',
+            $factory
+        );
     }
 
     /**
      * Create the mock NamespaceResolverInterface.
      *
-     * @param null|\Closure(MockObject&NamespaceResolverInterface):void $factory
+     * @param null|\Closure(MockObject&ResolverInterface):void $factory optional callback used to configure the mock
      *
-     * @return MockObject&NamespaceResolverInterface
+     * @return MockObject&ResolverInterface
      */
     public function createMockNamespaceResolver($factory = null)
     {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\NamespaceResolverInterface'
-        )->getMock();
+        return $this->createMockObject('PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\ResolverInterface', $factory);
+    }
+
+    /**
+     * Create a mock object for the supplied interface.
+     *
+     * @template T of object
+     *
+     * @param class-string<T>                  $name    the name of the class or interface to mock
+     * @param null|\Closure(MockObject&T):void $factory optional callback used to configure the mock
+     *
+     * @return MockObject&T
+     */
+    public function createMockObject($name, $factory = null)
+    {
+        $mockObject = $this->getMockBuilder($name)->getMock();
 
         if ($factory instanceof \Closure) {
             $factory($mockObject);
@@ -170,444 +247,500 @@ abstract class AbstractTestcase extends TestCase
     /**
      * Create the mock PathResolverInterface.
      *
-     * @param null|\Closure(MockObject&PathResolverInterface):void $factory
+     * @param null|\Closure(MockObject&ResolverInterface):void $factory optional callback used to configure the mock
      *
-     * @return MockObject&PathResolverInterface
+     * @return MockObject&ResolverInterface
      */
     public function createMockPathResolver($factory = null)
     {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\PathResolverInterface'
-        )->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockObject('PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\ResolverInterface', $factory);
     }
 
     /**
      * Create the mock RendererInterface.
      *
-     * @param null|\Closure(MockObject&TemplateRendererInterface):void $factory
+     * @param null|\Closure(MockObject&TemplateRendererInterface):void $factory optional callback used to configure the mock
      *
      * @return MockObject&TemplateRendererInterface
      */
     public function createMockRenderer($factory = null)
     {
-        $mockObject = $this->getMockBuilder('PHPCSDevTools\\Scripts\\Scaffold\\TemplateRendererInterface')->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockObject(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Template\\TemplateRendererInterface',
+            $factory
+        );
     }
 
     /**
      * Create the mock ScaffolderInterface.
      *
-     * @param null|\Closure(MockObject&ScaffolderInterface):void $factory
+     * @param null|\Closure(ApplicationInterface&MockObject):void $factory optional callback used to configure the mock
      *
-     * @return MockObject&ScaffolderInterface
+     * @return ApplicationInterface&MockObject
      */
     public function createMockScaffolder($factory = null)
     {
-        $mockObject = $this->getMockBuilder('PHPCSDevTools\\Scripts\\Scaffold\\ScaffolderInterface')->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockObject('PHPCSDevTools\\Scripts\\Scaffold\\Console\\ApplicationInterface', $factory);
     }
 
     /**
      * Create the mock ShortClassResolverInterface.
      *
-     * @param null|\Closure(MockObject&ShortClassResolverInterface):void $factory
+     * @param null|\Closure(MockObject&ResolverInterface):void $factory optional callback used to configure the mock
      *
-     * @return MockObject&ShortClassResolverInterface
+     * @return MockObject&ResolverInterface
      */
     public function createMockShortClassResolver($factory = null)
     {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\ShortClassResolverInterface'
-        )->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockObject('PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\ResolverInterface', $factory);
     }
 
     /**
      * Create the mock ShortClassResolverInterface.
      *
-     * @param null|\Closure(MockObject&ShortClassResolverInterface):void $factory
+     * @param null|\Closure(MockObject&ResolverInterface):void $factory optional callback used to configure the mock
      *
-     * @return MockObject&ShortClassResolverInterface
+     * @return MockObject&ResolverInterface
      */
     public function createMockShortClassResolverInterface($factory = null)
     {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\ShortClassResolverInterface'
-        )->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
-    }
-
-    /**
-     * Create the mock SniffFullyQualifiedClassResolverInterface.
-     *
-     * @param null|\Closure(MockObject&SniffFullyQualifiedClassResolverInterface):void $factory
-     *
-     * @return MockObject&SniffFullyQualifiedClassResolverInterface
-     */
-    public function createMockSniffFullyQualifiedClassResolver($factory = null)
-    {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\FullyQualifiedClassResolver\\SniffFullyQualifiedClassResolverInterface'
-        )->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
-    }
-
-    /**
-     * Create the mock SniffGeneratorInterface.
-     *
-     * @param null|\Closure(MockObject&SniffGeneratorInterface):void $factory
-     *
-     * @return MockObject&SniffGeneratorInterface
-     */
-    public function createMockSniffGenerator($factory = null)
-    {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Generator\\SniffGeneratorInterface'
-        )->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockObject('PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\ResolverInterface', $factory);
     }
 
     /**
      * Create the mock SniffNameInterface.
      *
-     * @param null|\Closure(MockObject&SniffNameInterface):void $factory
+     * @param null|\Closure(DotSeparatedSniffInterface&MockObject):void $factory optional callback used to configure the mock
      *
-     * @return MockObject&SniffNameInterface
+     * @return DotSeparatedSniffInterface&MockObject
      */
-    public function createMockSniffName($factory = null)
+    public function createMockSniff($factory = null)
     {
-        $mockObject = $this->getMockBuilder('PHPCSDevTools\\Scripts\\Scaffold\\SniffNameInterface')->getMock();
+        return $this->createMockObject('PHPCSDevTools\\Scripts\\Scaffold\\DotSeparatedSniffInterface', $factory);
+    }
 
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
+    /**
+     * Create the mock SniffFullyQualifiedClassResolverInterface.
+     *
+     * @param null|\Closure(MockObject&SniffFullyQualifiedClassResolverInterface):void $factory optional callback used to configure the mock
+     *
+     * @return MockObject&SniffFullyQualifiedClassResolverInterface
+     */
+    public function createMockSniffFullyQualifiedClassResolver($factory = null)
+    {
+        return $this->createMockObject(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\SniffFullyQualifiedClassResolverInterface',
+            $factory
+        );
+    }
 
-        return $mockObject;
+    /**
+     * Create the mock sniff generation listener.
+     *
+     * @param null|\Closure(ListenerInterface&MockObject):void $factory optional callback used to configure the mock
+     *
+     * @return ListenerInterface&MockObject
+     */
+    public function createMockSniffGenerator($factory = null)
+    {
+        return $this->createMockListener($factory);
+    }
+
+    /**
+     * Create the mock sniff name metadata interface.
+     *
+     * @param null|\Closure(MockObject):void $factory optional callback used to configure the mock
+     *
+     * @return MockObject
+     */
+    public function createMockSniffName2($factory = null)
+    {
+        return $this->createMockObject('PHPCSDevTools\\Scripts\\Scaffold\\Standard\\SniffInterface', $factory);
     }
 
     /**
      * Create the mock SniffNamespaceResolverInterface.
      *
-     * @param null|\Closure(MockObject&SniffNamespaceResolverInterface):void $factory
+     * @param null|\Closure(MockObject&SniffNamespaceResolverInterface):void $factory optional callback used to configure the mock
      *
      * @return MockObject&SniffNamespaceResolverInterface
      */
     public function createMockSniffNamespaceResolver($factory = null)
     {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\NamespaceResolver\\SniffNamespaceResolverInterface'
-        )->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockObject(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\SniffNamespaceResolverInterface',
+            $factory
+        );
     }
 
     /**
      * Create the mock SniffPathResolverInterface.
      *
-     * @param null|\Closure(MockObject&SniffPathResolverInterface):void $factory
+     * @param null|\Closure(MockObject&SniffPathResolverInterface):void $factory optional callback used to configure the mock
      *
      * @return MockObject&SniffPathResolverInterface
      */
     public function createMockSniffPathResolver($factory = null)
     {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\PathResolver\\SniffPathResolverInterface'
-        )->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockObject(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\SniffPathResolverInterface',
+            $factory
+        );
     }
 
     /**
      * Create the mock SniffShortClassResolverInterface.
      *
-     * @param null|\Closure(MockObject&SniffShortClassResolverInterface):void $factory
+     * @param null|\Closure(MockObject&SniffShortClassResolverInterface):void $factory optional callback used to configure the mock
      *
      * @return MockObject&SniffShortClassResolverInterface
      */
     public function createMockSniffShortClassResolver($factory = null)
     {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\ShortClassResolver\\SniffShortClassResolverInterface'
-        )->getMock();
+        return $this->createMockObject(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\SniffShortClassResolverInterface',
+            $factory
+        );
+    }
 
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
+    /**
+     * Create the mock StandardDirectoryInterface.
+     *
+     * @param null|\Closure(DirectoryInterface&MockObject):void $factory optional callback used to configure the mock
+     *
+     * @return DirectoryInterface&MockObject
+     */
+    public function createMockStandardDirectory($factory = null)
+    {
+        return $this->createMockObject('PHPCSDevTools\\Scripts\\Scaffold\\Standard\\DirectoryInterface', $factory);
+    }
 
-        return $mockObject;
+    /**
+     * Create a mock template directory.
+     *
+     * @return MockObject&TemplateDirectoryInterface
+     */
+    public function createMockTemplateDirectory()
+    {
+        return $this->createMockObject(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Template\\TemplateDirectoryInterface',
+            function ($mock) {
+                $path = $this->getProjectRoot() . \DIRECTORY_SEPARATOR . 'templates';
+
+                self::assertDirectoryExists($path);
+
+                $mock->method('toString')->willReturn($path);
+            }
+        );
     }
 
     /**
      * Create the mock UnitTestFullyQualifiedClassResolverInterface.
      *
-     * @param null|\Closure(MockObject&UnitTestFullyQualifiedClassResolverInterface):void $factory
+     * @param null|\Closure(MockObject&UnitTestFullyQualifiedClassResolverInterface):void $factory optional callback used to configure the mock
      *
      * @return MockObject&UnitTestFullyQualifiedClassResolverInterface
      */
     public function createMockUnitTestFullyQualifiedClassResolver($factory = null)
     {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\FullyQualifiedClassResolver\\UnitTestFullyQualifiedClassResolverInterface'
-        )->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockObject(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\UnitTestFullyQualifiedClassResolverInterface',
+            $factory
+        );
     }
 
     /**
-     * Create the mock UnitTestGeneratorInterface.
+     * Create the mock unit test generation listener.
      *
-     * @param null|\Closure(MockObject&UnitTestGeneratorInterface):void $factory
+     * @param null|\Closure(ListenerInterface&MockObject):void $factory optional callback used to configure the mock
      *
-     * @return MockObject&UnitTestGeneratorInterface
+     * @return ListenerInterface&MockObject
      */
     public function createMockUnitTestGenerator($factory = null)
     {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Generator\\UnitTestGeneratorInterface'
-        )->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockListener($factory);
     }
 
     /**
-     * Create the mock UnitTestIncFixedGeneratorInterface.
+     * Create the mock fixed fixture generation listener.
      *
-     * @param null|\Closure(MockObject&UnitTestIncFixedGeneratorInterface):void $factory
+     * @param null|\Closure(ListenerInterface&MockObject):void $factory optional callback used to configure the mock
      *
-     * @return MockObject&UnitTestIncFixedGeneratorInterface
+     * @return ListenerInterface&MockObject
      */
     public function createMockUnitTestIncFixedGenerator($factory = null)
     {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Generator\\UnitTestIncFixedGeneratorInterface'
-        )->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockListener($factory);
     }
 
     /**
      * Create the mock UnitTestIncFixedPathResolverInterface.
      *
-     * @param null|\Closure(MockObject&UnitTestIncFixedPathResolverInterface):void $factory
+     * @param null|\Closure(MockObject&UnitTestIncFixedPathResolverInterface):void $factory optional callback used to configure the mock
      *
      * @return MockObject&UnitTestIncFixedPathResolverInterface
      */
     public function createMockUnitTestIncFixedPathResolver($factory = null)
     {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\PathResolver\\UnitTestIncFixedPathResolverInterface'
-        )->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockObject(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\UnitTestIncFixedPathResolverInterface',
+            $factory
+        );
     }
 
     /**
-     * Create the mock UnitTestIncGeneratorInterface.
+     * Create the mock fixture generation listener.
      *
-     * @param null|\Closure(MockObject&UnitTestIncGeneratorInterface):void $factory
+     * @param null|\Closure(ListenerInterface&MockObject):void $factory optional callback used to configure the mock
      *
-     * @return MockObject&UnitTestIncGeneratorInterface
+     * @return ListenerInterface&MockObject
      */
     public function createMockUnitTestIncGenerator($factory = null)
     {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Generator\\UnitTestIncGeneratorInterface'
-        )->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockListener($factory);
     }
 
     /**
      * Create the mock UnitTestIncPathResolverInterface.
      *
-     * @param null|\Closure(MockObject&UnitTestIncPathResolverInterface):void $factory
+     * @param null|\Closure(MockObject&UnitTestIncPathResolverInterface):void $factory optional callback used to configure the mock
      *
      * @return MockObject&UnitTestIncPathResolverInterface
      */
     public function createMockUnitTestIncPathResolver($factory = null)
     {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\PathResolver\\UnitTestIncPathResolverInterface'
-        )->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockObject(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\UnitTestIncPathResolverInterface',
+            $factory
+        );
     }
 
     /**
      * Create the mock UnitTestNamespaceResolverInterface.
      *
-     * @param null|\Closure(MockObject&UnitTestNamespaceResolverInterface):void $factory
+     * @param null|\Closure(MockObject&UnitTestNamespaceResolverInterface):void $factory optional callback used to configure the mock
      *
      * @return MockObject&UnitTestNamespaceResolverInterface
      */
     public function createMockUnitTestNamespaceResolver($factory = null)
     {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\NamespaceResolver\\UnitTestNamespaceResolverInterface'
-        )->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockObject(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\UnitTestNamespaceResolverInterface',
+            $factory
+        );
     }
 
     /**
      * Create the mock UnitTestPathResolverInterface.
      *
-     * @param null|\Closure(MockObject&UnitTestPathResolverInterface):void $factory
+     * @param null|\Closure(MockObject&UnitTestPathResolverInterface):void $factory optional callback used to configure the mock
      *
      * @return MockObject&UnitTestPathResolverInterface
      */
     public function createMockUnitTestPathResolver($factory = null)
     {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\PathResolver\\UnitTestPathResolverInterface'
-        )->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockObject(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\UnitTestPathResolverInterface',
+            $factory
+        );
     }
 
     /**
      * Create the mock UnitTestShortClassResolverInterface.
      *
-     * @param null|\Closure(MockObject&UnitTestShortClassResolverInterface):void $factory
+     * @param null|\Closure(MockObject&UnitTestShortClassResolverInterface):void $factory optional callback used to configure the mock
      *
      * @return MockObject&UnitTestShortClassResolverInterface
      */
     public function createMockUnitTestShortClassResolver($factory = null)
     {
-        $mockObject = $this->getMockBuilder(
-            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\ShortClassResolver\\UnitTestShortClassResolverInterface'
-        )->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockObject(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Resolver\\UnitTestShortClassResolverInterface',
+            $factory
+        );
     }
 
     /**
      * Create the mock WorkspaceInterface.
      *
-     * @param null|\Closure(MockObject&WorkspaceInterface):void $factory
+     * @param null|\Closure(MockObject&WorkspaceInterface):void $factory optional callback used to configure the mock
      *
      * @return MockObject&WorkspaceInterface
      */
     public function createMockWorkspace($factory = null)
     {
-        $mockObject = $this->getMockBuilder('PHPCSDevTools\\Scripts\\Scaffold\\WorkspaceInterface')->getMock();
-
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
-        }
-
-        return $mockObject;
+        return $this->createMockObject('PHPCSDevTools\\Scripts\\Scaffold\\WorkspaceInterface', $factory);
     }
 
     /**
      * Create the mock Writer.
      *
-     * @param null|\Closure(MockObject&Writer):void $factory a factory to configure the mock with, if needed
+     * @param null|\Closure(MockObject&Writer):void $factory optional callback used to configure the mock
      *
      * @return MockObject&Writer
      */
     public function createMockWriter($factory = null)
     {
-        $mockObject = $this->getMockBuilder('PHPCSDevTools\\Scripts\\Utils\\Writer')->getMock();
+        return $this->createMockObject('PHPCSDevTools\\Scripts\\Utils\\Writer', $factory);
+    }
 
-        if ($factory instanceof \Closure) {
-            $factory($mockObject);
+    /**
+     * Create a ruleset.xml file for the given standard directory.
+     *
+     * @param string $directory the standard directory
+     *
+     * @return void
+     */
+    public function createRuleset(string $directory)
+    {
+        self::assertDirectoryExists(
+            $directory,
+            \sprintf('Failed to create ruleset.xml: The directory "%s" does not exist.', $directory)
+        );
+
+        \file_put_contents(
+            $directory . \DIRECTORY_SEPARATOR . 'ruleset.xml',
+            \implode(\PHP_EOL, [
+                '<?xml version="1.0"?>',
+                '<ruleset name="' . \basename($directory) . '">',
+                '</ruleset>',
+                '',
+            ])
+        );
+    }
+
+    /**
+     * Create a Scaffolder instance with mocked dependencies.
+     *
+     * @return Application
+     */
+    public function createScaffolder()
+    {
+        return $this->createApplication();
+    }
+
+    /**
+     * Create a temporary workspace directory for CLI integration tests.
+     *
+     * @return non-empty-string
+     */
+    public function createTempProjectDirectory()
+    {
+        $projectDirectory = \sys_get_temp_dir() . \DIRECTORY_SEPARATOR . 'phpcsdevtools-scaffold-' . \md5(\uniqid());
+
+        if (\mkdir($projectDirectory, 0777, true) === false) {
+            self::fail('Failed to create the temporary workspace directory.');
         }
 
-        return $mockObject;
+        return $projectDirectory;
+    }
+
+    /**
+     * Create a temporary workspace directory for CLI integration tests.
+     *
+     * @return string
+     */
+    public function createTempWorkspace()
+    {
+        $workspace = \sys_get_temp_dir() . \DIRECTORY_SEPARATOR . 'phpcsdevtools-scaffold-' . \md5(\uniqid());
+
+        if (\mkdir($workspace, 0777, true) === false) {
+            self::fail('Failed to create the temporary workspace directory.');
+        }
+
+        return $workspace;
     }
 
     /**
      * Create a renderer for the supplied filesystem double.
      *
-     * @param FilesystemInterface $filesystem the filesystem mock to inject
+     * @param FilesystemInterface        $filesystem        the filesystem mock to inject
+     * @param TemplateDirectoryInterface $templateDirectory the template directory mock to inject
      *
      * @throws ScaffolderException
      *
      * @return TemplateRendererInterface
      */
-    public function createTemplateRenderer($filesystem)
+    public function createTemplateRenderer($filesystem = null, $templateDirectory = null)
     {
-        return new TemplateRenderer($filesystem);
+        if ($filesystem === null) {
+            $filesystem = $this->createMockFilesystem();
+        }
+
+        if ($templateDirectory === null) {
+            $templateDirectory = $this->createMockTemplateDirectory();
+        }
+
+        return new TemplateRenderer($filesystem, $templateDirectory);
+    }
+
+    /**
+     * Get the expected scaffold help output.
+     *
+     * @return non-empty-string
+     */
+    public function getHelpText()
+    {
+        return \implode(\PHP_EOL, [
+            'Scaffold a new PHPCS sniff class, along with its unit test, fixtures and documentation files.',
+            '',
+            'Usage:',
+            '  phpcs-scaffold --sniff="Standard.Category.Sniff" --workspace=\\getcwd()',
+            '',
+            'Example:',
+            '  phpcs-scaffold --workspace="./src/Standards" --sniff="Standard.Category.Sniff"',
+            '  phpcs-scaffold --workspace="./PHPCSDevTools" --sniff="PHPCSDebug.Debug.TokenList"',
+            '  phpcs-scaffold --workspace="./PHPCSExtra" --sniff="Universal.Attributes.BlockOrder"',
+            '',
+            'Options:',
+            '  -h, --help            Print this help.',
+            '  -w, --workspace       The workspace where the files and folders will be generated (default: \getcwd()).',
+            '  -s, --sniff           The sniff name in the format "Standard.Category.Sniff".',
+        ]);
+    }
+
+    /**
+     * Return the repository root path.
+     *
+     * @return string
+     */
+    public function getProjectRoot()
+    {
+        if (\is_string($this->projectRoot)) {
+            return $this->projectRoot;
+        }
+
+        return $this->projectRoot = \dirname(\dirname(__DIR__));
+    }
+
+    /**
+     * Recursively remove a temporary directory created by a test.
+     *
+     * @param string $path the directory path to remove
+     *
+     * @return void
+     */
+    public function removeDirectory($path)
+    {
+        if (\is_dir($path) === false) {
+            return;
+        }
+
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::CHILD_FIRST
+        );
+
+        foreach ($iterator as $item) {
+            if ($item->isDir() === true) {
+                \rmdir($item->getPathname());
+
+                continue;
+            }
+
+            \unlink($item->getPathname());
+        }
+
+        \rmdir($path);
     }
 }
