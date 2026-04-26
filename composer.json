@@ -1,47 +1,51 @@
 {
-    "name": "phpcsstandards/phpcsdevtools",
-    "description": "Tools for PHP_CodeSniffer sniff developers.",
-    "license": "LGPL-3.0-or-later",
-    "type": "phpcodesniffer-standard",
-    "keywords": ["phpcs", "devtools", "debug", "dev", "static analysis", "php_codesniffer", "phpcodesniffer-standard"],
-    "authors": [
+    "name" : "phpcsstandards/phpcsdevtools",
+    "description" : "Tools for PHP_CodeSniffer sniff developers.",
+    "type" : "phpcodesniffer-standard",
+    "keywords" : [ "phpcs", "devtools", "debug", "dev", "static analysis", "php_codesniffer", "phpcodesniffer-standard" ],
+    "homepage": "https://phpcsstandards.github.io/PHPCSDevTools/",
+    "license" : "LGPL-3.0-or-later",
+    "authors" : [
         {
-            "name": "Juliette Reinders Folmer",
-            "homepage": "https://github.com/jrfnl",
-            "role": "lead"
+            "name" : "Juliette Reinders Folmer",
+            "role" : "lead",
+            "homepage" : "https://github.com/jrfnl"
         },
         {
-            "name": "Contributors",
-            "homepage": "https://github.com/PHPCSStandards/PHPCSDevTools/graphs/contributors"
+            "name" : "Contributors",
+            "homepage" : "https://github.com/PHPCSStandards/PHPCSDevTools/graphs/contributors"
         }
     ],
-    "homepage": "https://phpcsstandards.github.io/PHPCSDevTools/",
-    "support": {
-        "issues": "https://github.com/PHPCSStandards/PHPCSDevTools/issues",
-        "source": "https://github.com/PHPCSStandards/PHPCSDevTools",
+    "support" : {
+        "issues" : "https://github.com/PHPCSStandards/PHPCSDevTools/issues",
+        "source" : "https://github.com/PHPCSStandards/PHPCSDevTools",
         "security": "https://github.com/PHPCSStandards/PHPCSDevTools/security/policy"
     },
-    "require": {
-        "php": ">=5.4",
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.4.1 || ^0.5 || ^0.6.2 || ^0.7 || ^1.0",
-        "squizlabs/php_codesniffer": "^3.1.0 || ^4.0"
+    "require" : {
+        "php" : ">=5.4",
+        "squizlabs/php_codesniffer" : "^3.1.0 || ^4.0",
+        "dealerdirect/phpcodesniffer-composer-installer" : "^0.4.1 || ^0.5 || ^0.6.2 || ^0.7 || ^1.0"
     },
-    "require-dev": {
-        "php-parallel-lint/php-console-highlighter": "^1.0.0",
+    "require-dev" : {
+        "phpunit/phpunit" : "^4.8.36 || ^5.7.21 || ^6.0 || ^7.0 || ^8.0 || ^9.0 || ^10.5.32 || ^11.3.3",
         "php-parallel-lint/php-parallel-lint": "^1.4.0",
+        "php-parallel-lint/php-console-highlighter": "^1.0.0",
         "phpcsstandards/phpcsdevcs": "^1.2.0",
-        "phpcsstandards/phpcsutils": "^1.0",
-        "phpunit/phpunit": "^4.8.36 || ^5.7.21 || ^6.0 || ^7.0 || ^8.0 || ^9.0 || ^10.5.32 || ^11.3.3",
+        "phpcsstandards/phpcsutils" : "^1.0",
         "yoast/phpunit-polyfills": "^1.1 || ^2.0 || ^3.0"
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "autoload": {
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "lock": false
+    },
+    "autoload" : {
         "psr-4": {
             "PHPCSDevTools\\Scripts\\": "Scripts/"
         }
     },
-    "autoload-dev": {
+    "autoload-dev" : {
         "psr-4": {
             "PHPCSDevTools\\Tests\\": "Tests/"
         }
@@ -50,15 +54,14 @@
         "bin/phpcs-check-feature-completeness",
         "bin/phpcs-scaffold"
     ],
-    "config": {
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
-        },
-        "lock": false
-    },
-    "scripts": {
-        "check-complete": [
-            "@php ./bin/phpcs-check-feature-completeness ./PHPCSDebug"
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts" : {
+        "lint": [
+            "@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --show-deprecated --exclude vendor --exclude .git"
+        ],
+        "lintlt72": [
+            "@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --show-deprecated --exclude vendor --exclude .git --exclude .github/build"
         ],
         "checkcs": [
             "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs"
@@ -66,36 +69,26 @@
         "fixcs": [
             "@php ./vendor/squizlabs/php_codesniffer/bin/phpcbf"
         ],
-        "lint": [
-            "@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --show-deprecated --exclude vendor --exclude .git"
-        ],
-        "lintlt72": [
-            "@lint --exclude .github/build"
-        ],
-        "phpunit": [
-            "@xdebug",
+        "test": [
             "@php ./vendor/phpunit/phpunit/phpunit"
         ],
-        "test": [
-            "@phpunit"
-        ],
-        "test-lte9": [
-            "@phpunit -c phpunitlte9.xml.dist"
-        ],
         "test-sniff": [
-            "@phpunit --testsuite DebugSniff"
-        ],
-        "test-sniff-lte9": [
-            "@test-sniff -c phpunitlte9.xml.dist"
+            "@php ./vendor/phpunit/phpunit/phpunit --testsuite DebugSniff"
         ],
         "test-tools": [
-            "@phpunit --testsuite DevTools"
+            "@php ./vendor/phpunit/phpunit/phpunit --testsuite DevTools"
+        ],
+        "test-lte9": [
+            "@php ./vendor/phpunit/phpunit/phpunit -c phpunitlte9.xml.dist"
+        ],
+        "test-sniff-lte9": [
+            "@php ./vendor/phpunit/phpunit/phpunit -c phpunitlte9.xml.dist --testsuite DebugSniff"
         ],
         "test-tools-lte9": [
-            "@test-tools -c phpunitlte9.xml.dist"
+            "@php ./vendor/phpunit/phpunit/phpunit -c phpunitlte9.xml.dist --testsuite DevTools"
         ],
-        "xdebug": [
-            "@putenv XDEBUG_MODE=coverage"
+        "check-complete": [
+            "@php ./bin/phpcs-check-feature-completeness ./PHPCSDebug"
         ]
     }
 }
