@@ -32,11 +32,11 @@ final class StandardNameTest extends AbstractTestcase
      */
     public function testImplementsItsInterfaceAndCachesInstances()
     {
-        $first  = Name::fromString('DemoStandard');
+        $name   = Name::fromString('DemoStandard');
         $second = Name::fromString('DemoStandard');
 
-        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Standard\\NameInterface', $first);
-        self::assertSame($first, $second);
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Standard\\NameInterface', $name);
+        self::assertSame($name, $second);
     }
 
     /**
@@ -61,6 +61,9 @@ final class StandardNameTest extends AbstractTestcase
         $this->expectException('PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException');
         $this->expectExceptionMessage('The standard name must be a string.');
 
+        /**
+         * @phpstan-ignore argument.type
+         */
         Name::fromString(true);
     }
 

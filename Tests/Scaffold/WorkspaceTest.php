@@ -47,6 +47,9 @@ final class WorkspaceTest extends AbstractTestcase
         $this->expectException('PHPCSDevTools\\Scripts\\Scaffold\\Exception\\ScaffolderException');
         $this->expectExceptionMessage('Workspace path must be a string.');
 
+        /**
+         * @phpstan-ignore argument.type
+         */
         new Workspace([]);
     }
 

@@ -32,7 +32,7 @@ final class Workspace implements WorkspaceInterface
     /**
      * Create a Workspace instance from a string path.
      *
-     * @param non-empty-string $path the path to the workspace
+     * @param string $path the path to the workspace
      *
      * @throws ScaffolderException
      */
@@ -66,7 +66,7 @@ final class Workspace implements WorkspaceInterface
     /**
      * Create a Workspace instance from the current working directory.
      *
-     * @param non-empty-string $path the path to the workspace
+     * @param string $path the path to the workspace
      *
      * @throws ScaffolderException if the current working directory is not a valid directory
      *

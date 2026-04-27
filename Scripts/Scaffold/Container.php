@@ -17,6 +17,10 @@ use PHPCSDevTools\Tests\Scaffold\ContainerTest;
 /**
  * Dependency injection container implementation.
  *
+ * @template TAlias of object
+ * @template TService of object
+ * @template TFactory of FactoryInterface<TService>
+ *
  * @see ContainerTest
  */
 final class Container implements ContainerInterface
@@ -26,30 +30,30 @@ final class Container implements ContainerInterface
     /**
      * The array of aliases registered in the container.
      *
-     * @var array<string, object>
+     * @var array<class-string<TAlias>,class-string<TService>>
      */
     private $aliases = [];
 
     /**
      * The array of factories registered in the container.
      *
-     * @var array<string, class-string<FactoryInterface>>
+     * @var array<class-string<TService>, class-string<TFactory>>
      */
     private $factories = [];
 
     /**
      * The array of services registered in the container.
      *
-     * @var array<string, object>
+     * @var array<class-string<TService>, TService>
      */
     private $services = [];
 
     /**
      * Create a new container instance.
      *
-     * @param array<string, string>                         $aliases   the aliases to register in the container
-     * @param array<string, class-string<FactoryInterface>> $factories the factories to register in the container
-     * @param array<string, object>                         $services  the services to register in the container
+     * @param array<class-string<TAlias>, class-string<TService>>   $aliases   the aliases to register in the container
+     * @param array<class-string<TService>, class-string<TFactory>> $factories the factories to register in the container
+     * @param array<class-string<TService>, TService>               $services  the services to register in the container
      */
     public function __construct(array $aliases = [], array $factories = [], array $services = [])
     {
@@ -74,8 +78,8 @@ final class Container implements ContainerInterface
     /**
      * Register an alias in the container.
      *
-     * @param string $alias   the alias to register
-     * @param string $service the name of the service the alias points to
+     * @param class-string<TAlias>   $alias   the alias to register
+     * @param class-string<TService> $service the name of the service the alias points to
      *
      * @return void
      */
@@ -109,10 +113,8 @@ final class Container implements ContainerInterface
     /**
      * Register a factory in the container.
      *
-     * @template T of object
-     *
-     * @param class-string<T>                                 $service the service to register the factory for
-     * @param class-string<FactoryInterface<class-string<T>>> $factory the factory to register
+     * @param class-string<TService> $service the service to register the factory for
+     * @param class-string<TFactory> $factory the factory to register
      *
      * @return void
      */
@@ -147,13 +149,11 @@ final class Container implements ContainerInterface
     /**
      * Get a service from the container.
      *
-     * @template T of object
-     *
-     * @param class-string<T> $service the name of the service to get
+     * @param class-string<TService> $service the name of the service to get
      *
      * @throws \InvalidArgumentException if the service is not registered in the container
      *
-     * @return T
+     * @return TService
      */
     public function get($service)
     {
@@ -183,8 +183,8 @@ final class Container implements ContainerInterface
     /**
      * Register a service in the container.
      *
-     * @param string $service  the name of the service to register
-     * @param object $instance the service instance to register
+     * @param class-string<TService> $service  the name of the service to register
+     * @param TService               $instance the service instance to register
      *
      * @return void
      */
@@ -213,7 +213,7 @@ final class Container implements ContainerInterface
                 'Service "%s" cannot be registered because the provided instance is not an instance of "%s", got: %s.',
                 $service,
                 $service,
-                \is_object($service) ? \get_class($service) : \gettype($service)
+                \get_class($instance)
             ));
         }
 

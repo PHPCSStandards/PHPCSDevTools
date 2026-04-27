@@ -36,10 +36,10 @@ final class SniffNameTest extends AbstractTestcase
      */
     public function testDotSeparatedSniffFromRequestIgnoresHelpFlags()
     {
-        $request = new Request(['bin/phpcs-scaffold', '--help', 'Standard.Category.MySniff']);
-        $sniff   = DotSeparatedSniff::fromRequest($request);
+        $request           = new Request(['bin/phpcs-scaffold', '--help', 'Standard.Category.MySniff']);
+        $dotSeparatedSniff = DotSeparatedSniff::fromRequest($request);
 
-        self::assertSame('Standard.Category.MySniff', $sniff->toString());
+        self::assertSame('Standard.Category.MySniff', $dotSeparatedSniff->toString());
     }
 
     /**
@@ -88,13 +88,13 @@ final class SniffNameTest extends AbstractTestcase
      */
     public function testDotSeparatedSniffImplementsItsInterfaceAndExposesAllParts()
     {
-        $sniff = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $dotSeparatedSniff = DotSeparatedSniff::fromString('Standard.Category.MySniff');
 
-        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\DotSeparatedSniffInterface', $sniff);
-        self::assertSame('Standard.Category.MySniff', $sniff->toString());
-        self::assertSame('Standard', $sniff->getStandard()->toString());
-        self::assertSame('Category', $sniff->getCategory()->toString());
-        self::assertSame('MySniff', $sniff->getSniff()->toString());
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\DotSeparatedSniffInterface', $dotSeparatedSniff);
+        self::assertSame('Standard.Category.MySniff', $dotSeparatedSniff->toString());
+        self::assertSame('Standard', $dotSeparatedSniff->getStandard()->toString());
+        self::assertSame('Category', $dotSeparatedSniff->getCategory()->toString());
+        self::assertSame('MySniff', $dotSeparatedSniff->getSniff()->toString());
     }
 
     /**
@@ -117,11 +117,11 @@ final class SniffNameTest extends AbstractTestcase
      */
     public function testStandardSniffImplementsItsInterfaceAndCachesInstances()
     {
-        $first  = Sniff::fromString('MySniff');
+        $sniff  = Sniff::fromString('MySniff');
         $second = Sniff::fromString('MySniff');
 
-        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Standard\\SniffInterface', $first);
-        self::assertSame($first, $second);
-        self::assertSame('MySniff', $first->toString());
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Standard\\SniffInterface', $sniff);
+        self::assertSame($sniff, $second);
+        self::assertSame('MySniff', $sniff->toString());
     }
 }

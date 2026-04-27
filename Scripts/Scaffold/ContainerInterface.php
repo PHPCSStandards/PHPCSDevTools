@@ -22,8 +22,11 @@ interface ContainerInterface
     /**
      * Register an alias in the container.
      *
-     * @param string $alias   the alias to register
-     * @param string $service the name of the service the alias points to
+     * @template TAlias of object
+     * @template TService of object
+     *
+     * @param class-string<TAlias>   $alias   the alias to register
+     * @param class-string<TService> $service the name of the service the alias points to
      *
      * @return void
      */
@@ -32,10 +35,10 @@ interface ContainerInterface
     /**
      * Register a factory in the container.
      *
-     * @template T of object
+     * @template TService of object
      *
-     * @param class-string<T>                                 $service the service to register the factory for
-     * @param class-string<FactoryInterface<class-string<T>>> $factory the factory to register
+     * @param class-string<TService>                   $service the service to register the factory for
+     * @param class-string<FactoryInterface<TService>> $factory the factory to register
      *
      * @return void
      */
@@ -44,21 +47,23 @@ interface ContainerInterface
     /**
      * Get a service from the container.
      *
-     * @template T of object
+     * @template TService of object
      *
-     * @param class-string<T> $service the name of the service to get
+     * @param class-string<TService> $service the name of the service to get
+     *
+     * @return TService
      *
      * @throws \InvalidArgumentException if the service is not registered in the container
-     *
-     * @return T
      */
     public function get($service);
 
     /**
      * Register a service in the container.
      *
-     * @param string $service  the name of the service to register
-     * @param object $instance the service instance to register
+     * @template TService of object
+     *
+     * @param class-string<TService> $service  the name of the service to register
+     * @param TService               $instance the service instance to register
      *
      * @return void
      */

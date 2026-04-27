@@ -41,8 +41,8 @@ final class UnitTestIncGeneratorTest extends AbstractTestcase
      */
     public function testCreatesANewFixtureFileWhenItDoesNotAlreadyExist()
     {
-        $sniff = DotSeparatedSniff::fromString('Standard.Category.MySniff');
-        $event = new ApplicationStartedEvent($sniff, new Workspace(\sys_get_temp_dir()));
+        $dotSeparatedSniff       = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $applicationStartedEvent = new ApplicationStartedEvent($dotSeparatedSniff, new Workspace(\sys_get_temp_dir()));
 
         $filesystem   = $this->createMockFilesystem(function ($mock) {
             $mock->expects(self::once())->method('exists')->with('/tmp/fixture.inc')->willReturn(false);
@@ -51,18 +51,23 @@ final class UnitTestIncGeneratorTest extends AbstractTestcase
         $renderer     = $this->createMockRenderer(function ($mock) {
             $mock->expects(self::once())->method('render')->with('fixture.inc')->willReturn('fixture content');
         });
-        $pathResolver = $this->createMockUnitTestIncPathResolver(function ($mock) use ($sniff) {
-            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('/tmp/fixture.inc');
+        $pathResolver = $this->createMockUnitTestIncPathResolver(function ($mock) use ($dotSeparatedSniff) {
+            $mock->expects(self::once())->method('resolve')->with($dotSeparatedSniff)->willReturn('/tmp/fixture.inc');
         });
-        $writer       = new TestWriter();
+        $testWriter   = new TestWriter();
 
-        $listener = new GenerateUnitTestIncListener($filesystem, $renderer, $pathResolver, $writer);
+        $generateUnitTestIncListener = new GenerateUnitTestIncListener(
+            $filesystem,
+            $renderer,
+            $pathResolver,
+            $testWriter
+        );
 
-        $listener($event);
+        $generateUnitTestIncListener($applicationStartedEvent);
 
         self::assertSame(
             'Creating file: /tmp/fixture.inc' . \PHP_EOL . 'Created file: /tmp/fixture.inc' . \PHP_EOL,
-            $writer->getStdout()
+            $testWriter->getStdout()
         );
     }
 
@@ -73,8 +78,8 @@ final class UnitTestIncGeneratorTest extends AbstractTestcase
      */
     public function testDoesNotOverwriteAnExistingFixtureFile()
     {
-        $sniff = DotSeparatedSniff::fromString('Standard.Category.MySniff');
-        $event = new ApplicationStartedEvent($sniff, new Workspace(\sys_get_temp_dir()));
+        $dotSeparatedSniff       = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $applicationStartedEvent = new ApplicationStartedEvent($dotSeparatedSniff, new Workspace(\sys_get_temp_dir()));
 
         $filesystem   = $this->createMockFilesystem(function ($mock) {
             $mock->expects(self::once())->method('exists')->with('/tmp/fixture.inc')->willReturn(true);
@@ -83,16 +88,21 @@ final class UnitTestIncGeneratorTest extends AbstractTestcase
         $renderer     = $this->createMockRenderer(function ($mock) {
             $mock->expects(self::never())->method('render');
         });
-        $pathResolver = $this->createMockUnitTestIncPathResolver(function ($mock) use ($sniff) {
-            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('/tmp/fixture.inc');
+        $pathResolver = $this->createMockUnitTestIncPathResolver(function ($mock) use ($dotSeparatedSniff) {
+            $mock->expects(self::once())->method('resolve')->with($dotSeparatedSniff)->willReturn('/tmp/fixture.inc');
         });
-        $writer       = new TestWriter();
+        $testWriter   = new TestWriter();
 
-        $listener = new GenerateUnitTestIncListener($filesystem, $renderer, $pathResolver, $writer);
+        $generateUnitTestIncListener = new GenerateUnitTestIncListener(
+            $filesystem,
+            $renderer,
+            $pathResolver,
+            $testWriter
+        );
 
-        $listener($event);
+        $generateUnitTestIncListener($applicationStartedEvent);
 
-        self::assertSame('File already exists: /tmp/fixture.inc' . \PHP_EOL, $writer->getStderr());
+        self::assertSame('File already exists: /tmp/fixture.inc' . \PHP_EOL, $testWriter->getStderr());
     }
 
     /**
@@ -102,13 +112,16 @@ final class UnitTestIncGeneratorTest extends AbstractTestcase
      */
     public function testImplementsRequiredInterfaces()
     {
-        $listener = new GenerateUnitTestIncListener(
+        $generateUnitTestIncListener = new GenerateUnitTestIncListener(
             $this->createMockFilesystem(),
             $this->createMockRenderer(),
             $this->createMockUnitTestIncPathResolver(),
             new TestWriter()
         );
 
-        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Listener\\ListenerInterface', $listener);
+        self::assertInstanceOf(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Listener\\ListenerInterface',
+            $generateUnitTestIncListener
+        );
     }
 }

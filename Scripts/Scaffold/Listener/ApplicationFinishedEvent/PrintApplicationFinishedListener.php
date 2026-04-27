@@ -52,7 +52,7 @@ final class PrintApplicationFinishedListener implements ListenerInterface
 
         $this->writer->toStdout(\sprintf(
             \PHP_EOL . 'Finished scaffolding sniff "%s".' . \PHP_EOL,
-            $event->getSniff()->toString()
+            $event->getDotSeparatedSniff()->toString()
         ));
     }
 }

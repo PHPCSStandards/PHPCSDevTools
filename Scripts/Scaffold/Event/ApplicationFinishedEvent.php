@@ -56,6 +56,16 @@ final class ApplicationFinishedEvent implements EventInterface
     }
 
     /**
+     * Get the sniff being scaffolded.
+     *
+     * @return DotSeparatedSniffInterface the sniff being scaffolded
+     */
+    public function getDotSeparatedSniff()
+    {
+        return $this->dotSeparatedSniff;
+    }
+
+    /**
      * Get the exit code of the script.
      *
      * @return int the exit code of the script
@@ -63,16 +73,6 @@ final class ApplicationFinishedEvent implements EventInterface
     public function getExitCode()
     {
         return $this->exitCode;
-    }
-
-    /**
-     * Get the sniff being scaffolded.
-     *
-     * @return DotSeparatedSniffInterface the sniff being scaffolded
-     */
-    public function getSniff()
-    {
-        return $this->dotSeparatedSniff;
     }
 
     /**

@@ -40,13 +40,13 @@ final class RequestFactoryTest extends AbstractTestcase
         try {
             $container = new Container();
 
-            $factory = new RequestFactory();
-            $result  = $factory($container);
+            $requestFactory = new RequestFactory();
+            $result         = $requestFactory($container);
 
             self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Console\\RequestInterface', $result);
             self::assertSame($_SERVER['argv'], $result->toArray());
             self::assertSame('bin/phpcs-scaffold', $result->getCommand());
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
         }
 
         if ($originalArgv === null) {

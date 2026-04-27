@@ -46,23 +46,23 @@ final class DocsGeneratorTest extends AbstractTestcase
      */
     public function testCreatesANewDocsFileWhenItDoesNotAlreadyExist()
     {
-        $sniff = DotSeparatedSniff::fromString('Standard.Category.MySniff');
-        $event = new ApplicationStartedEvent($sniff, new Workspace(\sys_get_temp_dir()));
+        $dotSeparatedSniff       = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $applicationStartedEvent = new ApplicationStartedEvent($dotSeparatedSniff, new Workspace(\sys_get_temp_dir()));
 
-        $docsPathResolver      = $this->createMockDocsPathResolver(function ($mock) use ($sniff) {
+        $docsPathResolver      = $this->createMockDocsPathResolver(function ($mock) use ($dotSeparatedSniff) {
             $mock->expects(self::once())
                 ->method('resolve')
-                ->with($sniff)
+                ->with($dotSeparatedSniff)
                 ->willReturn('/tmp/docs.xml');
         });
         $filesystem            = $this->createMockFilesystem(function ($mock) {
             $mock->expects(self::once())->method('exists')->with('/tmp/docs.xml')->willReturn(false);
             $mock->expects(self::once())->method('write')->with('/tmp/docs.xml', '<xml/>');
         });
-        $namespaceNameProvider = $this->createMockNamespaceNameProvider(function ($mock) use ($sniff) {
+        $namespaceNameProvider = $this->createMockNamespaceNameProvider(function ($mock) use ($dotSeparatedSniff) {
             $mock->expects(self::once())
                 ->method('provide')
-                ->with($sniff->getStandard())
+                ->with($dotSeparatedSniff->getStandard())
                 ->willReturn(NamespaceName::fromString('Vendor\\Standard'));
         });
         $renderer              = $this->createMockRenderer(function ($mock) {
@@ -76,21 +76,21 @@ final class DocsGeneratorTest extends AbstractTestcase
                 ])
                 ->willReturn('<xml/>');
         });
-        $writer                = new TestWriter();
+        $testWriter            = new TestWriter();
 
-        $listener = new GenerateDocsListener(
+        $generateDocsListener = new GenerateDocsListener(
             $docsPathResolver,
             $filesystem,
             $namespaceNameProvider,
             $renderer,
-            $writer
+            $testWriter
         );
 
-        $listener($event);
+        $generateDocsListener($applicationStartedEvent);
 
         self::assertSame(
             'Creating file: /tmp/docs.xml' . \PHP_EOL . 'Created file: /tmp/docs.xml' . \PHP_EOL,
-            $writer->getStdout()
+            $testWriter->getStdout()
         );
     }
 
@@ -101,13 +101,13 @@ final class DocsGeneratorTest extends AbstractTestcase
      */
     public function testDoesNotOverwriteAnExistingDocsFile()
     {
-        $sniff = DotSeparatedSniff::fromString('Standard.Category.MySniff');
-        $event = new ApplicationStartedEvent($sniff, new Workspace(\sys_get_temp_dir()));
+        $dotSeparatedSniff       = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $applicationStartedEvent = new ApplicationStartedEvent($dotSeparatedSniff, new Workspace(\sys_get_temp_dir()));
 
-        $docsPathResolver      = $this->createMockDocsPathResolver(function ($mock) use ($sniff) {
+        $docsPathResolver      = $this->createMockDocsPathResolver(function ($mock) use ($dotSeparatedSniff) {
             $mock->expects(self::once())
                 ->method('resolve')
-                ->with($sniff)
+                ->with($dotSeparatedSniff)
                 ->willReturn('/tmp/docs.xml');
         });
         $filesystem            = $this->createMockFilesystem(function ($mock) {
@@ -120,19 +120,19 @@ final class DocsGeneratorTest extends AbstractTestcase
         $renderer              = $this->createMockRenderer(function ($mock) {
             $mock->expects(self::never())->method('render');
         });
-        $writer                = new TestWriter();
+        $testWriter            = new TestWriter();
 
-        $listener = new GenerateDocsListener(
+        $generateDocsListener = new GenerateDocsListener(
             $docsPathResolver,
             $filesystem,
             $namespaceNameProvider,
             $renderer,
-            $writer
+            $testWriter
         );
 
-        $listener($event);
+        $generateDocsListener($applicationStartedEvent);
 
-        self::assertSame('File already exists: /tmp/docs.xml' . \PHP_EOL, $writer->getStderr());
+        self::assertSame('File already exists: /tmp/docs.xml' . \PHP_EOL, $testWriter->getStderr());
     }
 
     /**
@@ -142,7 +142,7 @@ final class DocsGeneratorTest extends AbstractTestcase
      */
     public function testImplementsRequiredInterfaces()
     {
-        $listener = new GenerateDocsListener(
+        $generateDocsListener = new GenerateDocsListener(
             $this->createMockDocsPathResolver(),
             $this->createMockFilesystem(),
             $this->createMockNamespaceNameProvider(),
@@ -150,6 +150,6 @@ final class DocsGeneratorTest extends AbstractTestcase
             new TestWriter()
         );
 
-        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Listener\\ListenerInterface', $listener);
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Listener\\ListenerInterface', $generateDocsListener);
     }
 }

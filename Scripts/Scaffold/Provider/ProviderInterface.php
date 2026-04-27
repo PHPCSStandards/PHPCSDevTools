@@ -24,9 +24,7 @@ interface ProviderInterface
      *
      * @param NameInterface $name The name to provide a value for
      *
-     * @template T of mixed
-     *
-     * @return T The value for the given name
+     * @return mixed The value for the given name
      */
     public function provide(NameInterface $name);
 }

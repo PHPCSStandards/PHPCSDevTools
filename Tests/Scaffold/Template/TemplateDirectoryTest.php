@@ -45,6 +45,9 @@ final class TemplateDirectoryTest extends AbstractTestcase
         $this->expectException('PHPCSDevTools\\Scripts\\Scaffold\\Exception\\ScaffolderException');
         $this->expectExceptionMessage('Template directory path must be a string, got: boolean');
 
+        /**
+         * @phpstan-ignore argument.type
+         */
         TemplateDirectory::fromString(true);
     }
 

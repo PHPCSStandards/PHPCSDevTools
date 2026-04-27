@@ -16,8 +16,6 @@ use PHPCSDevTools\Scripts\Scaffold\Standard\RulesetInterface;
 
 /**
  * Reads ruleset.xml files using the FilesystemInterface.
- *
- * @implements RulesetReaderInterface
  */
 final class RulesetReader implements RulesetReaderInterface
 {

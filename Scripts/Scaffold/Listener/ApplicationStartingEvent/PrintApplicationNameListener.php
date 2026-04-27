@@ -14,7 +14,7 @@ namespace PHPCSDevTools\Scripts\Scaffold\Listener\ApplicationStartingEvent;
 use PHPCSDevTools\Scripts\Scaffold\Event\ApplicationStartingEvent;
 use PHPCSDevTools\Scripts\Scaffold\Event\EventInterface;
 use PHPCSDevTools\Scripts\Scaffold\Listener\ListenerInterface;
-use PHPCSDevTools\Scripts\Utils\CliWriter;
+use PHPCSDevTools\Scripts\Utils\Writer;
 
 /**
  * Listener for the ScaffoldStartingEvent that prints the application name to the command line.
@@ -25,18 +25,18 @@ final class PrintApplicationNameListener implements ListenerInterface
     /**
      * The CliWriter instance to use for writing output to the command line.
      *
-     * @var CliWriter
+     * @var Writer
      */
-    private $cliWriter;
+    private $writer;
 
     /**
      * Create a new PrintApplicationNameListener instance.
      *
-     * @param CliWriter $cliWriter the CliWriter instance to use for writing output to the command line
+     * @param Writer $writer the CliWriter instance to use for writing output to the command line
      */
-    public function __construct(CliWriter $cliWriter)
+    public function __construct(Writer $writer)
     {
-        $this->cliWriter = $cliWriter;
+        $this->writer = $writer;
     }
 
     /**
@@ -50,6 +50,6 @@ final class PrintApplicationNameListener implements ListenerInterface
     {
         \assert($event instanceof ApplicationStartingEvent);
 
-        $this->cliWriter->toStdout('PHPCSDevTools: Scaffold' . \PHP_EOL . \PHP_EOL);
+        $this->writer->toStdout('PHPCSDevTools: Scaffold' . \PHP_EOL . \PHP_EOL);
     }
 }

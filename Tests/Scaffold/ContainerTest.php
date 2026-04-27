@@ -35,12 +35,16 @@ final class ContainerTest extends AbstractTestcase
     public function testGetCachesServicesCreatedByFactoryClasses()
     {
         $filesystem = $this->createMockFilesystem();
-        $container  = new Container([], [
-            'PHPCSDevTools\\Scripts\\Scaffold\\Ruleset\\RulesetReader' => 'PHPCSDevTools\\Scripts\\Scaffold\\Factory\\RulesetReaderFactory',
-        ], [
-            'PHPCSDevTools\\Scripts\\Scaffold\\Factory\\RulesetReaderFactory' => new RulesetReaderFactory(),
-            'PHPCSDevTools\\Scripts\\Scaffold\\FilesystemInterface'           => $filesystem,
-        ]);
+        $container  = new Container(
+            [],
+            [
+                'PHPCSDevTools\\Scripts\\Scaffold\\Ruleset\\RulesetReader' => 'PHPCSDevTools\\Scripts\\Scaffold\\Factory\\RulesetReaderFactory',
+            ],
+            [
+                'PHPCSDevTools\\Scripts\\Scaffold\\Factory\\RulesetReaderFactory' => new RulesetReaderFactory(),
+                'PHPCSDevTools\\Scripts\\Scaffold\\FilesystemInterface'           => $filesystem,
+            ]
+        );
 
         $rulesetReader = $container->get('PHPCSDevTools\\Scripts\\Scaffold\\Ruleset\\RulesetReader');
         $second        = $container->get('PHPCSDevTools\\Scripts\\Scaffold\\Ruleset\\RulesetReader');

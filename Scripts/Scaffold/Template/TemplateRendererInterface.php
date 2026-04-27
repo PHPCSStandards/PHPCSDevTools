@@ -22,8 +22,8 @@ interface TemplateRendererInterface
     /**
      * Render a template with the provided variables.
      *
-     * @param string                    $template  The template name to render
-     * @param array<int|string, string> $variables An associative array of variables to replace in the template
+     * @param string                  $template  The template name to render
+     * @param array<array-key, mixed> $variables An associative array of variables to replace in the template
      *
      * @throws ScaffolderException
      *

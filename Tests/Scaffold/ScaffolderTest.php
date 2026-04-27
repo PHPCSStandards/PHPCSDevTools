@@ -11,6 +11,7 @@
 
 namespace PHPCSDevTools\Tests\Scaffold;
 
+use Exception;
 use PHPCSDevTools\Scripts\Scaffold\Console\Application;
 use PHPCSDevTools\Scripts\Scaffold\Console\Request;
 use PHPCSDevTools\Scripts\Scaffold\Workspace;
@@ -44,7 +45,9 @@ final class ScaffolderTest extends AbstractTestcase
                 ->method('dispatch');
         });
 
-        new Application($dispatcher);
+        $application = new Application($dispatcher);
+
+        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Console\\Application', $application);
     }
 
     /**
@@ -107,7 +110,7 @@ final class ScaffolderTest extends AbstractTestcase
         self::assertSame('Listener failure.', $events[3]->getException()->getMessage());
         self::assertSame($workspace, $events[3]->getWorkspace());
         self::assertSame(1, $events[4]->getExitCode());
-        self::assertSame('Standard.Category.Sniff', $events[4]->getSniff()->toString());
+        self::assertSame('Standard.Category.Sniff', $events[4]->getDotSeparatedSniff()->toString());
         self::assertSame($workspace, $events[4]->getWorkspace());
     }
 
@@ -134,6 +137,8 @@ final class ScaffolderTest extends AbstractTestcase
 
         $application->run($request, $workspace);
 
+        self::assertContainsOnlyInstancesOf('PHPCSDevTools\\Scripts\\Scaffold\\Event\\EventInterface', $events);
+
         self::assertCount(4, $events);
         self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Event\\ApplicationConstructedEvent', $events[0]);
         self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Event\\ApplicationStartingEvent', $events[1]);
@@ -145,7 +150,7 @@ final class ScaffolderTest extends AbstractTestcase
         self::assertSame('Standard.Category.Sniff', $events[2]->getDotSeparatedSniff()->toString());
         self::assertSame($workspace, $events[2]->getWorkspace());
         self::assertSame(0, $events[3]->getExitCode());
-        self::assertSame('Standard.Category.Sniff', $events[3]->getSniff()->toString());
+        self::assertSame('Standard.Category.Sniff', $events[3]->getDotSeparatedSniff()->toString());
         self::assertSame($workspace, $events[3]->getWorkspace());
     }
 }

@@ -21,8 +21,6 @@ use PHPCSDevTools\Scripts\Scaffold\StandardInterface;
 
 /**
  * Parses a ruleset.xml file and returns standard metadata for the referenced standard.
- *
- * @implements RulesetParserInterface
  */
 final class RulesetParser implements RulesetParserInterface
 {

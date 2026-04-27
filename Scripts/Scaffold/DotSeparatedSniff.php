@@ -154,7 +154,7 @@ final class DotSeparatedSniff implements DotSeparatedSniffInterface
     /**
      * Create a new Sniff instance from a string.
      *
-     * @param non-empty-string $name the name of the sniff as a dot-separated string with 3 parts: "Standard.Category.Sniff"
+     * @param string $name the name of the sniff as a dot-separated string with 3 parts: "Standard.Category.Sniff"
      *
      * @throws ScaffolderException
      *

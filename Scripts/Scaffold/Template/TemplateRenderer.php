@@ -52,8 +52,8 @@ final class TemplateRenderer implements TemplateRendererInterface
     /**
      * Render a template with the provided variables.
      *
-     * @param non-empty-string                          $template  The name of the template to render
-     * @param array<non-empty-string, non-empty-string> $variables The variables to replace in the template
+     * @param string                  $template  The name of the template to render
+     * @param array<array-key, mixed> $variables The variables to replace in the template
      *
      * @throws ScaffolderException
      *
@@ -93,7 +93,7 @@ final class TemplateRenderer implements TemplateRendererInterface
     /**
      * Format a variable key as a template placeholder.
      *
-     * @param non-empty-string $key the variable key to format
+     * @param string $key the variable key to format
      *
      * @return non-empty-string
      */

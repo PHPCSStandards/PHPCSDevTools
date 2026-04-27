@@ -55,8 +55,8 @@ final class UnitTestShortClassResolverTest extends AbstractTestcase
     public function testResolveBuildsTheUnitTestShortClassName()
     {
         $unitTestShortClassResolver = new UnitTestShortClassResolver();
-        $sniffName                  = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $dotSeparatedSniff          = DotSeparatedSniff::fromString('Standard.Category.MySniff');
 
-        self::assertSame('MySniffUnitTest', $unitTestShortClassResolver->resolve($sniffName));
+        self::assertSame('MySniffUnitTest', $unitTestShortClassResolver->resolve($dotSeparatedSniff));
     }
 }

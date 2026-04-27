@@ -50,11 +50,11 @@ final class StandardMetadataProviderTest extends AbstractTestcase
                 \implode(\PHP_EOL, ['<?xml version="1.0"?>', '<ruleset name="DemoStandard">', '</ruleset>', ''])
             );
 
-            $parser = new RulesetParser(new RulesetReader(new Filesystem()));
-            $result = $parser->parse(Ruleset::fromString($rulesetPath));
+            $rulesetParser = new RulesetParser(new RulesetReader(new Filesystem()));
+            $result        = $rulesetParser->parse(Ruleset::fromString($rulesetPath));
 
             self::assertSame('DemoStandard', $result->getNamespaceName()->toString());
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
         }
 
         $this->removeDirectory($standardDirectory);
@@ -81,14 +81,14 @@ final class StandardMetadataProviderTest extends AbstractTestcase
                 ])
             );
 
-            $parser = new RulesetParser(new RulesetReader(new Filesystem()));
-            $result = $parser->parse(Ruleset::fromString($rulesetPath));
+            $rulesetParser = new RulesetParser(new RulesetReader(new Filesystem()));
+            $result        = $rulesetParser->parse(Ruleset::fromString($rulesetPath));
 
             self::assertSame('DemoStandard', $result->getName()->toString());
             self::assertSame('Vendor\\DemoStandard', $result->getNamespaceName()->toString());
             self::assertSame($standardDirectory, $result->getDirectory()->toString());
             self::assertSame($rulesetPath, $result->getRuleset()->toString());
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
         }
 
         $this->removeDirectory($standardDirectory);
@@ -109,12 +109,12 @@ final class StandardMetadataProviderTest extends AbstractTestcase
             $this->expectExceptionMessage('Failed to parse ruleset file "' . $rulesetPath . '".');
             \file_put_contents($rulesetPath, '<ruleset');
 
-            $parser = new RulesetParser(new RulesetReader(new Filesystem()));
-            $parser->parse(Ruleset::fromString($rulesetPath));
-        } catch (\Exception $e) {
+            $rulesetParser = new RulesetParser(new RulesetReader(new Filesystem()));
+            $rulesetParser->parse(Ruleset::fromString($rulesetPath));
+        } catch (\Exception $exception) {
             $this->removeDirectory($standardDirectory);
 
-            throw $e;
+            throw $exception;
         }
 
         $this->removeDirectory($standardDirectory);
@@ -146,12 +146,12 @@ final class StandardMetadataProviderTest extends AbstractTestcase
                 'Failed to determine standard name from ruleset file "' . $rulesetPath . '".'
             );
 
-            $parser = new RulesetParser(new RulesetReader(new Filesystem()));
-            $parser->parse(Ruleset::fromString($rulesetPath));
-        } catch (\Exception $e) {
+            $rulesetParser = new RulesetParser(new RulesetReader(new Filesystem()));
+            $rulesetParser->parse(Ruleset::fromString($rulesetPath));
+        } catch (\Exception $exception) {
             $this->removeDirectory($standardDirectory);
 
-            throw $e;
+            throw $exception;
         }
 
         $this->removeDirectory($standardDirectory);
@@ -173,8 +173,8 @@ final class StandardMetadataProviderTest extends AbstractTestcase
                 ->willReturn('<ruleset name="DemoStandard"/>');
         });
 
-        $reader = new RulesetReader($filesystem);
+        $rulesetReader = new RulesetReader($filesystem);
 
-        self::assertSame('<ruleset name="DemoStandard"/>', $reader->read($ruleset));
+        self::assertSame('<ruleset name="DemoStandard"/>', $rulesetReader->read($ruleset));
     }
 }

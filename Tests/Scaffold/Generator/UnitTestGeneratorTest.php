@@ -41,15 +41,17 @@ final class UnitTestGeneratorTest extends AbstractTestcase
      */
     public function testCreatesANewUnitTestFileWhenItDoesNotAlreadyExist()
     {
-        $sniff = DotSeparatedSniff::fromString('Standard.Category.MySniff');
-        $event = new ApplicationStartedEvent($sniff, new Workspace(\sys_get_temp_dir()));
+        $dotSeparatedSniff       = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $applicationStartedEvent = new ApplicationStartedEvent($dotSeparatedSniff, new Workspace(\sys_get_temp_dir()));
 
         $filesystem                 = $this->createMockFilesystem(function ($mock) {
             $mock->expects(self::once())->method('exists')->with('/tmp/UnitTest.php')->willReturn(false);
             $mock->expects(self::once())->method('write')->with('/tmp/UnitTest.php', '<?php // unit test');
         });
-        $sniffResolver              = $this->createMockSniffFullyQualifiedClassResolver(function ($mock) use ($sniff) {
-            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('SniffFQCN');
+        $sniffResolver              = $this->createMockSniffFullyQualifiedClassResolver(function ($mock) use (
+            $dotSeparatedSniff
+        ) {
+            $mock->expects(self::once())->method('resolve')->with($dotSeparatedSniff)->willReturn('SniffFQCN');
         });
         $renderer                   = $this->createMockRenderer(function ($mock) {
             $mock->expects(self::once())
@@ -64,22 +66,26 @@ final class UnitTestGeneratorTest extends AbstractTestcase
                 ->willReturn('<?php // unit test');
         });
         $unitTestFqcnResolver       = $this->createMockUnitTestFullyQualifiedClassResolver(function ($mock) use (
-            $sniff
+            $dotSeparatedSniff
         ) {
-            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('UnitTestFQCN');
+            $mock->expects(self::once())->method('resolve')->with($dotSeparatedSniff)->willReturn('UnitTestFQCN');
         });
-        $unitTestNamespaceResolver  = $this->createMockUnitTestNamespaceResolver(function ($mock) use ($sniff) {
-            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('Tests\\Category');
+        $unitTestNamespaceResolver  = $this->createMockUnitTestNamespaceResolver(function ($mock) use (
+            $dotSeparatedSniff
+        ) {
+            $mock->expects(self::once())->method('resolve')->with($dotSeparatedSniff)->willReturn('Tests\\Category');
         });
-        $unitTestPathResolver       = $this->createMockUnitTestPathResolver(function ($mock) use ($sniff) {
-            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('/tmp/UnitTest.php');
+        $unitTestPathResolver       = $this->createMockUnitTestPathResolver(function ($mock) use ($dotSeparatedSniff) {
+            $mock->expects(self::once())->method('resolve')->with($dotSeparatedSniff)->willReturn('/tmp/UnitTest.php');
         });
-        $unitTestShortClassResolver = $this->createMockUnitTestShortClassResolver(function ($mock) use ($sniff) {
-            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('MySniffUnitTest');
+        $unitTestShortClassResolver = $this->createMockUnitTestShortClassResolver(function ($mock) use (
+            $dotSeparatedSniff
+        ) {
+            $mock->expects(self::once())->method('resolve')->with($dotSeparatedSniff)->willReturn('MySniffUnitTest');
         });
-        $writer                     = new TestWriter();
+        $testWriter                 = new TestWriter();
 
-        $listener = new GenerateUnitTestListener(
+        $generateUnitTestListener = new GenerateUnitTestListener(
             $filesystem,
             $sniffResolver,
             $renderer,
@@ -87,14 +93,14 @@ final class UnitTestGeneratorTest extends AbstractTestcase
             $unitTestNamespaceResolver,
             $unitTestPathResolver,
             $unitTestShortClassResolver,
-            $writer
+            $testWriter
         );
 
-        $listener($event);
+        $generateUnitTestListener($applicationStartedEvent);
 
         self::assertSame(
             'Creating file: /tmp/UnitTest.php' . \PHP_EOL . 'Created file: /tmp/UnitTest.php' . \PHP_EOL,
-            $writer->getStdout()
+            $testWriter->getStdout()
         );
     }
 
@@ -105,8 +111,8 @@ final class UnitTestGeneratorTest extends AbstractTestcase
      */
     public function testDoesNotOverwriteAnExistingUnitTestFile()
     {
-        $sniff = DotSeparatedSniff::fromString('Standard.Category.MySniff');
-        $event = new ApplicationStartedEvent($sniff, new Workspace(\sys_get_temp_dir()));
+        $dotSeparatedSniff       = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $applicationStartedEvent = new ApplicationStartedEvent($dotSeparatedSniff, new Workspace(\sys_get_temp_dir()));
 
         $filesystem                 = $this->createMockFilesystem(function ($mock) {
             $mock->expects(self::once())->method('exists')->with('/tmp/UnitTest.php')->willReturn(true);
@@ -124,15 +130,15 @@ final class UnitTestGeneratorTest extends AbstractTestcase
         $unitTestNamespaceResolver  = $this->createMockUnitTestNamespaceResolver(function ($mock) {
             $mock->expects(self::never())->method('resolve');
         });
-        $unitTestPathResolver       = $this->createMockUnitTestPathResolver(function ($mock) use ($sniff) {
-            $mock->expects(self::once())->method('resolve')->with($sniff)->willReturn('/tmp/UnitTest.php');
+        $unitTestPathResolver       = $this->createMockUnitTestPathResolver(function ($mock) use ($dotSeparatedSniff) {
+            $mock->expects(self::once())->method('resolve')->with($dotSeparatedSniff)->willReturn('/tmp/UnitTest.php');
         });
         $unitTestShortClassResolver = $this->createMockUnitTestShortClassResolver(function ($mock) {
             $mock->expects(self::never())->method('resolve');
         });
-        $writer                     = new TestWriter();
+        $testWriter                 = new TestWriter();
 
-        $listener = new GenerateUnitTestListener(
+        $generateUnitTestListener = new GenerateUnitTestListener(
             $filesystem,
             $sniffResolver,
             $renderer,
@@ -140,12 +146,12 @@ final class UnitTestGeneratorTest extends AbstractTestcase
             $unitTestNamespaceResolver,
             $unitTestPathResolver,
             $unitTestShortClassResolver,
-            $writer
+            $testWriter
         );
 
-        $listener($event);
+        $generateUnitTestListener($applicationStartedEvent);
 
-        self::assertSame('File already exists: /tmp/UnitTest.php' . \PHP_EOL, $writer->getStderr());
+        self::assertSame('File already exists: /tmp/UnitTest.php' . \PHP_EOL, $testWriter->getStderr());
     }
 
     /**
@@ -155,7 +161,7 @@ final class UnitTestGeneratorTest extends AbstractTestcase
      */
     public function testImplementsRequiredInterfaces()
     {
-        $listener = new GenerateUnitTestListener(
+        $generateUnitTestListener = new GenerateUnitTestListener(
             $this->createMockFilesystem(),
             $this->createMockSniffFullyQualifiedClassResolver(),
             $this->createMockRenderer(),
@@ -166,6 +172,9 @@ final class UnitTestGeneratorTest extends AbstractTestcase
             new TestWriter()
         );
 
-        self::assertInstanceOf('PHPCSDevTools\\Scripts\\Scaffold\\Listener\\ListenerInterface', $listener);
+        self::assertInstanceOf(
+            'PHPCSDevTools\\Scripts\\Scaffold\\Listener\\ListenerInterface',
+            $generateUnitTestListener
+        );
     }
 }

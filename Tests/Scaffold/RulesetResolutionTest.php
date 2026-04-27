@@ -36,7 +36,7 @@ final class RulesetResolutionTest extends AbstractTestcase
 
             self::assertSame(1, $result['exitcode']);
             self::assertStringContainsString('Standard "Universal" not found in collection.', $result['stderr']);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
         }
 
         $this->removeDirectory($workspace);
@@ -121,7 +121,7 @@ final class RulesetResolutionTest extends AbstractTestcase
             self::assertFileExists($unitTestPath);
             self::assertFileExists($unitTestIncPath);
             self::assertFileExists($unitTestIncFixedPath);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
         }
 
         $this->removeDirectory($workspace);

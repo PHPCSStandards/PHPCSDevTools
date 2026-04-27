@@ -34,9 +34,9 @@ final class RequestTest extends AbstractTestcase
     public function testConstructorStoresTheArguments()
     {
         $arguments = ['bin/phpcs-scaffold', 'Standard.Category.Sniff'];
-        $input     = new Request($arguments);
+        $request   = new Request($arguments);
 
-        self::assertSame($arguments, $input->toArray());
+        self::assertSame($arguments, $request->toArray());
     }
 
     /**
@@ -51,6 +51,9 @@ final class RequestTest extends AbstractTestcase
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('Each argument must be a string. "array" given.');
 
+        /**
+         * @phpstan-ignore argument.type
+         */
         new Request([[]]);
     }
 
@@ -78,9 +81,9 @@ final class RequestTest extends AbstractTestcase
      */
     public function testGetCommandReturnsTheFirstArgument()
     {
-        $input = new Request(['bin/phpcs-scaffold', 'Standard.Category.Sniff']);
+        $request = new Request(['bin/phpcs-scaffold', 'Standard.Category.Sniff']);
 
-        self::assertSame('bin/phpcs-scaffold', $input->getCommand());
+        self::assertSame('bin/phpcs-scaffold', $request->getCommand());
     }
 
     /**
@@ -95,8 +98,8 @@ final class RequestTest extends AbstractTestcase
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('At least one argument is required to determine the command.');
 
-        $input = new Request([]);
-        $input->getCommand();
+        $request = new Request([]);
+        $request->getCommand();
     }
 
     /**

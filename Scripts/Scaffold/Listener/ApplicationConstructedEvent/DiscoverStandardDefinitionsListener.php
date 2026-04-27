@@ -13,7 +13,6 @@ namespace PHPCSDevTools\Scripts\Scaffold\Listener\ApplicationConstructedEvent;
 
 use PHPCSDevTools\Scripts\Scaffold\Collection\StandardCollectionInterface;
 use PHPCSDevTools\Scripts\Scaffold\Event\ApplicationConstructedEvent;
-use PHPCSDevTools\Scripts\Scaffold\Event\ApplicationStartingEvent;
 use PHPCSDevTools\Scripts\Scaffold\Event\EventInterface;
 use PHPCSDevTools\Scripts\Scaffold\Listener\ListenerInterface;
 use PHPCSDevTools\Scripts\Scaffold\Ruleset\RulesetFinderInterface;
@@ -71,7 +70,7 @@ final class DiscoverStandardDefinitionsListener implements ListenerInterface
     /**
      * Handle the scaffold starting event.
      *
-     * @param ApplicationStartingEvent $event the event to handle
+     * @param ApplicationConstructedEvent $event the event to handle
      *
      * @return void
      */

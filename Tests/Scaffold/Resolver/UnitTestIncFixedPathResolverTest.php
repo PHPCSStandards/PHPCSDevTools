@@ -54,14 +54,14 @@ final class UnitTestIncFixedPathResolverTest extends AbstractTestcase
      */
     public function testResolveBuildsTheFixedFixturePath()
     {
-        $sniffName         = DotSeparatedSniff::fromString('Standard.Category.MySniff');
-        $directoryProvider = $this->createMockDirectoryProvider(function ($mock) use ($sniffName) {
+        $dotSeparatedSniff = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $directoryProvider = $this->createMockDirectoryProvider(function ($mock) use ($dotSeparatedSniff) {
             $standardDirectory = $this->createMockObject(
                 'PHPCSDevTools\\Scripts\\Scaffold\\Standard\\DirectoryInterface'
             );
             $standardDirectory->expects(self::once())->method('toString')->willReturn(\DIRECTORY_SEPARATOR . 'project');
 
-            $mock->expects(self::once())->method('provide')->with($sniffName->getStandard())->willReturn(
+            $mock->expects(self::once())->method('provide')->with($dotSeparatedSniff->getStandard())->willReturn(
                 $standardDirectory
             );
         });
@@ -75,7 +75,7 @@ final class UnitTestIncFixedPathResolverTest extends AbstractTestcase
                 'Category',
                 'MySniffUnitTest.inc.fixed',
             ]),
-            $unitTestIncFixedPathResolver->resolve($sniffName)
+            $unitTestIncFixedPathResolver->resolve($dotSeparatedSniff)
         );
     }
 }

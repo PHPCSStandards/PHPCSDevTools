@@ -51,14 +51,14 @@ final class DocsPathResolverTest extends AbstractTestcase
      */
     public function testResolveBuildsTheDocumentationPath()
     {
-        $sniffName         = DotSeparatedSniff::fromString('Standard.Category.MySniff');
-        $directoryProvider = $this->createMockDirectoryProvider(function ($mock) use ($sniffName) {
+        $dotSeparatedSniff = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $directoryProvider = $this->createMockDirectoryProvider(function ($mock) use ($dotSeparatedSniff) {
             $standardDirectory = $this->createMockObject(
                 'PHPCSDevTools\\Scripts\\Scaffold\\Standard\\DirectoryInterface'
             );
             $standardDirectory->expects(self::once())->method('toString')->willReturn(\DIRECTORY_SEPARATOR . 'project');
 
-            $mock->expects(self::once())->method('provide')->with($sniffName->getStandard())->willReturn(
+            $mock->expects(self::once())->method('provide')->with($dotSeparatedSniff->getStandard())->willReturn(
                 $standardDirectory
             );
         });
@@ -72,7 +72,7 @@ final class DocsPathResolverTest extends AbstractTestcase
                 'Category',
                 'MySniffStandard.xml',
             ]),
-            $docsPathResolver->resolve($sniffName)
+            $docsPathResolver->resolve($dotSeparatedSniff)
         );
     }
 }

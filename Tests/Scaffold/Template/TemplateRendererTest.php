@@ -56,8 +56,8 @@ final class TemplateRendererTest extends AbstractTestcase
         $this->expectException('PHPCSDevTools\\Scripts\\Scaffold\\Exception\\ScaffolderException');
         $this->expectExceptionMessage('File not found');
 
-        $renderer = $this->createTemplateRenderer($filesystem);
-        $renderer->render('missing');
+        $templateRenderer = $this->createTemplateRenderer($filesystem);
+        $templateRenderer->render('missing');
     }
 
     /**
@@ -72,9 +72,9 @@ final class TemplateRendererTest extends AbstractTestcase
             $mock->expects(self::once())->method('read')->willReturn('Hello { name }!');
         });
 
-        $renderer = $this->createTemplateRenderer($filesystem);
+        $templateRenderer = $this->createTemplateRenderer($filesystem);
 
-        self::assertSame('Hello { name }!', $renderer->render('foo', [
+        self::assertSame('Hello { name }!', $templateRenderer->render('foo', [
             'title' => 'World',
         ]));
     }
@@ -91,9 +91,9 @@ final class TemplateRendererTest extends AbstractTestcase
             $mock->expects(self::once())->method('read')->willReturn('{ name } and { name }');
         });
 
-        $renderer = $this->createTemplateRenderer($filesystem);
+        $templateRenderer = $this->createTemplateRenderer($filesystem);
 
-        self::assertSame('World and World', $renderer->render('foo', [
+        self::assertSame('World and World', $templateRenderer->render('foo', [
             'name' => 'World',
         ]));
     }
@@ -110,9 +110,9 @@ final class TemplateRendererTest extends AbstractTestcase
             $mock->expects(self::once())->method('read')->willReturn('Hello { name }!');
         });
 
-        $renderer = $this->createTemplateRenderer($filesystem);
+        $templateRenderer = $this->createTemplateRenderer($filesystem);
 
-        self::assertSame('Hello World!', $renderer->render('foo', [
+        self::assertSame('Hello World!', $templateRenderer->render('foo', [
             'name' => 'World',
         ]));
     }
@@ -129,9 +129,9 @@ final class TemplateRendererTest extends AbstractTestcase
             $mock->expects(self::once())->method('read')->willReturn('No variables here.');
         });
 
-        $renderer = $this->createTemplateRenderer($filesystem);
+        $templateRenderer = $this->createTemplateRenderer($filesystem);
 
-        self::assertSame('No variables here.', $renderer->render('bar'));
+        self::assertSame('No variables here.', $templateRenderer->render('bar'));
     }
 
     /**
@@ -149,8 +149,8 @@ final class TemplateRendererTest extends AbstractTestcase
         $this->expectException('PHPCSDevTools\\Scripts\\Scaffold\\Exception\\ScaffolderException');
         $this->expectExceptionMessage('Template variable keys must be strings.');
 
-        $renderer = $this->createTemplateRenderer($filesystem);
-        $renderer->render('foo', [
+        $templateRenderer = $this->createTemplateRenderer($filesystem);
+        $templateRenderer->render('foo', [
             0 => 'World',
         ]);
     }
@@ -170,8 +170,8 @@ final class TemplateRendererTest extends AbstractTestcase
         $this->expectException('PHPCSDevTools\\Scripts\\Scaffold\\Exception\\ScaffolderException');
         $this->expectExceptionMessage('Template variable keys must be non-empty strings.');
 
-        $renderer = $this->createTemplateRenderer($filesystem);
-        $renderer->render('foo', [
+        $templateRenderer = $this->createTemplateRenderer($filesystem);
+        $templateRenderer->render('foo', [
             '   ' => 'World',
         ]);
     }
@@ -191,8 +191,8 @@ final class TemplateRendererTest extends AbstractTestcase
         $this->expectException('PHPCSDevTools\\Scripts\\Scaffold\\Exception\\ScaffolderException');
         $this->expectExceptionMessage('Template variable keys must be non-empty strings.');
 
-        $renderer = $this->createTemplateRenderer($filesystem);
-        $renderer->render('foo', [
+        $templateRenderer = $this->createTemplateRenderer($filesystem);
+        $templateRenderer->render('foo', [
             '' => 'World',
         ]);
     }
@@ -212,8 +212,8 @@ final class TemplateRendererTest extends AbstractTestcase
         $this->expectException('PHPCSDevTools\\Scripts\\Scaffold\\Exception\\ScaffolderException');
         $this->expectExceptionMessage('Template variable values must be strings.');
 
-        $renderer = $this->createTemplateRenderer($filesystem);
-        $renderer->render('foo', [
+        $templateRenderer = $this->createTemplateRenderer($filesystem);
+        $templateRenderer->render('foo', [
             'name' => [],
         ]);
     }
@@ -232,7 +232,7 @@ final class TemplateRendererTest extends AbstractTestcase
         $this->expectException('PHPCSDevTools\\Scripts\\Scaffold\\Exception\\ScaffolderException');
         $this->expectExceptionMessage('Template file does not exist');
 
-        $renderer = $this->createTemplateRenderer($filesystem);
-        $renderer->render('missing');
+        $templateRenderer = $this->createTemplateRenderer($filesystem);
+        $templateRenderer->render('missing');
     }
 }

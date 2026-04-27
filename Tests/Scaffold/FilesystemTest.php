@@ -58,6 +58,9 @@ final class FilesystemTest extends AbstractTestcase
         $this->expectException('PHPCSDevTools\\Scripts\\Scaffold\\Exception\\ScaffolderException');
         $this->expectExceptionMessage('Directory path must be a string.');
 
+        /**
+         * @phpstan-ignore argument.type
+         */
         $filesystem->createDirectory(true);
     }
 
@@ -256,6 +259,9 @@ final class FilesystemTest extends AbstractTestcase
         $this->expectException('PHPCSDevTools\\Scripts\\Scaffold\\Exception\\ScaffolderException');
         $this->expectExceptionMessage('Path must be a string.');
 
+        /**
+         * @phpstan-ignore argument.type
+         */
         $filesystem->exists(true);
     }
 
@@ -303,7 +309,7 @@ final class FilesystemTest extends AbstractTestcase
             \sort($paths);
 
             self::assertSame([$firstRulesetPath, $secondRulesetPath], $paths);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
         }
 
         if (\file_exists($firstRulesetPath)) {
@@ -391,6 +397,9 @@ final class FilesystemTest extends AbstractTestcase
         $this->expectException('PHPCSDevTools\\Scripts\\Scaffold\\Exception\\ScaffolderException');
         $this->expectExceptionMessage('File path must be a string.');
 
+        /**
+         * @phpstan-ignore argument.type
+         */
         $filesystem->read(true);
     }
 
@@ -618,6 +627,9 @@ final class FilesystemTest extends AbstractTestcase
         $this->expectException('PHPCSDevTools\\Scripts\\Scaffold\\Exception\\ScaffolderException');
         $this->expectExceptionMessage('Path must be a string.');
 
+        /**
+         * @phpstan-ignore argument.type
+         */
         $filesystem->write($path, 'abc');
     }
 
@@ -654,6 +666,9 @@ final class FilesystemTest extends AbstractTestcase
         $this->expectException('PHPCSDevTools\\Scripts\\Scaffold\\Exception\\ScaffolderException');
         $this->expectExceptionMessage('Contents must be a string.');
 
+        /**
+         * @phpstan-ignore argument.type
+         */
         $filesystem->write('/tmp/fc.txt', $contents);
     }
 

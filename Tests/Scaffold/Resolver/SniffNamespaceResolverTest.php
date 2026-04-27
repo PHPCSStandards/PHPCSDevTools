@@ -56,16 +56,16 @@ final class SniffNamespaceResolverTest extends AbstractTestcase
      */
     public function testResolveBuildsTheSniffNamespace()
     {
-        $sniffName             = DotSeparatedSniff::fromString('Standard.Category.MySniff');
-        $namespaceNameProvider = $this->createMockNamespaceNameProvider(function ($mock) use ($sniffName) {
+        $dotSeparatedSniff     = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $namespaceNameProvider = $this->createMockNamespaceNameProvider(function ($mock) use ($dotSeparatedSniff) {
             $mock->expects(self::once())
                 ->method('provide')
-                ->with($sniffName->getStandard())
+                ->with($dotSeparatedSniff->getStandard())
                 ->willReturn(NamespaceName::fromString('Vendor\\Standard'));
         });
 
         $sniffNamespaceResolver = new SniffNamespaceResolver($namespaceNameProvider);
 
-        self::assertSame('Vendor\\Standard\\Sniffs\\Category', $sniffNamespaceResolver->resolve($sniffName));
+        self::assertSame('Vendor\\Standard\\Sniffs\\Category', $sniffNamespaceResolver->resolve($dotSeparatedSniff));
     }
 }

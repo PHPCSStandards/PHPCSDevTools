@@ -58,11 +58,11 @@ final class SniffFullyQualifiedClassResolverTest extends AbstractTestcase
      */
     public function testResolveBuildsTheSniffFullyQualifiedClassName()
     {
-        $sniffName             = DotSeparatedSniff::fromString('Standard.Category.MySniff');
-        $namespaceNameProvider = $this->createMockNamespaceNameProvider(function ($mock) use ($sniffName) {
+        $dotSeparatedSniff     = DotSeparatedSniff::fromString('Standard.Category.MySniff');
+        $namespaceNameProvider = $this->createMockNamespaceNameProvider(function ($mock) use ($dotSeparatedSniff) {
             $mock->expects(self::once())
                 ->method('provide')
-                ->with($sniffName->getStandard())
+                ->with($dotSeparatedSniff->getStandard())
                 ->willReturn(NamespaceName::fromString('Vendor\\Standard'));
         });
 
@@ -70,7 +70,7 @@ final class SniffFullyQualifiedClassResolverTest extends AbstractTestcase
 
         self::assertSame(
             'Vendor\\Standard\\Sniffs\\Category\\MySniffSniff',
-            $sniffFullyQualifiedClassResolver->resolve($sniffName)
+            $sniffFullyQualifiedClassResolver->resolve($dotSeparatedSniff)
         );
     }
 }

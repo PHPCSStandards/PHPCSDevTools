@@ -39,7 +39,7 @@ final class TemplateDirectory implements TemplateDirectoryInterface
     /**
      * Create a new template directory instance.
      *
-     * @param non-empty-string $path the path to the template directory
+     * @param string $path the path to the template directory
      *
      * @throws ScaffolderException if the path is invalid or does not exist
      */
@@ -87,11 +87,11 @@ final class TemplateDirectory implements TemplateDirectoryInterface
     /**
      * Create a new template directory instance from the provided path.
      *
-     * @param non-empty-string $path the path to the template directory
+     * @param string $path the path to the template directory
      *
      * @throws ScaffolderException
      *
-     * @return TemplateDirectoryInterface
+     * @return self
      */
     public static function fromString($path)
     {
