@@ -12,20 +12,7 @@
     colors="true"
     executionOrder="depends,random"
     forceCoversAnnotation="true">
-    <coverage cacheDirectory="build/phpunit/coverage"
-              includeUncoveredFiles="true"
-              processUncoveredFiles="true"
-              pathCoverage="true"
-              ignoreDeprecatedCodeUnits="true"
-              disableCodeCoverageIgnore="true">
-        <report>
-            <clover outputFile="build/phpunit/clover.xml"/>
-            <text outputFile="build/phpunit/coverage.txt"/>
-        </report>
-    </coverage>
-    <logging>
-        <junit outputFile="build/phpunit/junit.xml"/>
-    </logging>
+
     <testsuites>
         <testsuite name="DebugSniff">
             <directory suffix="Test.php">./PHPCSDebug/Tests/</directory>
@@ -33,8 +20,6 @@
         <testsuite name="DevTools">
             <directory suffix="Test.php">./Tests/DocsXsd/</directory>
             <directory suffix="Test.php">./Tests/FeatureComplete/</directory>
-        </testsuite>
-        <testsuite name="Scaffold">
             <directory suffix="Test.php">./Tests/Scaffold/</directory>
         </testsuite>
     </testsuites>
