@@ -52,6 +52,8 @@ final class RequestTest extends AbstractTestcase
         $this->expectExceptionMessage('Each argument must be a string. "array" given.');
 
         /**
+         * Ignore the type error here to verify the constructor throws for a non-string argument.
+         *
          * @phpstan-ignore argument.type
          */
         new Request([[]]);

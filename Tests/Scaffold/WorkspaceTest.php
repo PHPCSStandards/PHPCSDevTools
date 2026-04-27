@@ -48,6 +48,8 @@ final class WorkspaceTest extends AbstractTestcase
         $this->expectExceptionMessage('Workspace path must be a string.');
 
         /**
+         * Ignore the type error here to verify the constructor throws for a non-string path.
+         *
          * @phpstan-ignore argument.type
          */
         new Workspace([]);

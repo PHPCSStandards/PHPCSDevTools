@@ -46,6 +46,8 @@ final class TemplateDirectoryTest extends AbstractTestcase
         $this->expectExceptionMessage('Template directory path must be a string, got: boolean');
 
         /**
+         * Ignore the type error here to verify the constructor throws for a non-string path.
+         *
          * @phpstan-ignore argument.type
          */
         TemplateDirectory::fromString(true);

@@ -62,6 +62,8 @@ final class StandardNameTest extends AbstractTestcase
         $this->expectExceptionMessage('The standard name must be a string.');
 
         /**
+         * Ignore the type error here as we're testing that the exception is thrown for a non-string argument.
+         *
          * @phpstan-ignore argument.type
          */
         Name::fromString(true);

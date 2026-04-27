@@ -59,6 +59,8 @@ final class FilesystemTest extends AbstractTestcase
         $this->expectExceptionMessage('Directory path must be a string.');
 
         /**
+         * Ignore the type error here to verify the exception is thrown for a non-string path.
+         *
          * @phpstan-ignore argument.type
          */
         $filesystem->createDirectory(true);
@@ -260,6 +262,8 @@ final class FilesystemTest extends AbstractTestcase
         $this->expectExceptionMessage('Path must be a string.');
 
         /**
+         * Ignore the type error here to verify the exception is thrown for a non-string path.
+         *
          * @phpstan-ignore argument.type
          */
         $filesystem->exists(true);
@@ -398,6 +402,8 @@ final class FilesystemTest extends AbstractTestcase
         $this->expectExceptionMessage('File path must be a string.');
 
         /**
+         * Ignore the type error here to verify the exception is thrown for a non-string file path.
+         *
          * @phpstan-ignore argument.type
          */
         $filesystem->read(true);
@@ -628,6 +634,8 @@ final class FilesystemTest extends AbstractTestcase
         $this->expectExceptionMessage('Path must be a string.');
 
         /**
+         * Ignore the type error here to verify the exception is thrown for a non-string path.
+         *
          * @phpstan-ignore argument.type
          */
         $filesystem->write($path, 'abc');
@@ -667,6 +675,8 @@ final class FilesystemTest extends AbstractTestcase
         $this->expectExceptionMessage('Contents must be a string.');
 
         /**
+         * Ignore the type error here to verify the exception is thrown for non-string contents.
+         *
          * @phpstan-ignore argument.type
          */
         $filesystem->write('/tmp/fc.txt', $contents);
