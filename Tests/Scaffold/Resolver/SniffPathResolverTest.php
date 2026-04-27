@@ -53,7 +53,7 @@ final class SniffPathResolverTest extends AbstractTestcase
     {
         $sniffName         = DotSeparatedSniff::fromString('Standard.Category.MySniff');
         $directoryProvider = $this->createMockDirectoryProvider(function ($mock) use ($sniffName) {
-            $standardDirectory = $this->createMock(
+            $standardDirectory = $this->createMockObject(
                 'PHPCSDevTools\\Scripts\\Scaffold\\Standard\\DirectoryInterface'
             );
             $standardDirectory->expects(self::once())->method('toString')->willReturn(\DIRECTORY_SEPARATOR . 'project');
