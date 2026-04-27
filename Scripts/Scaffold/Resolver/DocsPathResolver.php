@@ -31,6 +31,8 @@ final class DocsPathResolver implements DocsPathResolverInterface
     private $directoryProvider;
 
     /**
+     * Create a new DocsPathResolver instance.
+     *
      * @param DirectoryProviderInterface $directoryProvider the directory provider
      */
     public function __construct(DirectoryProviderInterface $directoryProvider)

@@ -14,6 +14,9 @@ namespace PHPCSDevTools\Scripts\Scaffold\Provider;
 use PHPCSDevTools\Scripts\Scaffold\Standard\DirectoryInterface;
 use PHPCSDevTools\Scripts\Scaffold\Standard\NameInterface;
 
+/**
+ * Provides directories for standard names.
+ */
 interface DirectoryProviderInterface extends ProviderInterface
 {
 

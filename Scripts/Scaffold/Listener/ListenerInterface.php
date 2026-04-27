@@ -13,6 +13,9 @@ namespace PHPCSDevTools\Scripts\Scaffold\Listener;
 
 use PHPCSDevTools\Scripts\Scaffold\Event\EventInterface;
 
+/**
+ * Interface ListenerInterface.
+ */
 interface ListenerInterface
 {
 

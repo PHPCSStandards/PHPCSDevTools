@@ -13,6 +13,9 @@ namespace PHPCSDevTools\Scripts\Scaffold;
 
 use PHPCSDevTools\Scripts\Scaffold\Event\EventInterface;
 
+/**
+ * Interface for a dispatcher that can dispatch events to listeners.
+ */
 interface DispatcherInterface
 {
 

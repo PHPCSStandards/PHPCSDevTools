@@ -58,9 +58,12 @@
 
     <rule ref="Generic.Files.LineLength.TooLong">
         <exclude-pattern>/Tests/*\.php$</exclude-pattern>
+        <exclude-pattern>/config/Scaffold/*\.php$</exclude-pattern>
+        <exclude-pattern>/Scripts/Scaffold/*\.php$</exclude-pattern>
     </rule>
 
     <rule ref="Universal.FunctionDeclarations.NoLongClosures.ExceedsMaximum">
+        <exclude-pattern>/Tests/Scaffold/*\.php$</exclude-pattern>
         <exclude-pattern>/devtools-autoload\.php$</exclude-pattern>
     </rule>
 

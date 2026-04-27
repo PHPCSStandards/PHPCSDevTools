@@ -16,6 +16,9 @@ use PHPCSDevTools\Scripts\Scaffold\Event\Exception\ExceptionEventInterface;
 use PHPCSDevTools\Scripts\Scaffold\Event\Exception\ListenerExceptionEvent;
 use PHPCSDevTools\Scripts\Scaffold\Listener\ListenerInterface;
 
+/**
+ * Default implementation of the dispatcher.
+ */
 final class Dispatcher implements DispatcherInterface
 {
 

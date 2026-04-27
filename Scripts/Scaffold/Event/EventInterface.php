@@ -11,6 +11,9 @@
 
 namespace PHPCSDevTools\Scripts\Scaffold\Event;
 
+/**
+ * Event interface.
+ */
 interface EventInterface
 {
 }

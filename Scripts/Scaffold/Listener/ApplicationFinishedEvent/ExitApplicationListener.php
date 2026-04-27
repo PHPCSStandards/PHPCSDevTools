@@ -32,6 +32,6 @@ final class ExitApplicationListener implements ListenerInterface
     {
         \assert($event instanceof ApplicationFinishedEvent);
 
-        \exit($event->getExitCode());
+        exit($event->getExitCode());
     }
 }

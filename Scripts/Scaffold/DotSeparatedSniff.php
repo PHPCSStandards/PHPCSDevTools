@@ -151,6 +151,15 @@ final class DotSeparatedSniff implements DotSeparatedSniffInterface
         return self::fromString($validatedArguments[1]);
     }
 
+    /**
+     * Create a new Sniff instance from a string.
+     *
+     * @param non-empty-string $name the name of the sniff as a dot-separated string with 3 parts: "Standard.Category.Sniff"
+     *
+     * @throws ScaffolderException
+     *
+     * @return DotSeparatedSniffInterface the Sniff instance created from the provided string
+     */
     public static function fromString($name)
     {
         if ($name === null) {

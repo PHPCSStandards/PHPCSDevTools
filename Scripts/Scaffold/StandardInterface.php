@@ -16,6 +16,9 @@ use PHPCSDevTools\Scripts\Scaffold\Standard\NameInterface;
 use PHPCSDevTools\Scripts\Scaffold\Standard\NamespaceNameInterface;
 use PHPCSDevTools\Scripts\Scaffold\Standard\RulesetInterface;
 
+/**
+ * Interface for a standard.
+ */
 interface StandardInterface
 {
 

@@ -64,6 +64,11 @@ final class TemplateDirectory implements TemplateDirectoryInterface
         $this->path = $path;
     }
 
+    /**
+     * Clean up the cache when the instance is destroyed.
+     *
+     * @return void
+     */
     public function __destruct()
     {
         unset(self::$cache[$this->path]);

@@ -24,24 +24,50 @@ use PHPCSDevTools\Scripts\Scaffold\Container;
  */
 $rootDirectory = \dirname(__DIR__);
 
-if (isset($GLOBALS['_composer_autoload_path']) === true) {
-    require $GLOBALS['_composer_autoload_path'];
-} else {
-    $autoloadPath = \implode(\DIRECTORY_SEPARATOR, [$rootDirectory, 'vendor', 'autoload.php']);
+$autoloadPath = isset($GLOBALS['_composer_autoload_path']) === true
+            ? $GLOBALS['_composer_autoload_path']
+            : \implode(\DIRECTORY_SEPARATOR, [$rootDirectory, 'vendor', 'autoload.php']);
 
-    \assert(\is_file($autoloadPath) === true, 'Autoload file not found. Run "composer install" to generate it.');
-
-    require $autoloadPath;
+if (\is_file($autoloadPath) === false) {
+    throw new \RuntimeException('Autoload file not found: ' . $autoloadPath);
 }
+
+require $autoloadPath;
 
 $scaffoldConfigPath = \implode(\DIRECTORY_SEPARATOR, [$rootDirectory, 'config', 'scaffold']);
 if (\is_dir($scaffoldConfigPath) === false) {
     throw new \RuntimeException('Scaffold configuration directory not found: ' . $scaffoldConfigPath);
 }
 
-$aliases   = require $scaffoldConfigPath . \DIRECTORY_SEPARATOR . 'aliases.php';
-$factories = require $scaffoldConfigPath . \DIRECTORY_SEPARATOR . 'factories.php';
-$services  = require $scaffoldConfigPath . \DIRECTORY_SEPARATOR . 'services.php';
+$aliasesConfigPath = $scaffoldConfigPath . \DIRECTORY_SEPARATOR . 'aliases.php';
+if (\is_file($aliasesConfigPath) === false) {
+    throw new \RuntimeException('Scaffold configuration file not found: ' . $aliasesConfigPath);
+}
+
+$aliases = require $aliasesConfigPath;
+if (\is_array($aliases) === false) {
+    throw new \RuntimeException('Scaffold configuration file "aliases.php" must return an array.');
+}
+
+$factoriesConfigPath = $scaffoldConfigPath . \DIRECTORY_SEPARATOR . 'factories.php';
+if (\is_file($factoriesConfigPath) === false) {
+    throw new \RuntimeException('Scaffold configuration file not found: ' . $factoriesConfigPath);
+}
+
+$factories = require $factoriesConfigPath;
+if (\is_array($factories) === false) {
+    throw new \RuntimeException('Scaffold configuration file "factories.php" must return an array.');
+}
+
+$servicesConfigPath = $scaffoldConfigPath . \DIRECTORY_SEPARATOR . 'services.php';
+if (\is_file($servicesConfigPath) === false) {
+    throw new \RuntimeException('Scaffold configuration file not found: ' . $servicesConfigPath);
+}
+
+$services = require $servicesConfigPath;
+if (\is_array($services) === false) {
+    throw new \RuntimeException('Scaffold configuration file "services.php" must return an array.');
+}
 
 $container = new Container($aliases, $factories, $services);
 

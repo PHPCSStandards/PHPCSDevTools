@@ -52,10 +52,8 @@ final class TemplateRenderer implements TemplateRendererInterface
     /**
      * Render a template with the provided variables.
      *
-     * @param non-empty-string                          $template
-     *                                                             The name of the template to render
-     * @param array<non-empty-string, non-empty-string> $variables
-     *                                                             The variables to replace in the template
+     * @param non-empty-string                          $template  The name of the template to render
+     * @param array<non-empty-string, non-empty-string> $variables The variables to replace in the template
      *
      * @throws ScaffolderException
      *
@@ -83,8 +81,7 @@ final class TemplateRenderer implements TemplateRendererInterface
     /**
      * Build placeholder replacements for the template renderer.
      *
-     * @param array<non-empty-string, non-empty-string> $variables
-     *                                                             The variables to map to placeholders
+     * @param array<non-empty-string, non-empty-string> $variables The variables to map to placeholders
      *
      * @return array<non-empty-string, non-empty-string>
      */
@@ -100,7 +97,7 @@ final class TemplateRenderer implements TemplateRendererInterface
      *
      * @return non-empty-string
      */
-    private function formatPlaceholder(string $key)
+    private function formatPlaceholder($key)
     {
         return '{ ' . $key . ' }';
     }

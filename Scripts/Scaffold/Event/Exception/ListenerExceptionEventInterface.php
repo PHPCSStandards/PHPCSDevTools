@@ -14,6 +14,9 @@ namespace PHPCSDevTools\Scripts\Scaffold\Event\Exception;
 use PHPCSDevTools\Scripts\Scaffold\Event\EventInterface;
 use PHPCSDevTools\Scripts\Scaffold\Listener\ListenerInterface;
 
+/**
+ * Interface for events representing exceptions thrown by listeners.
+ */
 interface ListenerExceptionEventInterface extends ExceptionEventInterface
 {
 

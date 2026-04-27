@@ -14,6 +14,9 @@ namespace PHPCSDevTools\Scripts\Scaffold\Provider;
 use PHPCSDevTools\Scripts\Scaffold\Standard\NameInterface;
 use PHPCSDevTools\Scripts\Scaffold\Standard\NamespaceNameInterface;
 
+/**
+ * Provides namespace names for standard names.
+ */
 interface NamespaceNameProviderInterface extends ProviderInterface
 {
 

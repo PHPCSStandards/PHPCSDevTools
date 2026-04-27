@@ -15,6 +15,9 @@ use PHPCSDevTools\Scripts\Scaffold\Collection\StandardCollectionInterface;
 use PHPCSDevTools\Scripts\Scaffold\Standard\NameInterface;
 use PHPCSDevTools\Scripts\Scaffold\Standard\NamespaceNameInterface;
 
+/**
+ * Provides namespace names for standard names.
+ */
 final class NamespaceNameProvider implements NamespaceNameProviderInterface
 {
 

@@ -15,6 +15,9 @@ use PHPCSDevTools\Scripts\Scaffold\Event\EventInterface;
 use PHPCSDevTools\Scripts\Scaffold\Exception\ScaffolderException;
 use PHPCSDevTools\Scripts\Scaffold\Listener\ListenerInterface;
 
+/**
+ * Default implementation of the listener provider.
+ */
 final class ListenerProvider implements ListenerProviderInterface
 {
     const EVENT_INTERFACE = 'PHPCSDevTools\\Scripts\\Scaffold\\Event\\EventInterface';

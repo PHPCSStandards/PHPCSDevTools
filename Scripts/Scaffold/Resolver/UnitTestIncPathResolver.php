@@ -31,6 +31,8 @@ final class UnitTestIncPathResolver implements UnitTestIncPathResolverInterface
     private $directoryProvider;
 
     /**
+     * Create a new UnitTestIncPathResolver instance.
+     *
      * @param DirectoryProviderInterface $directoryProvider the directory provider
      */
     public function __construct(DirectoryProviderInterface $directoryProvider)

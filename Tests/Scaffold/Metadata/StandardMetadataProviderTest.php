@@ -113,6 +113,7 @@ final class StandardMetadataProviderTest extends AbstractTestcase
             $parser->parse(Ruleset::fromString($rulesetPath));
         } catch (\Exception $e) {
             $this->removeDirectory($standardDirectory);
+
             throw $e;
         }
 
@@ -149,6 +150,7 @@ final class StandardMetadataProviderTest extends AbstractTestcase
             $parser->parse(Ruleset::fromString($rulesetPath));
         } catch (\Exception $e) {
             $this->removeDirectory($standardDirectory);
+
             throw $e;
         }
 

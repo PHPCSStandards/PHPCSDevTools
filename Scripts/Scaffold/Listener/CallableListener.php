@@ -13,6 +13,9 @@ namespace PHPCSDevTools\Scripts\Scaffold\Listener;
 
 use PHPCSDevTools\Scripts\Scaffold\Event\EventInterface;
 
+/**
+ * A listener that wraps a callable.
+ */
 final class CallableListener implements ListenerInterface
 {
 

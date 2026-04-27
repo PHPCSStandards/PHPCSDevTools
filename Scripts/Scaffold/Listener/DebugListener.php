@@ -14,6 +14,9 @@ namespace PHPCSDevTools\Scripts\Scaffold\Listener;
 use PHPCSDevTools\Scripts\Scaffold\Event\EventInterface;
 use PHPCSDevTools\Scripts\Utils\Writer;
 
+/**
+ * Listener for debugging events that outputs the event information to the command line.
+ */
 final class DebugListener implements ListenerInterface
 {
 

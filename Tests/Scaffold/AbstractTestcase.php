@@ -591,7 +591,7 @@ abstract class AbstractTestcase extends IOTestCase
      *
      * @return void
      */
-    public function createRuleset(string $directory)
+    public function createRuleset($directory)
     {
         self::assertDirectoryExists(
             $directory,

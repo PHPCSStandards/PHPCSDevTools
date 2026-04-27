@@ -13,6 +13,9 @@ namespace PHPCSDevTools\Scripts\Scaffold\Event\Exception;
 
 use PHPCSDevTools\Scripts\Scaffold\Event\EventInterface;
 
+/**
+ * Interface for events representing exceptions thrown while handling an event.
+ */
 interface ExceptionEventInterface extends EventInterface
 {
 

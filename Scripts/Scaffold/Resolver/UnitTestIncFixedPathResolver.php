@@ -31,6 +31,8 @@ final class UnitTestIncFixedPathResolver implements UnitTestIncFixedPathResolver
     private $directoryProvider;
 
     /**
+     * Create a new UnitTestIncFixedPathResolver instance.
+     *
      * @param DirectoryProviderInterface $directoryProvider the directory provider
      */
     public function __construct(DirectoryProviderInterface $directoryProvider)

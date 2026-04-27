@@ -14,6 +14,9 @@ namespace PHPCSDevTools\Scripts\Scaffold\Collection;
 use PHPCSDevTools\Scripts\Scaffold\Standard\NameInterface;
 use PHPCSDevTools\Scripts\Scaffold\StandardInterface;
 
+/**
+ * Interface StandardCollectionInterface.
+ */
 interface StandardCollectionInterface
 {
 

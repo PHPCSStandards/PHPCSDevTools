@@ -53,7 +53,7 @@ final class Container implements ContainerInterface
      */
     public function __construct(array $aliases = [], array $factories = [], array $services = [])
     {
-        $class = self::class;
+        $class = get_class($this);
 
         $this->aliases['PHPCSDevTools\\Scripts\\Scaffold\\ContainerInterface'] = $class;
         $this->services[$class] = $this;

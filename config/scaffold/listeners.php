@@ -12,7 +12,7 @@
 /**
  * Map of events to their listeners for the scaffold script.
  *
- * event => [listener1, listener2, ...]
+ * [event => [listener1, listener2, ...]]
  */
 return [
     'PHPCSDevTools\\Scripts\\Scaffold\\Event\\EventInterface'                             => [

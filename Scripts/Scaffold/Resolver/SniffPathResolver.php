@@ -31,6 +31,8 @@ final class SniffPathResolver implements SniffPathResolverInterface
     private $directoryProvider;
 
     /**
+     * Create a new SniffPathResolver instance.
+     *
      * @param DirectoryProviderInterface $directoryProvider the directory provider
      */
     public function __construct(DirectoryProviderInterface $directoryProvider)

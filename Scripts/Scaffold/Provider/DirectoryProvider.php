@@ -15,6 +15,9 @@ use PHPCSDevTools\Scripts\Scaffold\Collection\StandardCollectionInterface;
 use PHPCSDevTools\Scripts\Scaffold\Standard\DirectoryInterface;
 use PHPCSDevTools\Scripts\Scaffold\Standard\NameInterface;
 
+/**
+ * Provides directories for standard names.
+ */
 final class DirectoryProvider implements DirectoryProviderInterface
 {
 

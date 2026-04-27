@@ -13,6 +13,9 @@ namespace PHPCSDevTools\Scripts\Scaffold;
 
 use PHPCSDevTools\Scripts\Scaffold\Factory\FactoryInterface;
 
+/**
+ * Interface for a container that can be used to register and retrieve services and factories.
+ */
 interface ContainerInterface
 {
 

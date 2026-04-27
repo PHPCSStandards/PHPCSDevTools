@@ -13,8 +13,20 @@ namespace PHPCSDevTools\Scripts\Scaffold\Provider;
 
 use PHPCSDevTools\Scripts\Scaffold\Standard\NameInterface;
 
+/**
+ * Provider interface.
+ */
 interface ProviderInterface
 {
 
+    /**
+     * Provide a value for a given name.
+     *
+     * @param NameInterface $name The name to provide a value for
+     *
+     * @template T of mixed
+     *
+     * @return T The value for the given name
+     */
     public function provide(NameInterface $name);
 }
