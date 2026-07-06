@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Install PHP
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
@@ -52,49 +52,49 @@ jobs:
 
       # Validate the XSD and XML files against schema.
       - name: Validate Docs XSD against schema
-        uses: phpcsstandards/xmllint-validate@0fd9c4a9046055f621fca4bbdccb8eab1fd59fdc # v1.0.1
+        uses: phpcsstandards/xmllint-validate@5189514594c8d5f4cf21b7e5af50f54d697973d7 # v2.0.0
         with:
           pattern: "DocsXsd/phpcsdocs.xsd"
           xsd-url: "https://www.w3.org/2012/04/XMLSchema.xsd"
 
       - name: Validate PHPCSDebug ruleset against schema
-        uses: phpcsstandards/xmllint-validate@0fd9c4a9046055f621fca4bbdccb8eab1fd59fdc # v1.0.1
+        uses: phpcsstandards/xmllint-validate@5189514594c8d5f4cf21b7e5af50f54d697973d7 # v2.0.0
         with:
           pattern: "PHPCSDebug/ruleset.xml"
           xsd-file: "vendor/squizlabs/php_codesniffer/phpcs.xsd"
 
       - name: Validate docs against schema
-        uses: phpcsstandards/xmllint-validate@0fd9c4a9046055f621fca4bbdccb8eab1fd59fdc # v1.0.1
+        uses: phpcsstandards/xmllint-validate@5189514594c8d5f4cf21b7e5af50f54d697973d7 # v2.0.0
         with:
           pattern: "PHPCSDebug/Docs/*/*Standard.xml"
           xsd-file: "DocsXsd/phpcsdocs.xsd"
 
       - name: Validate Project PHPCS ruleset against schema
-        uses: phpcsstandards/xmllint-validate@0fd9c4a9046055f621fca4bbdccb8eab1fd59fdc # v1.0.1
+        uses: phpcsstandards/xmllint-validate@5189514594c8d5f4cf21b7e5af50f54d697973d7 # v2.0.0
         with:
           pattern: "phpcs.xml.dist"
           xsd-file: "vendor/squizlabs/php_codesniffer/phpcs.xsd"
 
       - name: "Validate PHPUnit < 10 config for use with PHPUnit 8"
-        uses: phpcsstandards/xmllint-validate@0fd9c4a9046055f621fca4bbdccb8eab1fd59fdc # v1.0.1
+        uses: phpcsstandards/xmllint-validate@5189514594c8d5f4cf21b7e5af50f54d697973d7 # v2.0.0
         with:
           pattern: "phpunitlte9.xml.dist"
           xsd-file: "vendor/phpunit/phpunit/schema/8.5.xsd"
 
       - name: "Validate PHPUnit < 10 config for use with PHPUnit 9"
-        uses: phpcsstandards/xmllint-validate@0fd9c4a9046055f621fca4bbdccb8eab1fd59fdc # v1.0.1
+        uses: phpcsstandards/xmllint-validate@5189514594c8d5f4cf21b7e5af50f54d697973d7 # v2.0.0
         with:
           pattern: "phpunitlte9.xml.dist"
           xsd-file: "vendor/phpunit/phpunit/schema/9.5.xsd"
 
       - name: "Validate PHPUnit 10+ config for use with PHPUnit 10"
-        uses: phpcsstandards/xmllint-validate@0fd9c4a9046055f621fca4bbdccb8eab1fd59fdc # v1.0.1
+        uses: phpcsstandards/xmllint-validate@5189514594c8d5f4cf21b7e5af50f54d697973d7 # v2.0.0
         with:
           pattern: "phpunit.xml.dist"
           xsd-file: "vendor/phpunit/phpunit/schema/10.5.xsd"
 
       - name: "Validate PHPUnit 10+ config for use with PHPUnit 11"
-        uses: phpcsstandards/xmllint-validate@0fd9c4a9046055f621fca4bbdccb8eab1fd59fdc # v1.0.1
+        uses: phpcsstandards/xmllint-validate@5189514594c8d5f4cf21b7e5af50f54d697973d7 # v2.0.0
         with:
           pattern: "phpunit.xml.dist"
           xsd-file: "vendor/phpunit/phpunit/phpunit.xsd"
@@ -117,7 +117,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       # Updating the lists can fail intermittently, typically after Microsoft has released a new package.
       # This should not be blocking for this job, so ignore any errors from this step.
@@ -141,18 +141,18 @@ jobs:
         run: diff -B ./PHPCSDebug/ruleset.xml <(xmllint --format "./PHPCSDebug/ruleset.xml")
 
   phpstan:
-    uses: PHPCSStandards/.github/.github/workflows/reusable-phpstan.yml@8ab4abdb86d0a69a15ea85472ab7dd5c44a37759 # v1.2.0
+    uses: PHPCSStandards/.github/.github/workflows/reusable-phpstan.yml@fcbbdd9495898d68229655147333a910679c33cf # v1.2.1
 
   markdownlint:
     name: 'Lint Markdown'
-    uses: PHPCSStandards/.github/.github/workflows/reusable-markdownlint.yml@8ab4abdb86d0a69a15ea85472ab7dd5c44a37759 # v1.2.0
+    uses: PHPCSStandards/.github/.github/workflows/reusable-markdownlint.yml@fcbbdd9495898d68229655147333a910679c33cf # v1.2.1
 
   remark:
     name: 'QA Markdown'
-    uses: PHPCSStandards/.github/.github/workflows/reusable-remark.yml@8ab4abdb86d0a69a15ea85472ab7dd5c44a37759 # v1.2.0
+    uses: PHPCSStandards/.github/.github/workflows/reusable-remark.yml@fcbbdd9495898d68229655147333a910679c33cf # v1.2.1
 
   yamllint:
     name: 'Lint Yaml'
-    uses: PHPCSStandards/.github/.github/workflows/reusable-yamllint.yml@8ab4abdb86d0a69a15ea85472ab7dd5c44a37759 # v1.2.0
+    uses: PHPCSStandards/.github/.github/workflows/reusable-yamllint.yml@fcbbdd9495898d68229655147333a910679c33cf # v1.2.1
     with:
       strict: true
