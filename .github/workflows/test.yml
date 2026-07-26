@@ -50,6 +50,8 @@ jobs:
           ini-values: error_reporting=-1, display_errors=On, display_startup_errors=On
           coverage: none
           tools: cs2pr
+        env:
+          fail-fast: true
 
       # Install dependencies and handle caching in one go.
       # @link https://github.com/marketplace/actions/install-php-dependencies-with-composer
@@ -195,6 +197,8 @@ jobs:
           php-version: ${{ matrix.php }}
           ini-values: ${{ steps.set_ini.outputs.PHP_INI }}
           coverage: none
+        env:
+          fail-fast: true
 
       - name: 'Composer: adjust dependencies'
         run: |
