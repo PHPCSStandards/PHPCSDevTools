@@ -58,6 +58,8 @@ jobs:
           php-version: 'latest'
           ini-values: error_reporting=-1, display_errors=On, display_startup_errors=On, log_errors_max_len=0
           coverage: none
+        env:
+          fail-fast: true
 
       - name: Prepare the files which will be deployed to the GH Pages website
         run: php .github/build/update-website.php
