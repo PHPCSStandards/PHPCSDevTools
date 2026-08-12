@@ -16,6 +16,8 @@ updates:
       include: "scope"
     labels:
       - "Type: chores/QA"
+    cooldown:
+      default-days: 10
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -34,3 +36,8 @@ updates:
         update-types:
           - "minor"
           - "patch"
+    cooldown:
+      default-days: 10
+      exclude:
+        - "phpcsstandards/xmllint-validate"
+        - "PHPCSStandards/.github/.github/workflows/"
