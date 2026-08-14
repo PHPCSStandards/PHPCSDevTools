@@ -6,19 +6,34 @@ on:
   # Allow manually triggering the workflow.
   workflow_dispatch:
 
+# Cancels all previous workflow runs for the same branch that have not yet completed.
+concurrency:
+  # The concurrency group contains the workflow name and the branch name.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Permissions should be configured at the job level.
+permissions: {}
+
 jobs:
   #### TEST THAT THE GH PAGES SITE GETS BUILT WITHOUT ERRORS ####
   test:
-    name: "Build GHPages site"
+    permissions:
+      contents: read # To clone the repo.
+
     if: github.repository == 'PHPCSStandards/PHPCSDevTools'
 
+    name: "Build GHPages site"
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
         with:
           # Use the version as per https://pages.github.com/versions/.
           ruby-version: 3.3.4
