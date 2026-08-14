@@ -10,6 +10,7 @@
 
 namespace PHPCSDevTools\Scripts\FeatureComplete;
 
+use PHPCSDevTools\Scripts\Utils\HelpTextFormatter;
 use PHPCSDevTools\Scripts\Utils\Writer;
 use RuntimeException;
 
@@ -34,20 +35,6 @@ use RuntimeException;
  */
 final class Config
 {
-
-    /**
-     * Max width for help text.
-     *
-     * @var int
-     */
-    const MAX_WIDTH = 80;
-
-    /**
-     * Margin for help options.
-     *
-     * @var string
-     */
-    const LEFT_MARGIN = '  ';
 
     /**
      * Writer for sending output.
@@ -303,7 +290,8 @@ final class Config
             || isset($argsFlipped['--help'])
         ) {
             $this->writer->toStderr($this->getVersion());
-            $this->writer->toStdout($this->getHelp());
+            $formatter = new HelpTextFormatter($this->helpTexts, $this->showColored);
+            $this->writer->toStdout($formatter->format());
             $this->executeCheck = false;
             return;
         }
@@ -420,67 +408,5 @@ final class Config
         $text .= \PHP_EOL . 'by Juliette Reinders Folmer' . \PHP_EOL . \PHP_EOL;
 
         return $text;
-    }
-
-    /**
-     * Retrieve usage instructions.
-     *
-     * @return string
-     */
-    private function getHelp()
-    {
-        $output = '';
-        foreach ($this->helpTexts as $section => $options) {
-            $longestOptionLength = 0;
-            foreach ($options as $option) {
-                if (isset($option['arg'])) {
-                    $longestOptionLength = \max($longestOptionLength, \strlen($option['arg']));
-                }
-            }
-
-            if ($this->showColored === true) {
-                $output .= "\033[33m{$section}:\033[0m" . \PHP_EOL;
-            } else {
-                $output .= "{$section}:" . \PHP_EOL;
-            }
-
-            $descWidth = (self::MAX_WIDTH - ($longestOptionLength + 1 + \strlen(self::LEFT_MARGIN)));
-            $descBreak = \PHP_EOL . self::LEFT_MARGIN . \str_pad(' ', ($longestOptionLength + 1));
-
-            foreach ($options as $option) {
-                if (isset($option['text'])) {
-                    $text = $option['text'];
-                    if ($this->showColored === true) {
-                        $text = \preg_replace('`(\[[^\]]+\])`', "\033[36m" . '$1' . "\033[0m", $text);
-                    }
-                    $output .= self::LEFT_MARGIN . $text . \PHP_EOL;
-                }
-
-                if (isset($option['arg'])) {
-                    $arg = \str_pad($option['arg'], $longestOptionLength);
-                    if ($this->showColored === true) {
-                        $arg = \preg_replace('`(<[^>]+>)`', "\033[0m\033[36m" . '$1', $arg);
-                        $arg = "\033[32m{$arg}\033[0m";
-                    }
-
-                    $descText = \wordwrap($option['desc'], $descWidth, $descBreak);
-                    $desc     = \explode('. ', $option['desc']);
-                    if (\count($desc) > 1) {
-                        $descText = '';
-                        foreach ($desc as $key => $sentence) {
-                            $descText .= ($key === 0) ? '' : $descBreak;
-                            $descText .= \wordwrap($sentence, $descWidth, $descBreak);
-                            $descText  = \rtrim($descText, '.') . '.';
-                        }
-                    }
-
-                    $output .= self::LEFT_MARGIN . $arg . ' ' . $descText . \PHP_EOL;
-                }
-            }
-
-            $output .= \PHP_EOL;
-        }
-
-        return $output;
     }
 }
