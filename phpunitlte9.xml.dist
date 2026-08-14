@@ -10,6 +10,7 @@
     convertNoticesToExceptions="true"
     convertDeprecationsToExceptions="true"
     colors="true"
+    executionOrder="depends,random"
     forceCoversAnnotation="true">
 
     <testsuites>
@@ -19,6 +20,7 @@
         <testsuite name="DevTools">
             <directory suffix="Test.php">./Tests/DocsXsd/</directory>
             <directory suffix="Test.php">./Tests/FeatureComplete/</directory>
+            <directory suffix="Test.php">./Tests/Scaffold/</directory>
         </testsuite>
     </testsuites>
 </phpunit>

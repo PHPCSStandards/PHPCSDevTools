@@ -28,7 +28,7 @@ abstract class IOTestCase extends XTestCase
      *                                Note: if the command itself already contains a "working directory" argument,
      *                                this parameter will normally not need to be passed.
      *
-     * @return array<string, int|string> Format:
+     * @return array{exitcode: int, stdout: string, stderr: string} An array containing the exit code, stdout and stderr of the executed command.
      *                                   'exitcode' int    The exit code from the command.
      *                                   'stdout'   string The output send to stdout.
      *                                   'stderr'   string The output send to stderr.
