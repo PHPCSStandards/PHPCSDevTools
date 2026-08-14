@@ -19,6 +19,7 @@ updates:
     cooldown:
       default-days: 10
 
+  # Handle updates for the default branch.
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -41,3 +42,24 @@ updates:
       exclude:
         - "phpcsstandards/xmllint-validate"
         - "PHPCSStandards/.github/.github/workflows/"
+
+  # Handle updates for the orphan gh-pages branch.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "cron"
+      cronjob: "10 22 5,20 * *" # At 22:10, every 5th and 20th day of the month.
+    open-pull-requests-limit: 5
+    target-branch: "gh-pages"
+    commit-message:
+      prefix: "GH Pages/Actions:"
+    labels:
+      - "Type: chores/QA"
+    groups:
+      action-runners:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+    cooldown:
+      default-days: 10
