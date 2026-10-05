@@ -41,7 +41,7 @@ updates:
       default-days: 10
       exclude:
         - "phpcsstandards/xmllint-validate"
-        - "PHPCSStandards/.github/.github/workflows/"
+        - "phpcsstandards/.github"
 
   # Handle updates for the orphan gh-pages branch.
   - package-ecosystem: "github-actions"
