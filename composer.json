@@ -51,7 +51,8 @@
         }
     },
     "bin": [
-        "bin/phpcs-check-feature-completeness"
+        "bin/phpcs-check-feature-completeness",
+        "bin/phpcs-scaffold"
     ],
     "minimum-stability": "dev",
     "prefer-stable": true,
