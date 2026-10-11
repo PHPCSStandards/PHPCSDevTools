@@ -40,7 +40,7 @@ This is a set of tools to assist developers of sniffs for [PHP CodeSniffer][phpc
 Run the following from the root of your project:
 ```bash
 composer config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
-composer require --dev phpcsstandards/phpcsdevtools:^1.0
+composer require --dev phpcsstandards/phpcsdevtools:^1.2
 ```
 
 ### Composer Global Installation
@@ -48,7 +48,7 @@ composer require --dev phpcsstandards/phpcsdevtools:^1.0
 If you work on several different sniff repos, you may want to install this toolset globally:
 ```bash
 composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
-composer global require --dev phpcsstandards/phpcsdevtools:^1.0
+composer global require --dev phpcsstandards/phpcsdevtools:^1.2
 ```
 
 Composer will automatically install dependencies and register the PHPCSDebug standard with PHP_CodeSniffer using the [Composer PHPCS plugin](https://github.com/PHPCSStandards/composer-installer).
