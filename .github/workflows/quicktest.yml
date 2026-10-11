@@ -18,13 +18,12 @@ concurrency:
 jobs:
   # Run CI checks/tests which have no dependency on the PHPCS version used.
   quicktest-php:
-    runs-on: ubuntu-latest
-
     strategy:
       matrix:
         php: ['5.4', 'latest']
 
     name: "QTest + Lint: PHP ${{ matrix.php }}"
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -93,8 +92,6 @@ jobs:
 
   # Run CI checks/tests which have a dependency on the PHPCS version used.
   quicktest-phpcs:
-    runs-on: ubuntu-latest
-
     strategy:
       matrix:
         php: ['5.4', 'latest']
@@ -120,6 +117,7 @@ jobs:
             phpcs_version: '4.x-dev'
 
     name: "QTest: PHP ${{ matrix.php }} - PHPCS ${{ matrix.phpcs_version }}"
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
