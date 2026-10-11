@@ -26,11 +26,12 @@ concurrency:
 
 jobs:
   prepare:
-    name: "Update website files"
     # Don't run on forks.
     if: github.repository == 'PHPCSStandards/PHPCSDevTools'
 
+    name: "Update website files"
     runs-on: ubuntu-latest
+
     steps:
       # By default use the `stable` branch as the published docs should always
       # reflect the latest release.
