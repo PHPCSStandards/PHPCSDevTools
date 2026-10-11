@@ -15,9 +15,15 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Permissions should be configured at the job level.
+permissions: {}
+
 jobs:
   # Run CI checks/tests which have no dependency on the PHPCS version used.
   quicktest-php:
+    permissions:
+      contents: read # To clone the repo.
+
     strategy:
       matrix:
         os: ['ubuntu-latest', 'windows-latest']
@@ -107,6 +113,9 @@ jobs:
 
   # Run CI checks/tests which have a dependency on the PHPCS version used.
   quicktest-phpcs:
+    permissions:
+      contents: read # To clone the repo.
+
     strategy:
       matrix:
         php: ['5.4', 'latest']
