@@ -12,7 +12,8 @@
         "remark-lint-no-dead-urls",
         {
             "skipUrlPatterns": [
-                "https://packagist.org/packages/phpcsstandards/phpcsdevtools#dev-develop"
+                "^https?://github\\.com/PHPCSStandards/PHPCSDevTools/compare/[0-9\\.]+?\\.{3}[0-9\\.]+",
+                "https?://packagist\\.org/packages/phpcsstandards/phpcsdevtools#dev-develop"
             ],
             "deadOrAliveOptions": {
                 "maxRetries": 3
