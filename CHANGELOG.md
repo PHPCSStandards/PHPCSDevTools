@@ -9,6 +9,15 @@ This projects adheres to [Keep a CHANGELOG](https://keepachangelog.com/) and use
 
 _Nothing yet._
 
+## [1.2.5] - 2026-11-03
+
+### Changed
+* General housekeeping.
+
+### Fixed
+* The PHP_CodeSniffer documentation XSD file is now deterministic, which will make it compatible with the XMLLint version which installs on the `ubuntu-26.04` image. Kudos to [@dingo-d] for fixing this!
+
+
 ## [1.2.4] - 2026-10-11
 
 This is a maintenance release.
@@ -102,6 +111,7 @@ Initial release containing:
 
 
 [Unreleased]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/stable...HEAD
+[1.2.5]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.2.4...1.2.5
 [1.2.4]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.2.3...1.2.4
 [1.2.3]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.2.2...1.2.3
 [1.2.2]: https://github.com/PHPCSStandards/PHPCSDevTools/compare/1.2.1...1.2.2
