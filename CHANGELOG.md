@@ -46,7 +46,7 @@ This is a maintenance release.
 ## [1.2.0] - 2022-09-23
 
 ### Added
-* An XSD schema for PHPCS sniff documentation files. Thanks to [@dingo_d] for this awesome contribution!
+* An XSD schema for PHPCS sniff documentation files. Thanks to [@dingo-d] for this awesome contribution!
     The XSD schema can be added to PHPCS sniff documentation XML files and can be used to verify these files comply with the requirements set by PHPCS, so the documentation will display correctly when using the PHPCS `--generator=...` feature.
     Information about how to use this new feature has been added to the README.
 * PHPCSDebug/TokenList sniff: tabs and spacess will now be visualized in whitespace-only tokens. In comment tokens, leading and trailing whitespace will be visualized.
@@ -113,7 +113,7 @@ Initial release containing:
 
 [Composer PHPCS plugin]: https://github.com/PHPCSStandards/composer-installer
 
-[@dingo_d]:     https://github.com/dingo-d
+[@dingo-d]:     https://github.com/dingo-d
 [@fredden]:     https://github.com/fredden
 [@GaryJones]:   https://github.com/GaryJones
 [@ghostwriter]: https://github.com/ghostwriter
