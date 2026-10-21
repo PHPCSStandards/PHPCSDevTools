@@ -55,7 +55,8 @@
         }
     },
     "bin": [
-        "bin/phpcs-check-feature-completeness"
+        "bin/phpcs-check-feature-completeness",
+        "bin/phpcs-scaffold"
     ],
     "config": {
         "allow-plugins": {
