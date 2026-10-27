@@ -2,10 +2,10 @@ name: Quicktest
 
 on:
   # Run on pushes, including merges, to all branches except `stable`.
-  push:
-    branches-ignore:
-      - stable
-      - develop
+#  push:
+#    branches-ignore:
+#      - stable
+#      - develop
   # Allow manually triggering the workflow.
   workflow_dispatch:
 
