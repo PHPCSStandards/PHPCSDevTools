@@ -14,7 +14,7 @@
         <xs:sequence>
             <xs:element name="standard" type="standardType"/>
             <xs:element name="code_comparison" type="code_comparisonType" maxOccurs="unbounded" minOccurs="0"/>
-            <xs:any minOccurs="0"/>
+            <xs:any namespace="##other" processContents="lax" minOccurs="0"/>
         </xs:sequence>
     </xs:group>
 
