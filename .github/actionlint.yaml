@@ -1,0 +1,10 @@
+# Actionlint configuration.
+#
+# https://github.com/rhysd/actionlint/blob/main/docs/config.md
+
+self-hosted-runner:
+  # GitHub-hosted runner labels not (yet) known to actionlint.
+  # Remove once actionlint supports them natively.
+  # https://github.com/rhysd/actionlint/pull/743
+  labels:
+    - ubuntu-26.04
