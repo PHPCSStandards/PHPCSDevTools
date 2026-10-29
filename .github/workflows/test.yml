@@ -270,3 +270,43 @@ jobs:
 
       - name: Run the unit tests for the PHPCSDebug sniff
         run: composer test-sniff${{ steps.phpunit_script.outputs.SUFFIX }}
+
+  # Run CI checks/tests which have a dependency on the CI runner version used.
+  test-xsd:
+    permissions:
+      contents: read # To clone the repo.
+
+    strategy:
+      matrix:
+        os: ['ubuntu-22.04', 'ubuntu-24.04', 'ubuntu-26.04']
+
+    name: "Test XSD: ${{ matrix.os }}"
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install xmllint
+        run: |
+          sudo apt-get update || true
+          sudo apt-get install --no-install-recommends -y libxml2-utils
+
+      - name: Show libxml version
+        run: xmllint --version
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: 'latest'
+          coverage: none
+
+      - name: Install Composer dependencies
+        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
+        with:
+          custom-cache-suffix: $(date -u "+%Y-%m")
+
+      - name: Run the XSD tests
+        run: vendor/bin/phpunit --testsuite DevTools --filter DocsXsd
