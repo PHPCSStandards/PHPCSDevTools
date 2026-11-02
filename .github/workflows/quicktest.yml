@@ -19,10 +19,60 @@ concurrency:
 permissions: {}
 
 jobs:
+  quicklint-php:
+    permissions:
+      contents: read # To clone the repo.
+
+    strategy:
+      matrix:
+        php: ['5.4', 'latest']
+
+    name: "QLint: PHP ${{ matrix.php }}"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: ${{ matrix.php }}
+          ini-values: error_reporting=-1, display_errors=On, display_startup_errors=On
+          coverage: none
+        env:
+          fail-fast: true
+
+      # Install dependencies and handle caching in one go.
+      # @link https://github.com/marketplace/actions/install-php-dependencies-with-composer
+      - name: Install Composer dependencies
+        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
+        with:
+          # Bust the cache at least once a month - output format: YYYY-MM.
+          custom-cache-suffix: $(date -u "+%Y-%m")
+
+      - name: Lint against parse errors (PHP 7.2+)
+        if: ${{ matrix.php >= '7.2' || matrix.php == 'latest' }}
+        run: composer lint
+
+      - name: Lint against parse errors (PHP < 7.2)
+        if: ${{ matrix.php < '7.2' && matrix.php != 'latest' }}
+        run: composer lintlt72
+
+      # Check that any sniffs available are feature complete.
+      # This acts as an integration test for the feature completeness script,
+      # which is why it is run against various PHP versions.
+      - name: Check for feature completeness
+        run: composer check-complete
+
   # Run CI checks/tests which have no dependency on the PHPCS version used.
   quicktest-php:
     permissions:
       contents: read # To clone the repo.
+
+    needs: 'quicklint-php'
 
     strategy:
       matrix:
@@ -39,7 +89,7 @@ jobs:
           - os: 'windows-latest'
             php: '5.5'
 
-    name: "QTest + Lint: PHP ${{ matrix.php }} (${{ matrix.os == 'windows-latest' && 'Win' || 'Linux' }})"
+    name: "QTest: PHP ${{ matrix.php }} (${{ matrix.os == 'windows-latest' && 'Win' || 'Linux' }})"
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -87,20 +137,6 @@ jobs:
           # Bust the cache at least once a month - output format: YYYY-MM.
           custom-cache-suffix: $(date -u "+%Y-%m")
 
-      - name: Lint against parse errors (PHP 7.2+)
-        if: ${{ matrix.php >= '7.2' || matrix.php == 'latest' }}
-        run: composer lint
-
-      - name: Lint against parse errors (PHP < 7.2)
-        if: ${{ matrix.php < '7.2' && matrix.php != 'latest' }}
-        run: composer lintlt72
-
-      # Check that any sniffs available are feature complete.
-      # This acts as an integration test for the feature completeness script,
-      # which is why it is run against various PHP versions.
-      - name: Check for feature completeness
-        run: composer check-complete
-
       - name: Grab PHPUnit version
         id: phpunit_version
         shell: bash
@@ -127,6 +163,8 @@ jobs:
   quicktest-phpcs:
     permissions:
       contents: read # To clone the repo.
+
+    needs: 'quicklint-php'
 
     strategy:
       matrix:
