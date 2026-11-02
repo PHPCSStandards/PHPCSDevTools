@@ -20,7 +20,6 @@ concurrency:
 permissions: {}
 
 jobs:
-  # Run CI checks/tests which have no dependency on the PHPCS version used.
   lint-php:
     permissions:
       contents: read # To clone the repo.
@@ -258,7 +257,7 @@ jobs:
           fail-fast: true
 
       - name: "Composer: ignore security advisories for PHPCS and PHPCSUtils only"
-        # Only needed on PHP 7.2, which will install the latest version of Composer.
+        # Only needed on PHP >= 7.2, which will install the latest version of Composer.
         # PHP 7.1 and lower will still install Compose 2.2.x, which doesn't recognize this config key.
         if: ${{ matrix.php > '7.1' }}
         run: composer config policy.advisories.ignore squizlabs/php_codesniffer phpcsstandards/phpcsutils
