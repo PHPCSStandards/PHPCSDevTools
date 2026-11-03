@@ -81,6 +81,9 @@ final class DocsXsdTest extends IOTestCase
             'Valid docs example without code comparison element in the sequence group' => [
                 'fixtureFile' => 'ValidEmptyCodeComparisonElement.xml',
             ],
+            'Valid docs example with an extension element in a custom namespace' => [
+                'fixtureFile' => 'ValidDocumentationWithNamespacedExtensionElement.xml',
+            ],
         ];
     }
 
@@ -212,6 +215,11 @@ final class DocsXsdTest extends IOTestCase
                 'fixtureFile'    => 'InvalidCodeElementContainsNonStringElements.xml',
                 'expectedStdOut' => '',
                 'expectedStdErr' => "Element 'code': Element content is not allowed, because the content type is a simple type definition.",
+            ],
+            'Nested <documentation> element' => [
+                'fixtureFile'    => 'InvalidNestedDocumentationElement.xml',
+                'expectedStdOut' => '',
+                'expectedStdErr' => "Element 'documentation': This element is not expected.",
             ],
         ];
     }
