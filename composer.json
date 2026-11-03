@@ -85,6 +85,9 @@
         "test-tools": [
             "@php ./vendor/phpunit/phpunit/phpunit --testsuite DevTools"
         ],
+        "test-xsd": [
+            "@php ./vendor/phpunit/phpunit/phpunit --testsuite DocsXsd"
+        ],
         "test-lte9": [
             "@php ./vendor/phpunit/phpunit/phpunit -c phpunitlte9.xml.dist"
         ],
@@ -93,6 +96,9 @@
         ],
         "test-tools-lte9": [
             "@php ./vendor/phpunit/phpunit/phpunit -c phpunitlte9.xml.dist --testsuite DevTools"
+        ],
+        "test-xsd-lte9": [
+            "@php ./vendor/phpunit/phpunit/phpunit -c phpunitlte9.xml.dist --testsuite DocsXsd"
         ],
         "check-complete": [
             "@php ./bin/phpcs-check-feature-completeness ./PHPCSDebug"

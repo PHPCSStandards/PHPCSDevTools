@@ -61,14 +61,10 @@ jobs:
         if: ${{ matrix.php < '7.2' && matrix.php != 'latest' }}
         run: composer lintlt72
 
-      # Check that any sniffs available are feature complete.
-      # This acts as an integration test for the feature completeness script,
-      # which is why it is run against various PHP versions.
-      - name: Check for feature completeness
-        run: composer check-complete
-
-  # Run CI checks/tests which have no dependency on the PHPCS version used.
-  quicktest-php:
+  # Run CI checks/tests which have a dependency on the XMLLint version used,
+  # which may be different depending on the OS.
+  # The PHP version is irrelevant as PHP is only used to run the tests via PHPUnit.
+  quicktest-xsd:
     permissions:
       contents: read # To clone the repo.
 
@@ -77,25 +73,11 @@ jobs:
     strategy:
       matrix:
         os: ['ubuntu-latest', 'windows-latest']
-        php: ['5.4', 'latest']
 
-        # Composer (2.2) is showing a segfault when installing with PHP 5.4 on Windows since Oct 2026.
-        # As PHP 5.4 is ancient, let's just ignore it and replace that build with PHP 5.5.
-        exclude:
-          - os: 'windows-latest'
-            php: '5.4'
-
-        include:
-          - os: 'windows-latest'
-            php: '5.5'
-
-    name: "QTest: PHP ${{ matrix.php }} (${{ matrix.os == 'windows-latest' && 'Win' || 'Linux' }})"
+    name: "QTest XSD: OS ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Prepare git to leave line endings alone
-        run: git config --global core.autocrlf input
-
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -123,6 +105,60 @@ jobs:
       - name: Install PHP
         uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
         with:
+          php-version: 'latest'
+          ini-values: error_reporting=-1, display_errors=On, display_startup_errors=On
+          coverage: none
+        env:
+          fail-fast: true
+
+      # Install dependencies and handle caching in one go.
+      # @link https://github.com/marketplace/actions/install-php-dependencies-with-composer
+      - name: Install Composer dependencies
+        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
+        with:
+          # Bust the cache at least once a month - output format: YYYY-MM.
+          custom-cache-suffix: $(date -u "+%Y-%m")
+
+      - name: Run the unit tests for the DocsXsd
+        run: composer test-xsd
+
+  # Run CI checks/tests which have no dependency on the PHPCS version used.
+  quicktest-tools:
+    permissions:
+      contents: read # To clone the repo.
+
+    needs: 'quicklint-php'
+
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'windows-latest']
+        php: ['5.4', 'latest']
+
+        # Composer (2.2) is showing a segfault when installing with PHP 5.4 on Windows since Oct 2026.
+        # As PHP 5.4 is ancient, let's just ignore it and replace that build with PHP 5.5.
+        exclude:
+          - os: 'windows-latest'
+            php: '5.4'
+
+        include:
+          - os: 'windows-latest'
+            php: '5.5'
+
+    name: "QTest Tools: PHP ${{ matrix.php }} (${{ matrix.os == 'windows-latest' && 'Win' || 'Linux' }})"
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Prepare git to leave line endings alone
+        run: git config --global core.autocrlf input
+
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
           php-version: ${{ matrix.php }}
           ini-values: error_reporting=-1, display_errors=On, display_startup_errors=On
           coverage: none
@@ -136,6 +172,12 @@ jobs:
         with:
           # Bust the cache at least once a month - output format: YYYY-MM.
           custom-cache-suffix: $(date -u "+%Y-%m")
+
+      # Check that any sniffs available are feature complete.
+      # This acts as an integration test for the feature completeness script,
+      # which is why it is run against various PHP versions.
+      - name: Check for feature completeness
+        run: composer check-complete
 
       - name: Grab PHPUnit version
         id: phpunit_version
