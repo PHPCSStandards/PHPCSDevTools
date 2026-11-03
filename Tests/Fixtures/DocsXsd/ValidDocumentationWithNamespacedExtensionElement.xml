@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<documentation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://phpcsstandards.github.io/PHPCSDevTools/phpcsdocs.xsd" xmlns:ext="https://example.com/phpcs-docs-extension" title="Example docs">
+    <standard>
+    <![CDATA[
+      This is an example of the correct documentation example.
+    ]]>
+    </standard>
+    <ext:note>This is an extension element in a custom namespace.</ext:note>
+</documentation>
