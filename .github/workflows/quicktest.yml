@@ -67,8 +67,10 @@ jobs:
       - name: Check for feature completeness
         run: composer check-complete
 
-  # Run CI checks/tests which have no dependency on the PHPCS version used.
-  quicktest-php:
+  # Run CI checks/tests which have a dependency on the XMLLint version used,
+  # which may be different depending on the OS.
+  # The PHP version is irrelevant as PHP is only used to run the tests via PHPUnit.
+  quicktest-xsd:
     permissions:
       contents: read # To clone the repo.
 
@@ -76,10 +78,10 @@ jobs:
 
     strategy:
       matrix:
-        php: ['5.4', 'latest']
+        os: ['ubuntu-latest', 'windows-latest']
 
-    name: "QTest: PHP ${{ matrix.php }}"
-    runs-on: ubuntu-latest
+    name: "QTest XSD: OS ${{ matrix.os }}"
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout code
@@ -90,17 +92,26 @@ jobs:
       # Updating the lists can fail intermittently, typically after Microsoft has released a new package.
       # This should not be blocking for this job, so ignore any errors from this step.
       # Ref: https://github.com/dotnet/core/issues/4167
-      - name: Update the available packages list
+      - name: Update the available packages list (Linux)
+        if: runner.os == 'Linux'
         continue-on-error: true
         run: sudo apt-get update
 
-      - name: Install xmllint
+      - name: Install xmllint (Linux)
+        if: runner.os == 'Linux'
         run: sudo apt-get install --no-install-recommends -y libxml2-utils
+
+      - name: Install xmllint (Windows)
+        if: runner.os == 'Windows'
+        run: choco install xsltproc -y
+
+      - name: Verify xmllint installed correctly
+        run: xmllint --version
 
       - name: Install PHP
         uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
         with:
-          php-version: ${{ matrix.php }}
+          php-version: 'latest'
           ini-values: error_reporting=-1, display_errors=On, display_startup_errors=On
           coverage: none
         env:
@@ -114,27 +125,10 @@ jobs:
           # Bust the cache at least once a month - output format: YYYY-MM.
           custom-cache-suffix: $(date -u "+%Y-%m")
 
-      - name: Grab PHPUnit version
-        id: phpunit_version
-        # yamllint disable rule:line-length
-        run: echo "VERSION=$(vendor/bin/phpunit --version | grep --only-matching --max-count=1 --extended-regexp '\b[0-9]+\.[0-9]+')" >> "$GITHUB_OUTPUT"
-        # yamllint enable rule:line-length
+      - name: Run the unit tests for the DocsXsd
+        run: composer test-xsd
 
-      - name: Determine PHPUnit composer script to use
-        id: phpunit_script
-        run: |
-          if [ "${{ startsWith( steps.phpunit_version.outputs.VERSION, '11.' ) }}" == "true" ]; then
-            echo 'SUFFIX=' >> "$GITHUB_OUTPUT"
-          elif [ "${{ startsWith( steps.phpunit_version.outputs.VERSION, '10.' ) }}" == "true" ]; then
-            echo 'SUFFIX=' >> "$GITHUB_OUTPUT"
-          else
-            echo 'SUFFIX=-lte9' >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Run the unit tests for the DevTools
-        run: composer test-tools${{ steps.phpunit_script.outputs.SUFFIX }}
-
-  # Run CI checks/tests which have a dependency on the PHPCS version used.
+  # Run CI checks/tests which have a dependency on the PHP and PHPCS version used.
   quicktest-phpcs:
     permissions:
       contents: read # To clone the repo.
