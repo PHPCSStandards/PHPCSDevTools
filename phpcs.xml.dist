@@ -39,6 +39,12 @@
 
         <!-- Temporary exclude. Changing pre-existing classes to final can only be done in a major release. -->
         <exclude name="Universal.Classes.RequireFinalClass"/>
+
+        <!-- Temporary exclusion until the trim()/ltrim()/rtrim() calls have been reviewed for the PHP 8.6
+             change to the default value of the $characters parameter.
+             Ref: https://github.com/PHPCSStandards/PHPCSDevTools/issues/266
+        -->
+        <exclude name="PHPCompatibility.ParameterValues.NewTrimCharactersDefault"/>
     </rule>
 
     <!-- Set minimum PHP version supported to PHP 5.4. -->
