@@ -18,6 +18,54 @@ concurrency:
 permissions: {}
 
 jobs:
+  phpcs:
+    permissions:
+      contents: read # To clone the repo.
+
+    name: Check PHP code style
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: 'latest'
+          coverage: none
+          tools: cs2pr
+
+      # Validate the composer.json file.
+      # @link https://getcomposer.org/doc/03-cli.md#validate
+      - name: Validate Composer installation
+        run: composer validate --no-check-all --strict
+
+      - name: 'Composer: adjust dependencies'
+        run: |
+          # The sniff stage doesn't run the unit tests, so no need for PHPUnit.
+          composer remove --no-update --dev phpunit/phpunit --no-scripts --no-interaction
+          # Using PHPCS `4.x` as an early detection system for bugs upstream.
+          composer require --no-update squizlabs/php_codesniffer:"4.x-dev" --no-interaction
+
+      # Install dependencies and handle caching in one go.
+      - name: Install Composer dependencies
+        uses: "ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda" # 4.0.0
+        with:
+          # Bust the cache at least once a month - output format: YYYY-MM.
+          custom-cache-suffix: $(date -u "+%Y-%m")
+
+      # Check the code-style consistency of the PHP files.
+      - name: Check PHP code style
+        id: phpcs
+        run: composer checkcs -- --report-full --report-checkstyle=./phpcs-report.xml
+
+      - name: Show PHPCS results in PR
+        if: ${{ always() && steps.phpcs.outcome == 'failure' }}
+        run: cs2pr ./phpcs-report.xml
+
   checkcs:
     permissions:
       contents: read # To clone the repo.
@@ -38,7 +86,6 @@ jobs:
         with:
           php-version: 'latest'
           coverage: none
-          tools: cs2pr
 
       # Validate the composer.json file.
       # @link https://getcomposer.org/doc/03-cli.md#validate
@@ -108,15 +155,6 @@ jobs:
         with:
           pattern: "phpunit.xml.dist"
           xsd-file: "vendor/phpunit/phpunit/phpunit.xsd"
-
-      # Check the code-style consistency of the PHP files.
-      - name: Check PHP code style
-        id: phpcs
-        run: composer checkcs -- --report-full --report-checkstyle=./phpcs-report.xml
-
-      - name: Show PHPCS results in PR
-        if: ${{ always() && steps.phpcs.outcome == 'failure' }}
-        run: cs2pr ./phpcs-report.xml
 
   xml-cs:
     permissions:
