@@ -23,7 +23,9 @@ jobs:
       contents: read # To clone the repo.
 
     name: 'Basic CS and QA checks'
-    runs-on: ubuntu-latest
+    # Note: the `ubuntu-24.04` is deliberate as the XML validation steps will (for now) fail on `ubuntu-26.04`.
+    # This should be fixed at some point: https://github.com/PHPCSStandards/PHPCSDevTools/issues/268
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout code
