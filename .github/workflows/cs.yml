@@ -160,7 +160,16 @@ jobs:
     permissions:
       contents: read # To clone the repo.
 
-    name: 'XML Code style'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: 'XSD file'
+            file: './DocsXsd/phpcsdocs.xsd'
+          - name: 'PHPCSDebug ruleset'
+            file: './PHPCSDebug/ruleset.xml'
+
+    name: 'XML Code style: ${{ matrix.name }}'
     runs-on: ubuntu-latest
 
     env:
@@ -187,11 +196,8 @@ jobs:
         uses: korelstar/xmllint-problem-matcher@dd2ad21bd8a2de0187cb621419537f345e7e509c # v1.3.0
 
       # Check code-style consistency of the XSD and XML files.
-      - name: Check XSD code style
-        run: diff -B ./DocsXsd/phpcsdocs.xsd <(xmllint --format "./DocsXsd/phpcsdocs.xsd")
-
-      - name: Check Ruleset XML code style
-        run: diff -B ./PHPCSDebug/ruleset.xml <(xmllint --format "./PHPCSDebug/ruleset.xml")
+      - name: Check XML code style
+        run: diff -B ${{ matrix.file }} <(xmllint --format "${{ matrix.file }}")
 
   phpstan:
     permissions:
