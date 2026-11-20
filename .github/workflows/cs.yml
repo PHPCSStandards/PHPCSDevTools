@@ -110,7 +110,7 @@ jobs:
     name: "Check XML files: ${{ matrix.name }}"
     # Note: the `ubuntu-24.04` is deliberate as the XML validation steps will (for now) fail on `ubuntu-26.04`.
     # This should be fixed at some point: https://github.com/PHPCSStandards/PHPCSDevTools/issues/268
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
 
     steps:
       - name: Checkout code
@@ -163,7 +163,7 @@ jobs:
             file: './PHPCSDebug/ruleset.xml'
 
     name: 'XML Code style: ${{ matrix.name }}'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     env:
       XMLLINT_INDENT: '    '
